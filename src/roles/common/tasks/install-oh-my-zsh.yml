@@ -27,6 +27,11 @@
   when: not oh_my_zsh_installed.stat.exists
   shell:
     cmd: ". /home/{{ user_name }}/install.sh"
+  
+- name: Remove oh-my-zsh installer
+  file:
+    path: "/home/{{ user_name }}/installer.sh"
+    state: absent
 
 # Get plugins for zsh
 # If Ansible is failing on this step ensure that you get your public RSA token into github
