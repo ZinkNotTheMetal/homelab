@@ -1,6 +1,6 @@
 ---
 - name: Install zsh
-  ansible.builtin.package:
+  package:
     name: zsh
     state: present
   become: true

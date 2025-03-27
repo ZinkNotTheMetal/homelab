@@ -37,12 +37,6 @@
     name: git
     state: latest
 
-- name: Install ZSH
-  become: true
-  ansible.builtin.package:
-    name: zsh
-    state: present
-
 - name: Install NodeJS (stable)
   become: true
   apt:
