@@ -3,10 +3,36 @@
 # Documentation: https://transmissionbt.com
 # Purpose: To download Linux ISOs such as Debian & Mint
 
+- name: Ensure 'torrent data' is created
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0777"
+  with_items:
+    - "/mnt/nas/torrent-data"
+
+# Ensure that permissions are properly setup in NAS to mount directories
+# 1. Login to Synology
+# 2. Open Control Panel
+# 3. Click Share(s) individually (i.e. Media)
+# 4. Right click and hit Edit
+# 5. Go to the NFS permissions Tab
+# 6. Add hostname of the server
+
+- name: Mount 'Transmission-Data'
+  become: true
+  mount:
+    src: "{{ nas_ip }}:/volume1/Files/Torrent-Data"
+    path: /mnt/nas/torrent-data
+    state: mounted
+    opts: rw,nolock,soft
+    fstype: nfs
+
 - name: Create docker data volume
   become: true
   file:
-    path: "{{ docker_data_transmission }}"
+    path: /mnt/nas/torrent-data 
     state: directory
     mode: "0777"
     owner: root
@@ -22,7 +48,7 @@
     pull: true
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "{{ docker_data_transmission }}:/data"
+      - "/mnt/nas/torrent-data:/data"
       - "/etc/timezone:/etc/timezone:ro"
     env:
       OPENVPN_PROVIDER: "{{ vpn_provider }}"
