@@ -3,7 +3,7 @@
 # Documentation: https://prowlarr.com/
 # Purpose: Index manager for .iso torrents
 
-- name: Create docker volume
+- name: Create 'Prowlarr' docker volume
   become: true
   file:
     path: "{{ docker_data_prowlarr }}/config"

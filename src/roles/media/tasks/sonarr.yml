@@ -3,7 +3,7 @@
 # Documentation: https://github.com/linuxserver/docker-sonarr
 # Purpose: To help automate movement of tv show media
 
-- name: Create docker volume
+- name: Create 'Sonarr' docker volume
   become: true
   file:
     path: "{{ docker_data_sonarr }}/config"
