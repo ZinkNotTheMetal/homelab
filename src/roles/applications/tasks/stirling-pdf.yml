@@ -9,12 +9,12 @@
     path: "{{ item }}"
     state: directory
     mode: "0777"
-    owner: root
-    group: root
+    owner: "{{ ansible_user}}"
+    group: "{{ ansible_user }}"
   with_items:
     - "{{ docker_data_stirling_pdf }}/training-data"
     - "{{ docker_data_stirling_pdf }}/config"
-    - "{{ docker_data_stirling_pdf}}/logs"
+    - "{{ docker_data_stirling_pdf }}/logs"
 
 - name: Run 'Stirling PDF' - Docker Container
   docker_container:
