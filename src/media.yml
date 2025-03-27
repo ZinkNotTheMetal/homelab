@@ -1,0 +1,9 @@
+---
+- hosts: application
+  vars_files:
+    - "media.vars.yml"
+    - "common.vars.yml"
+  roles:
+    - role: media
+      tag:
+        - media

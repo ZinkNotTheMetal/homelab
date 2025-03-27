@@ -1,0 +1,8 @@
+#####################################################################
+# Media Configuration - used for installing homelab apps
+# This mainly uses docker so there are lot of configuration for that
+# Potentially duplicates of applications.vars.templates but this is
+# known and due to separation if you want to put the media on a different
+# server
+#####################################################################
+domain_name: domain.org

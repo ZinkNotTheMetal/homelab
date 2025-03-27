@@ -1,0 +1,47 @@
+---
+# Prowlarr
+# Documentation: https://prowlarr.com/
+# Purpose: Index manager for .iso torrents
+
+- name: Create docker volume
+  become: true
+  file:
+    path: "{{ docker_data_prowlarr }}/config"
+    state: directory
+    mode: 0777
+    owner: root
+
+- name: Run 'Prowlarr' - Docker Container
+  docker_container:
+    name: prowlarr
+    image: lscr.io/linuxserver/prowlarr
+    restart_policy: unless-stopped
+    pull: true
+    privileged: true
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ prowlarr_container_ip }}"
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      VERSION: "docker"
+      TZ: "{{ time_zone }}"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "{{ docker_data_prowlarr }}/config:/config"
+    healthcheck:
+      test: ["CMD", "curl", "-kL", "http://localhost:9696"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "true"
+      traefik.http.routers.prowlarr.entrypoints: "websecure,web"
+      traefik.http.routers.prowlarr.tls: "true"
+      traefik.http.routers.prowlarr.rule: "Host(`prowlarr.{{ domain_name }}`)"
+      traefik.http.routers.prowlarr.service: "prowlarr"
+      traefik.http.services.prowlarr.loadBalancer.server.port: "9696"
+      traefik.http.routers.prowlarr.tls.certresolver: "letsencrypt"

@@ -1,0 +1,7 @@
+docker_application_folder: /home/{{ ansible_user }}/.docker
+
+###########################################################################
+# Prowlarr Configuration
+###########################################################################
+docker_data_prowlarr: "{{ docker_application_folder }}/prowlarr"
+prowlarr_container_ip: 192.168.101.200

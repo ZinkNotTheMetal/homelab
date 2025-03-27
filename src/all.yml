@@ -7,13 +7,13 @@
 - import_playbook: common.yml
 
 # Applicable to machine hosting DNS
-- import_playbook: dns-host.yml
+- import_playbook: docker
 
 # Applicable to all machines that are running the home environment
 - import_playbook: home.yml
 
 # Applicable to machine hosting all applications (via Docker)
-#- import_playbook: app-server.yml
+- import_playbook: applications.yml
 
 # Applicable to machine hosting all applications (via Docker)
-#- import_playbook: monitoring.yml
+- import_playbook: media.yml
