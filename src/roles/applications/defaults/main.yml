@@ -8,7 +8,7 @@ it_tools_container_ip: 192.168.144.10
 # Stirling PDF Configuration
 ###########################################################################
 docker_data_stirling_pdf: "{{ docker_application_folder }}/stirling-pdf"
-stirling_pdf_container_ip: 192.168.144.11
+stirling_pdf_container_ip: 192.168.144.20
 ###########################################################################
 # Mealie Configuration
 ###########################################################################
@@ -21,29 +21,29 @@ mealie_url: mealie.{{ domain_name }}
 # Netbootxyz Configuration
 ###########################################################################
 docker_data_netboot: "{{ docker_application_folder }}/netboot"
-netboot_container_ip: 192.168.144.12
+netboot_container_ip: 192.168.144.30
 ###########################################################################
 # pgAdmin Configuration
 ###########################################################################
 docker_data_pgadmin: "{{ docker_application_folder }}/pgadmin"
-pgadmin_container_ip: 192.168.144.13
+pgadmin_container_ip: 192.168.144.40
 ###########################################################################
 # Portainer Configuration
 ###########################################################################
 docker_data_portainer: "{{ docker_application_folder }}/portainer"
-portainer_container_ip: 192.168.144.14
+portainer_container_ip: 192.168.144.50
 ###########################################################################
 # Traccar Configuration
 ###########################################################################
 docker_data_traccar: "{{ docker_application_folder }}/traccar"
-traccar_container_ip: 192.168.144.14
-traccar_db_container_ip: 192.168.144.15
+traccar_container_ip: 192.168.144.60
+traccar_db_container_ip: 192.168.144.61
 traccar_db_name: traccar
 ###########################################################################
 # Plex Configuration
 ###########################################################################
 docker_data_plex: "{{ docker_application_folder }}/plex"
-plex_container_ip: 192.168.101.12
+plex_container_ip: 192.168.101.20
 ###########################################################################
 
 
