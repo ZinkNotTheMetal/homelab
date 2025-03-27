@@ -51,7 +51,7 @@
     pull: true
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "{{ host_mealie_folder_location }}/app:/app/data:rw"
+      - "{{ docker_data_mealie }}/app:/app/data:rw"
       - "/etc/timezone:/etc/timezone:ro"
     links:
       - mealie-db:mealie-db
