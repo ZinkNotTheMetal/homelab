@@ -1,0 +1,41 @@
+- name: Find physical network adapter
+  command: find /sys/class/net -type l -not -lname '*virtual*' -not -name 'wlp0s20f3' -printf '%f\n'
+  register: physical_interfaces_cmd
+  changed_when: false
+  check_mode: false
+
+- name: Create IPVLAN L3
+  become: true
+  docker_network:
+    name: docker_ipvlan
+    driver: ipvlan
+    driver_options:
+      parent: "{{ physical_interfaces_cmd.stdout_lines[0] }}"
+      ipvlan_mode: l3
+    ipam_config:
+      - subnet: "{{ docker_network_ip_outside }}/24"
+      - subnet: "{{ docker_network_ip_inside }}/24"
+
+    # - name: Ensure no internet access for ipvlan_no_internet network
+    #   command: ip route del default via 192.168.20.1
+    #   ignore_errors: yes
+
+    # - name: Allow communication between Docker networks
+    #   ufw:i
+    #     rule: allow
+    #     from_ip: 192.168.20.0/24
+    #     to_ip: 192.168.10.0/24
+    #     comment: Allow communication between ipvlan_no_internet and ipvlan_internet
+
+    # - name: Block internet access for ipvlan_no_internet network
+    #   ufw:
+    #     rule: deny
+    #     from_ip: 192.168.20.0/24
+    #     to_ip: any
+    #     comment: Block internet access for ipvlan_no_internet network
+    #     direction: out
+
+- name: Create custom bridge docker network
+  become: true
+  docker_network:
+    name: curidge

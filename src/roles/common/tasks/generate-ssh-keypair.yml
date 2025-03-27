@@ -1,0 +1,19 @@
+    - name: Generate SSH key pair
+      shell: ssh-keygen -t rsa -b 4096 -f /home/{{ user_name }}/.ssh/id_rsa -N ""
+      args:
+        creates: /home/{{ user_name }}/.ssh/id_rsa
+
+    - name: Set correct permissions for the private key
+      file:
+        path: /home/{{ user_name }}/.ssh/id_rsa
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+        mode: '0600'
+
+    - name: Ensure .ssh directory has correct permissions
+      file:
+        path: /home/{{ ansible_user }}/.ssh
+        state: directory
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+        mode: '0700'

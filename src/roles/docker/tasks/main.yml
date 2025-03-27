@@ -1,0 +1,16 @@
+---
+# Install Debian flavor of Docker (followed recommended steps) 
+- import_tasks: install.yml
+
+- import_tasks: setup-networks.yml
+
+- name: Create docker data volume
+  become: true
+  file:
+    path: "{{ base_docker_directory }}"
+    state: directory
+    mode: "0755"
+    owner: root
+    recurse: yes
+
+

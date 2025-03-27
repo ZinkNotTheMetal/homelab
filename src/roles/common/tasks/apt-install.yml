@@ -37,6 +37,12 @@
     name: git
     state: latest
 
+- name: Install ZSH
+  become: true
+  ansible.builtin.package:
+    name: zsh
+    state: present
+
 - name: Install NodeJS (stable)
   become: true
   apt:
@@ -51,12 +57,6 @@
   debug:
     msg: "Version info {{ versioninfo.stdout_lines }}"
   when: versioninfo is changed
-
-- name: Install 'samba' - file sharing
-  become: true
-  apt:
-    name: samba
-    state: latest
 
 - name: Install 'unzip'
   become: true
