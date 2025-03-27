@@ -1,0 +1,42 @@
+---
+# Overseerr
+# Documentation: https://overseerr.dev
+# Purpose: To keep track of movies I want to watch / rip DVD's from my dad
+
+- name: Create docker volume (overseerr)
+  become: true
+  file:
+    path: "{{ docker_data_overseerr }}"
+    state: directory
+    mode: "0777"
+    owner: root
+
+- name: Run 'Overseerr' - Docker Container
+  docker_container:
+    name: overseerr
+    image: sctx/overseerr
+    pull: true
+    volumes:
+      - "{{ docker_data_overseerr }}:/app/config"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ overseerr_container_ip }}"
+    env:
+      TZ: "{{ time_zone }}"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055 || exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "true"
+      traefik.http.routers.overseerr.entrypoints: "websecure,web"
+      traefik.http.routers.overseerr.tls: "true"
+      traefik.http.routers.overseerr.rule: "Host(`overseerr.{{ domain_name }}`)"
+      traefik.http.routers.overseerr.service: "overseerr"
+      traefik.http.services.overseerr.loadBalancer.server.port: "5055"
+      traefik.http.routers.overseerr.tls.certresolver: "letsencrypt"

@@ -24,3 +24,4 @@
 # Changed to setup as it's expecting a traefik config if not prefixed
 - import_tasks: setup-traefik.yml
 
+- import_tasks: overseerr.yml

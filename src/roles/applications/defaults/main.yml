@@ -55,3 +55,8 @@ tautulli_container_ip: 192.168.101.30
 docker_data_traefik: "{{ docker_application_folder }}/traefik"
 traefik_container_ip: 192.168.101.40 
 ###########################################################################
+# Overseerr Configuration
+###########################################################################
+docker_data_overseerr: "{{ docker_application_folder }}/overseerr"
+overseerr_container_ip: 192.168.101.50 
+###########################################################################
