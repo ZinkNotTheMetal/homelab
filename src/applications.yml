@@ -1,0 +1,8 @@
+---
+- hosts: application
+  vars_files:
+    - "applications.vars.yml"
+  roles:
+    - role: applications
+      tag:
+        - applications

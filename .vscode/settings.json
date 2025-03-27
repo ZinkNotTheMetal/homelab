@@ -4,13 +4,16 @@
     "automations",
     "bindkey",
     "blockinfile",
+    "certresolver",
     "containerd",
+    "corentinth",
     "curidge",
     "Homelab",
     "Imager",
     "insertafter",
     "IPVLAN",
     "IYKYK",
+    "letsencrypt",
     "lfcd",
     "lname",
     "localtime",
@@ -26,6 +29,7 @@
     "Traefik",
     "usermod",
     "versioninfo",
+    "websecure",
     "zoneinfo"
   ]
 }

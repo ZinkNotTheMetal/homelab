@@ -1,0 +1,31 @@
+- name: Run 'IT Tools' - Docker Container
+  docker_container:
+    name: it-tools 
+    image: corentinth/it-tools:latest
+    pull: true
+    restart_policy: unless-stopped
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ it_tools_container_ip }}"
+    env:
+      TZ: "{{ time_zone }}"
+      PUID: "1000"
+      PGID: "1000"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "true"
+      traefik.http.routers.it_tools.tls: "true"
+      traefik.http.routers.it_tools.entrypoints: "websecure,web"
+      traefik.http.routers.it_tools.rule: "Host(`it.{{ domain_name }}`)"
+      traefik.http.routers.it_tools.service: "it_tools"
+      traefik.http.services.it_tools.loadBalancer.server.port: "80"
+      traefik.http.services.it_tools.loadBalancer.server.scheme: http
+      traefik.http.routers.it_tools.tls.certresolver: "letsencrypt"
