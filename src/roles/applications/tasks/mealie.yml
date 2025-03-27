@@ -40,11 +40,6 @@
     labels:
       com.centurylinklabs.watchtower.enable: "true"
 
-- name: Recurse chmod
-  become: true
-  command: |
-    sudo chmod 777 -R {{ host_mealie_folder_location }}/db-data
-
 - name: Run 'Mealie' - Docker Container
   docker_container:
     name: mealie

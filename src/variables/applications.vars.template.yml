@@ -4,6 +4,12 @@
 #####################################################################
 domain_name: example.duckdns.org
 
-## Below is the configuration for Mealie (recipe tracker)
+#####################################################################
+# Mealie Configuration Secrets
+#####################################################################
 mealie_db_user: <db username>
 mealie_db_password: <db pass>
+oidc_mealie_config_url: <authentik / other oidc provider>
+oidc_mealie_client_id: <client_id>
+oidc_mealie_client_secret: <client_secret>
+#####################################################################
