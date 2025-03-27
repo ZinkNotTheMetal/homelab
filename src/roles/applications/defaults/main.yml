@@ -14,3 +14,6 @@ stirling_pdf_container_ip: 192.168.144.11
 ###########################################################################
 docker_data_mealie: "{{ docker_application_folder }}/mealie"
 mealie_container_ip: 192.168.101.10
+mealie_db_container_ip: 192.168.101.11
+mealie_db_name: mealie
+mealie_url: mealie.{{ domain_name }}

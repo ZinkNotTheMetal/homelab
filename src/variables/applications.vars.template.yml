@@ -3,3 +3,7 @@
 # This mainly uses docker so there are lot of configuration for that
 #####################################################################
 domain_name: example.duckdns.org
+
+## Below is the configuration for Mealie (recipe tracker)
+mealie_db_user: <db username>
+mealie_db_password: <db pass>
