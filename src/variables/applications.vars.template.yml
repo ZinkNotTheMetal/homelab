@@ -3,7 +3,6 @@
 # This mainly uses docker so there are lot of configuration for that
 #####################################################################
 domain_name: domain.org
-nas_ip: <ip addr of nas>
 
 #####################################################################
 # Mealie Configuration Secrets
@@ -40,4 +39,16 @@ traccar_url: <base_url> - traccar.domain.org
 # OIDC Configuration
 traccar_client_id: <oidc_client_id>
 traccar_client_secret: <oidc_client_secret>
+#####################################################################
+
+#####################################################################
+# Plex Configuration Secrets
+#####################################################################
+plex_claim_token: <fill in token from plex>
+
+#####################################################################
+# Traefik Configuration Secrets
+#####################################################################
+cf_dns_api_token: <fill in token from cloudflare>
+
 #####################################################################

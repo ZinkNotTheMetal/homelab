@@ -1,0 +1,38 @@
+---
+# Tautulli
+# Documentation: https://github.com/Tautulli/Tautulli
+# Purpose: Keep statistics on what I watch and how often I watch Plex items
+
+- name: Create 'tautulli' data volume
+  become: true
+  file:
+    path: "{{ docker_data_tautulli }}"
+    state: directory
+    mode: "0755"
+
+- name: Run 'tautulli' - Docker Container
+  docker_container:
+    name: tautulli
+    image: tautulli/tautulli
+    restart_policy: unless-stopped
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ tautulli_container_ip }}"
+    pull: true
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "{{ docker_data_tautulli }}:/config"
+      - "/etc/timezone:/etc/timezone:ro"
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "{{ time_zone }}"
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "true"
+      traefik.http.routers.tautulli.entrypoints: "websecure,web"
+      traefik.http.routers.tautulli.tls: "true"
+      traefik.http.routers.tautulli.rule: "Host(`tautulli.{{ domain_name }}`)"
+      traefik.http.routers.tautulli.service: "tautulli"
+      traefik.http.services.tautulli.loadBalancer.server.port: "8181"
+      traefik.http.routers.tautulli.tls.certresolver: "letsencrypt"

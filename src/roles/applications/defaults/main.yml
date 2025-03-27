@@ -45,6 +45,13 @@ traccar_db_name: traccar
 docker_data_plex: "{{ docker_application_folder }}/plex"
 plex_container_ip: 192.168.101.20
 ###########################################################################
-
-
+# Tautulli Configuration
+###########################################################################
+docker_data_tautulli: "{{ docker_application_folder }}/tautulli"
+tautulli_container_ip: 192.168.101.30
+###########################################################################
+# traefik Configuration
+###########################################################################
+docker_data_traefik: "{{ docker_application_folder }}/traefik"
+traefik_container_ip: 192.168.101.40 
 ###########################################################################

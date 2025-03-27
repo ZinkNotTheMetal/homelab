@@ -8,4 +8,5 @@ time_zone: <time_zone>
 location_state_abbr: <current_state_location>
 # For SWS & Weather
 location_city: <current_city_location>
+nas_ip: <synology_nas_ip>
 #####################################################################

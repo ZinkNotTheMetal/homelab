@@ -23,6 +23,15 @@
 #  sudo mount -t nfs 10.10.0.10:/volume1/Files/Books /mnt/nas/books
 # Test unmount
 #  sudo umount 10.10.0.10:/backups
+
+# Ensure that permissions are properly setup in NAS to mount directories
+# 1. Login to Synology
+# 2. Open Control Panel
+# 3. Click Share(s) individually (i.e. Media)
+# 4. Right click and hit Edit
+# 5. Go to the NFS permissions Tab
+# 6. Add hostname of the server
+
 - name: Mount 'Movies'
   become: true
   mount:

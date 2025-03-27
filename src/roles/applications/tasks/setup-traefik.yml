@@ -1,0 +1,74 @@
+---
+# Traefik
+# Documentation: https://doc.traefik.io/
+# Purpose: Reverse Proxy (similar to SWAG) - but with labels and no downtime
+#          Although I added plugins for SWAG I wanted to give traefik a try as I'm tired of having to figure out
+#          a similar config if it's there and get it to work.
+
+- name: Create Traefik Directories
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0777
+  with_items:
+    - "{{ docker_data_traefik }}/config"
+    - "{{ docker_data_traefik }}/config/overrides"
+    - "{{ docker_data_traefik }}/certs"
+
+- name: Load the traefik configuration file
+  become: true
+  template:
+    src: traefik.yaml
+    dest: "{{ docker_data_traefik }}/config/traefik.yaml"
+
+- name: Load the traefik configuration file
+  become: true
+  copy:
+    src: traefik.middleware.conf
+    dest: "{{ docker_data_traefik }}/config/middlewares-authentik.yaml"
+
+- name: Load 'nas configuration'
+  become: true
+  template:
+    src: traefik.nas.conf
+    dest: "{{ docker_data_traefik }}/config/overrides/nas.yaml"
+
+- name: "Setup Traefik Reverse Proxy"
+  docker_container:
+    name: traefik
+    image: traefik:v3
+    pull: true
+    privileged: true
+    restart_policy: unless-stopped
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ traefik_container_ip }}"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "{{ docker_data_traefik }}/config/traefik.yaml:/etc/traefik/traefik.yaml:ro"
+      - "{{ docker_data_traefik }}/config/overrides:/etc/traefik/overrides:ro"
+      - "{{ docker_data_traefik }}/certs:/certs:rw"
+      - "{{ docker_data_traefik  }}/logs:/var/log/traefik"
+    env:
+      TZ: "{{ time_zone }}"
+      VERSION: "docker"
+      CF_API_EMAIL: "{{ contact_email }}"
+      CF_DNS_API_TOKEN: "{{ cf_dns_api_token }}"
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "true"
+      traefik.http.routers.traefik.entrypoints: "http"
+      traefik.http.routers.traefik.rule: "Host(`traefik-docker.{{ domain_name }}`)"
+      traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme: "https"
+      traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto: "https"
+      traefik.http.routers.traefik.middlewares: "traefik-https-redirect"
+      traefik.http.routers.traefik-secure.entrypoints: https
+      traefik.http.routers.traefik-secure.rule: "Host(`traefik-docker.{{ domain_name }}`)"
+      traefik.http.routers.traefik-secure.middlewares: "traefik-auth"
+      traefik.http.routers.traefik-secure.tls: "true"
+      traefik.http.routers.traefik-secure.tls.certresolver: "cloudflare"
+      traefik.http.routers.traefik-secure.tls.domains[0].main: "{{ domain_name }}"
+      traefik.http.routers.traefik-secure.tls.domains[0].sans: "*.{{ domain_name }}"
+      traefik.http.routers.traefik-secure.service: "api@internal"

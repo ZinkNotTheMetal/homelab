@@ -1,0 +1,25 @@
+- name: Ensure '/mnt/nas' is created
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0777"
+  with_items:
+    - "/mnt/nas/shbackups"
+
+# Ensure that permissions are properly setup in NAS to mount directories
+# 1. Login to Synology
+# 2. Open Control Panel
+# 3. Click Share(s) individually (i.e. Media)
+# 4. Right click and hit Edit
+# 5. Go to the NFS permissions Tab
+# 6. Add hostname of the server
+
+- name: Mount 'Smart-Home Backups'
+  become: true
+  mount:
+    src: "{{ nas_ip }}:/volume1/Media/Movies"
+    path: /mnt/nas/movies
+    state: mounted
+    opts: rw,nolock,soft
+    fstype: nfs

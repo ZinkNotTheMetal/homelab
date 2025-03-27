@@ -4,3 +4,5 @@
 
 # Ensure that ZWaveStick is properly setup for Home Assistant
 - import_tasks: setup-zstick.yml
+
+- import_tasks: mount-backup-dir.yml
