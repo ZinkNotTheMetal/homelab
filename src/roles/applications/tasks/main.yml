@@ -6,3 +6,5 @@
 - import_tasks: it-tools.yml
 
 - import_tasks: stirling-pdf.yml
+
+- import_tasks: mealie.yml
