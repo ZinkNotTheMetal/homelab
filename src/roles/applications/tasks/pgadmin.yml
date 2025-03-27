@@ -1,6 +1,8 @@
+---
 # pgAdmin
 # Documentation: https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html
 # Purpose: Database web client for connecting to Postgres databases
+
 - name: Create pgadmin Directory
   become: true
   file:
@@ -24,7 +26,6 @@
     image: dpage/pgadmin4:latest
     restart_policy: unless-stopped
     pull: true
-    privileged: true
     networks:
       - name: docker_ipvlan
         ipv4_address: "{{ pgadmin_container_ip }}"

@@ -32,3 +32,9 @@ pgadmin_container_ip: 192.168.144.13
 ###########################################################################
 docker_data_portainer: "{{ docker_application_folder }}/portainer"
 portainer_container_ip: 192.168.144.14
+###########################################################################
+# Traccar Configuration
+###########################################################################
+docker_data_traccar: "{{ docker_application_folder }}/traccar"
+traccar_container_ip: 192.168.144.14
+traccar_db_name: traccar

@@ -1,0 +1,88 @@
+---
+# Traccar
+# Documentation: https://www.traccar.org/documentation/
+# Purpose: Host Life360 like application locally for Home Assistant
+# https://github.com/traccar/traccar-docker?tab=readme-ov-file
+
+- name: Create Traccar Directories
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0777
+  with_items:
+    - "{{ docker_data_traccar }}/config"
+    - "{{ docker_data_traccar }}/logs"
+    - "{{ docker_data_traccar }}/db-data"
+    - "{{ docker_data_traccar }}/db-backups"
+
+- name: Ensure the 'traccar' config is loaded
+  become: true
+  template:
+    src: traccar.conf
+    dest: "{{ docker_data_traccar }}/config/traccar.xml"
+    owner: root
+    group: root
+
+- name: Run 'Traccar DB' - Docker Container
+  docker_container:
+    name: traccar-db
+    image: postgres:17-alpine
+    restart_policy: unless-stopped
+    privileged: true
+    pull: true
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ traccar_db_container_ip }}"
+    volumes:
+      - "{{ docker_data_traccar }}/db-backups:/backups:rw"
+      - "{{ docker_data_traccar }}/db-data:/data/postgres"
+    env:
+      POSTGRES_USER: "{{ traccar_db_user }}"
+      POSTGRES_PASSWORD: "{{ traccar_db_password }}"
+      POSTGRES_DB: "{{ traccar_db_name }}"
+      PGDATA: /data/postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 20s
+      timeout: 8s
+      retries: 5
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+
+
+- name: Traccar Docker Container
+  docker_container:
+    name: traccar
+    image: traccar/traccar:6-alpine
+    pull: true
+    restart_policy: unless-stopped
+    privileged: true
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ traccar_container_ip }}"
+    links:
+      - traccar-db:traccar-db
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "{{ docker_data_traccar }}/config/traccar.xml:/opt/traccar/conf/traccar.xml:ro"
+      - "{{ docker_data_traccar }}/logs:/opt/traccar/logs:rw"
+    env:
+      TZ: "{{ time_zone }}"
+      VERSION: "docker"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8082"]
+      start_period: 5s
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "true"
+      traefik.http.routers.traccar.entrypoints: "websecure,web"
+      traefik.http.routers.traccar.tls: "true"
+      traefik.http.routers.traccar.rule: "Host(`traccar.{{ domain_name }}`)"
+      traefik.http.routers.traccar.service: "traccar"
+      traefik.http.services.traccar.loadBalancer.server.port: "8082"
+      traefik.http.routers.traccar.tls.certresolver: "letsencrypt"

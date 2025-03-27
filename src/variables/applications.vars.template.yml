@@ -2,7 +2,7 @@
 # Application Configuration - used for installing homelab apps
 # This mainly uses docker so there are lot of configuration for that
 #####################################################################
-domain_name: example.duckdns.org
+domain_name: domain.org
 
 #####################################################################
 # Mealie Configuration Secrets
@@ -20,4 +20,23 @@ oidc_mealie_client_secret: <client_secret>
 pgadmin_default_email: <default_email>
 pgadmin_default_password: <pgadmin_password>
 pgadmin_master_password: <pgadmin_master_password>
+# OIDC Configuration (remove pgadmin.conf.env if not needed & step)
+oidc_pgadmin_metadata_url: <wellknown_openid_configuration_url>
+oidc_pgadmin_token_url: <oidc_token_url>
+oidc_pgadmin_auth_url: <authorize_url>
+oidc_pgadmin_base_url: <base_url> - pgadmin.domain.org
+oidc_pgadmin_userinfo_url: <userinfo_url>
+oidc_pgadmin_client_id: <oidc_client_id>
+oidc_pgadmin_client_secret: <oidc_client_secret>
+#####################################################################
+
+#####################################################################
+# Traccar Configuration Secrets
+#####################################################################
+traccar_db_user: <db_user_name>
+traccar_db_password: <db_password>
+traccar_url: <base_url> - traccar.domain.org
+# OIDC Configuration
+traccar_client_id: <oidc_client_id>
+traccar_client_secret: <oidc_client_secret>
 #####################################################################

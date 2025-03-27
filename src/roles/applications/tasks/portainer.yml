@@ -1,7 +1,9 @@
+---
 # Portainer
 # Documentation: https://docs.portainer.io
 # Purpose: To provide an easy to navigate UI for managing docker containers
-- name: Create nginx data volume
+
+- name: Create portainer data volume
   become: true
   file:
     path: "{{ docker_data_portainer }}"

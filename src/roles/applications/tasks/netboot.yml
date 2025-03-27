@@ -1,3 +1,8 @@
+---
+# Netbootxyz
+# Documentation: https://netboot.xyz/
+# Purpose: All of your favorite operating systems in one place 
+
 - name: Create netboot Directories
   become: true
   file:
