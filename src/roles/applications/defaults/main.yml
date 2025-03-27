@@ -9,3 +9,8 @@ it_tools_container_ip: 192.168.144.10
 ###########################################################################
 docker_data_stirling_pdf: "{{ docker_application_folder }}/stirling-pdf"
 stirling_pdf_container_ip: 192.168.144.11
+###########################################################################
+# Mealie Configuration
+###########################################################################
+docker_data_mealie: "{{ docker_application_folder }}/mealie"
+mealie_container_ip: 192.168.101.10

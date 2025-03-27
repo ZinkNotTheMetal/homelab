@@ -1,0 +1,97 @@
+---
+# Mealie
+# Documentation: https://docs.mealie.io/documentation/getting-started/introduction/
+# Purpose: Host for digitizing our recipes
+
+- name: Create Mealie docker directories
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0777"
+  with_items:
+    - "{{ docker_data_mealie }}/db-backups"
+    - "{{ docker_data_mealie }}/db-data"
+    - "{{ docker_data_mealie }}/app"
+
+- name: Run 'Mealie DB' - Docker Container
+  docker_container:
+    name: mealie-db
+    image: postgres:17-alpine
+    restart_policy: unless-stopped
+    pull: true
+    privileged: true
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ mealie_db_container_ip }}"
+    volumes:
+      - "{{ docker_data_mealie }}/db-backups:/backups:rw"
+      - "{{ docker_data_mealie }}/db-data:/data/postgres"
+    env:
+      POSTGRES_USER: "{{ mealie_db_user }}"
+      POSTGRES_PASSWORD: "{{ mealie_db_password }}"
+      POSTGRES_DB: "{{ mealie_db_name }}"
+      PGDATA: /data/postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 20s
+      timeout: 8s
+      retries: 5
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+
+- name: Recurse chmod
+  become: true
+  command: |
+    sudo chmod 777 -R {{ host_mealie_folder_location }}/db-data
+
+- name: Run 'Mealie' - Docker Container
+  docker_container:
+    name: mealie
+    image: hkotel/mealie:latest
+    restart_policy: unless-stopped
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ mealie_container_ip }}"
+    pull: true
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "{{ host_mealie_folder_location }}/app:/app/data:rw"
+      - "/etc/timezone:/etc/timezone:ro"
+    links:
+      - mealie-db:mealie-db
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "{{ time_zone }}"
+      ALLOW_SIGNUP: "false"
+      RECIPE_PUBLIC: "true"
+      RECIPE_SHOW_ASSETS: "true"
+      BASE_URL: "{{ mealie_url }}"
+      # Database Settings
+      DB_ENGINE: "postgres"
+      POSTGRES_USER: "{{ mealie_db_user }}"
+      POSTGRES_PASSWORD: "{{ mealie_db_password }}"
+      POSTGRES_SERVER: "mealie-db"
+      POSTGRES_DB: "{{ mealie_db_name }}"
+      # OIDC Settings - Comment out if not using (Authentik)
+      OIDC_AUTH_ENABLED: "true"
+      OIDC_PROVIDER_NAME: "Authentik"
+      OIDC_AUTO_REDIRECT: "true"
+      OIDC_SIGNUP_ENABLED: "true"
+      OIDC_CONFIGURATION_URL: "{{ oidc_mealie_config_url }}" #.well-known/openid-config
+      OIDC_CLIENT_ID: "{{ oidc_mealie_client_id }}" # Found in authentik
+      OIDC_CLIENT_SECRET: "{{ oidc_mealie_client_secret }}" # Found in authentik
+      OIDC_REMEMBER_ME: "true"
+      OIDC_ADMIN_GROUP: "Mealie Admins"
+      OIDC_USER_GROUP: "Mealie Users"
+    # Healthcheck built into the container
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "true"
+      traefik.http.routers.mealie.entrypoints: "websecure,web"
+      traefik.http.routers.mealie.tls: "true"
+      traefik.http.routers.mealie.rule: "Host(`mealie.{{ domain_name }}`)"
+      traefik.http.routers.mealie.service: "mealie"
+      traefik.http.services.mealie.loadBalancer.server.port: "9000"
+      traefik.http.routers.mealie.tls.certresolver: "letsencrypt"
