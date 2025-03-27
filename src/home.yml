@@ -1,7 +1,5 @@
 ---
 - hosts: home
-  vars_files:
-    - "common.vars.yml"
   roles:
     - role: home
       tag:
