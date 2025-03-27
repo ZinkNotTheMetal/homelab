@@ -21,3 +21,8 @@ mealie_url: mealie.{{ domain_name }}
 # Netbootxyz Configuration
 ###########################################################################
 docker_data_netboot: "{{ docker_application_folder }}/netboot"
+###########################################################################
+# pgAdmin Configuration
+###########################################################################
+docker_data_pgadmin: "{{ docker_application_folder }}/pgadmin"
+pgadmin_container_ip: 192.168.144.12

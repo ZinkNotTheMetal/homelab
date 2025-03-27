@@ -13,3 +13,11 @@ oidc_mealie_config_url: <authentik / other oidc provider>
 oidc_mealie_client_id: <client_id>
 oidc_mealie_client_secret: <client_secret>
 #####################################################################
+
+#####################################################################
+# pgadmin Configuration Secrets
+#####################################################################
+pgadmin_default_email: <default_email>
+pgadmin_default_password: <pgadmin_password>
+pgadmin_master_password: <pgadmin_master_password>
+#####################################################################
