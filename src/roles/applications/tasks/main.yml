@@ -1,0 +1,4 @@
+---
+# Documentation should be attached to each of the tasks.
+
+- import_tasks: it-tools.yml
