@@ -1,0 +1,52 @@
+---
+# Stirling PDF
+# Documentation: https://github.com/Stirling-Tools/Stirling-PDF
+# Purpose: To help with PDF tasks (i.e. signing, splitting, editing)
+
+- name: Create docker volume (Stirling)
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0777"
+    owner: root
+    group: root
+  with_items:
+    - "{{ docker_data_stirling_pdf }}/training-data"
+    - "{{ docker_data_stirling_pdf }}/config"
+    - "{{ docker_data_stirling_pdf}}/logs"
+
+- name: Run 'Stirling PDF' - Docker Container
+  docker_container:
+    name: stirling-pdf
+    image: frooodle/s-pdf:latest
+    restart_policy: unless-stopped
+    pull: true
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ stirling_pdf_container_ip }}"
+    env:
+      DOCKER_ENABLE_SECURITY: "false"
+      INSTALL_BOOK_AND_ADVANCED_HTML_OPS: "false"
+      LANGS: "en_US"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "{{ docker_data_stirling_pdf }}/logs:/logs"
+      - "{{ docker_data_stirling_pdf }}/config:/configs"
+      - "{{ docker_data_stirling_pdf }}/training-data:/usr/share/tessdata"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/api/v1/info/status | grep -q 'UP' && curl -fL http://localhost:8080/ | grep -qv 'Please sign in'"]
+      interval: 5s
+      timeout: 10s
+      retries: 16
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "true"
+      traefik.http.routers.stirling-pdf.entrypoints: "websecure,web"
+      traefik.http.routers.stirling-pdf.tls: "true"
+      traefik.http.routers.stirling-pdf.rule: "Host(`pdf.{{ domain_name }}`)"
+      traefik.http.routers.stirling-pdf.service: "stirling-pdf"
+      traefik.http.services.stirling-pdf.loadBalancer.server.port: "8080"
+      traefik.http.routers.stirling-pdf.tls.certresolver: "letsencrypt"

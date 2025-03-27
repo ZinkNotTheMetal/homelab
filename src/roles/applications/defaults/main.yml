@@ -1,0 +1,4 @@
+docker_application_folder: /home/{{ ansible_user }}/.docker
+
+# Place applications below
+docker_data_stirling_pdf: "{{ docker_application_folder }}/stirling-pdf"

@@ -1,4 +1,8 @@
 ---
 # Documentation should be attached to each of the tasks.
 
+- import_tasks: watchtower.yml
+
 - import_tasks: it-tools.yml
+
+- import_tasks: stirling-pdf.yml
