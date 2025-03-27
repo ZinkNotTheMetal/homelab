@@ -40,7 +40,11 @@ These things can't be done easily with Ansible so I'm just going to do them manu
 
 6. Get ssh-key for git
 
-   1. Generate a new key with above keygen command
+   1. Run Ansible common or use the command below
+  
+      ```bash
+      ssh-keygen -t rsa
+      ```
 
    2. Put new key into GitHub (SSH Keys under settings)
 
@@ -58,7 +62,7 @@ These things can't be done easily with Ansible so I'm just going to do them manu
    git clone git@github.com:zsh-users/zsh-syntax-highlighting.git
    ```
 
-9. Ensure NAS has proper NFS Permissions
+9.  Ensure NAS has proper NFS Permissions
 
    1. Login to NAS
    2. Ensure NFS is enabled

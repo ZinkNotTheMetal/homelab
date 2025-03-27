@@ -33,6 +33,8 @@
     group: root
 
 # Get plugins for zsh
+# If Ansible is failing on this step ensure that you get your public RSA token into github
+# Also run a trial git clone on any repository to ensure that the fingerprint is correct
 - name: Get 'zsh-syntax-highlighting' plugin from git
   git:
     repo: git@github.com:zsh-users/zsh-syntax-highlighting.git
@@ -59,6 +61,11 @@
   file:
     path: /home/{{ user_name }}/zsh-plugins
     state: absent
+
+- name: Create '.zshrc' file
+  file:
+    path: /home/{{ user_name }}/.zshrc
+    state: touch
 
 - name: Add customization to '.zshrc' file
   blockinfile:
