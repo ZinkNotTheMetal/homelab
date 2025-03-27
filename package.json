@@ -6,7 +6,7 @@
   "scripts": {
     "ansible": "ansible-playbook -K -i hosts src/all.yml",
     "ansible:common": "ansible-playbook -K -i hosts src/common.yml",
-    "ansible:home": "ansible-playbook-K -i hosts src/home.yml"
+    "ansible:home": "ansible-playbook -K -i hosts src/home.yml"
   },
   "keywords": [],
   "author": "William Zink",

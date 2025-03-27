@@ -29,13 +29,3 @@
 ## Requirements: 
 ## - templates/sshd_config
 - import_tasks: ssh-config.yml
-
-## This replaces the 99-com.rules default file with the file included in this playbook
-## Requirements:
-## - files/99-com.rules
-- import_tasks: setup-udev-rules.yml
-
-# Configure samba with template
-# Requirements:
-# - templates/smb.conf
-- import_tasks: configure-samba.yml
