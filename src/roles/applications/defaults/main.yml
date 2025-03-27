@@ -17,3 +17,7 @@ mealie_container_ip: 192.168.101.10
 mealie_db_container_ip: 192.168.101.11
 mealie_db_name: mealie
 mealie_url: mealie.{{ domain_name }}
+###########################################################################
+# Netbootxyz Configuration
+###########################################################################
+docker_data_netboot: "{{ docker_application_folder }}/netboot"

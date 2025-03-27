@@ -1,0 +1,44 @@
+- name: Create netboot Directories
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0777"
+  with_items:
+    - "{{ docker_data_netboot }}/config"
+    - "{{ docker_data_netboot }}/assets"
+
+- name: Run 'Netboot' - Docker Container
+  docker_container:
+    name: netbootxyz
+    image: lscr.io/linuxserver/netbootxyz
+    pull: true
+    restart_policy: unless-stopped
+    volumes:
+      - "{{ docker_data_netboot }}/config:/config"
+      - "{{ docker_data_netboot }}/assets:/assets"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ netboot_container_ip }}"
+    env:
+      TZ: "{{ time_zone }}"
+      PUID: "1000"
+      PGID: "1000"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "true"
+      traefik.http.routers.netboot.tls: "true"
+      traefik.http.routers.netboot.entrypoints: "websecure,web"
+      traefik.http.routers.netboot.rule: "Host(`netboot.{{ domain_name }}`)"
+      traefik.http.routers.netboot.service: "netboot"
+      traefik.http.services.netboot.loadBalancer.server.port: "3000"
+      traefik.http.services.netboot.loadBalancer.server.scheme: http
+      traefik.http.routers.netboot.tls.certresolver: "letsencrypt"
