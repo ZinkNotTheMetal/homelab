@@ -5,3 +5,17 @@ docker_application_folder: /home/{{ ansible_user }}/.docker
 ###########################################################################
 docker_data_prowlarr: "{{ docker_application_folder }}/prowlarr"
 prowlarr_container_ip: 192.168.101.200
+###########################################################################
+# Radarr Configuration
+###########################################################################
+docker_data_radarr: "{{ docker_application_folder }}/radarr"
+radarr_container_ip: 192.168.101.210
+###########################################################################
+# Transmission Configuration
+###########################################################################
+docker_data_transmission: "{{ docker_application_folder }}/transmission"
+###########################################################################
+# Sonarr Configuration
+###########################################################################
+docker_data_sonarr: "{{ docker_application_folder }}/sonarr"
+sonarr_container_ip: 192.168.101.220

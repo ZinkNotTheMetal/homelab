@@ -1,4 +1,12 @@
 ---
 # Documentation should be attached to each of the tasks.
 
+- import_tasks: watchtower.yml
+
 - import_tasks: prowlarr.yml
+
+- import_tasks: transmission.yml
+
+- import_tasks: radarr.yml
+
+- import_tasks: sonarr.yml

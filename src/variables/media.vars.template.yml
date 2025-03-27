@@ -6,3 +6,14 @@
 # server
 #####################################################################
 domain_name: domain.org
+
+#####################################################################
+# OpenVPN Configuration Secrets
+## Below is the configuration you will need for Transmission
+## Configuration found here:
+## https://github.com/haugene/docker-transmission-openvpn
+#####################################################################
+vpn_provider: <openvpn_provider>
+vpn_country: <home_country>
+vpn_username: <provider username>
+vpn_password: <provider password>

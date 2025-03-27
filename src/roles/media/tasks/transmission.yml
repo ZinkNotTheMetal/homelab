@@ -1,0 +1,44 @@
+---
+# Transmission
+# Documentation: https://transmissionbt.com
+# Purpose: To download Linux ISOs such as Debian & Mint
+
+- name: Create docker data volume
+  become: true
+  file:
+    path: "{{ docker_data_transmission }}"
+    state: directory
+    mode: "0777"
+    owner: root
+    recurse: yes
+
+- name: Run 'transmission-openvpn' - Docker Container
+  docker_container:
+    name: transmission-openvpn
+    image: haugene/transmission-openvpn
+    restart_policy: unless-stopped
+    networks:
+      - name: curidge
+    pull: true
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "{{ docker_data_transmission }}:/data"
+      - "/etc/timezone:/etc/timezone:ro"
+    env:
+      OPENVPN_PROVIDER: "{{ vpn_provider }}"
+      OPENVPN_CONFIG: "{{ vpn_country }}"
+      OPENVPN_USERNAME: "{{ vpn_username }}"
+      OPENVPN_PASSWORD: "{{ vpn_password }}"
+      GLOBAL_APPLY_PERMISSIONS: "true"
+      CREATE_TUN_DEVICE: "true"
+      PUID: "1000"
+      PGID: "1000"
+      HEALTH_CHECK_HOST: "google.com"
+      SELFHEAL: "false"
+      LOCAL_NETWORK: "192.168.0.0/16"
+    capabilities:
+      - NET_ADMIN
+    ports:
+      - 9091:9091
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"

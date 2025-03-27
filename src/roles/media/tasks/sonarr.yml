@@ -1,0 +1,50 @@
+---
+# Sonarr
+# Documentation: https://github.com/linuxserver/docker-sonarr
+# Purpose: To help automate movement of tv show media
+
+- name: Create docker volume
+  become: true
+  file:
+    path: "{{ docker_data_sonarr }}/config"
+    state: directory
+    mode: "0755"
+    owner: root
+
+- name: Run 'Sonarr' - Docker Container
+  docker_container:
+    name: sonarr
+    image: lscr.io/linuxserver/sonarr
+    restart_policy: unless-stopped
+    pull: true
+    privileged: true
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ sonarr_container_ip }}"
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      VERSION: "docker"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "{{ docker_data_sonarr }}/config:/config"
+      - "{{ docker_data_transmission }}:/data"
+      - "/mnt/nas/tv:/tv"
+    ports:
+      - 8989:8989
+    healthcheck:
+      test: ["CMD", "curl", "-kL", "http://localhost:8989"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "true"
+      traefik.http.routers.sonarr.entrypoints: "websecure,web"
+      traefik.http.routers.sonarr.tls: "true"
+      traefik.http.routers.sonarr.rule: "Host(`sonarr.{{ domain_name }}`)"
+      traefik.http.routers.sonarr.service: "sonarr"
+      traefik.http.services.sonarr.loadBalancer.server.port: "8989"
+      traefik.http.routers.sonarr.tls.certresolver: "letsencrypt"

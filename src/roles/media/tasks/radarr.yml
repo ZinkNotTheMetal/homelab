@@ -1,0 +1,48 @@
+---
+# Radarr
+# Documentation: https://docs.linuxserver.io/images/docker-radarr
+# Purpose: To help automate movement of media
+
+- name: Create docker volume
+  become: true
+  file:
+    path: "{{ docker_data_radarr }}/config"
+    state: directory
+    mode: "0755"
+    owner: root
+
+- name: Run 'Radarr' - Docker Container
+  docker_container:
+    name: radarr
+    image: lscr.io/linuxserver/radarr
+    restart_policy: unless-stopped
+    pull: true
+    privileged: true
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ radarr_container_ip }}"
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      VERSION: "docker"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "{{ docker_data_radarr }}/config:/config"
+      - "{{ docker_data_transmission }}:/data"
+      - "/mnt/nas/movies:/movies"
+    healthcheck:
+      test: ["CMD", "curl", "-kL", "http://localhost:7878"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "true"
+      traefik.http.routers.radarr.entrypoints: "websecure,web"
+      traefik.http.routers.radarr.tls: "true"
+      traefik.http.routers.radarr.rule: "Host(`radarr.{{ domain_name }}`)"
+      traefik.http.routers.radarr.service: "radarr"
+      traefik.http.services.radarr.loadBalancer.server.port: "7878"
+      traefik.http.routers.radarr.tls.certresolver: "letsencrypt"
