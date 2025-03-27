@@ -7,30 +7,30 @@
 
 - name: Set user shell to zsh
   user:
-    name: "{{ user_name }}"
+    name: "{{ ansible_user }}"
     shell: /bin/zsh
   become: true
 
 - name: Check if oh-my-zsh is installed
   stat:
-    path: "/home/{{ user_name }}/.oh-my-zsh"
+    path: "/home/{{ ansible_user }}/.oh-my-zsh"
   register: oh_my_zsh_installed
 
 - name: Download oh-my-zsh
   when: not oh_my_zsh_installed.stat.exists
   get_url:
     url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
-    dest: "/home/{{ user_name }}/install.sh"
+    dest: "/home/{{ ansible_user }}/install.sh"
     mode: '0755'
 
 - name: Run oh-my-zsh installer 
   when: not oh_my_zsh_installed.stat.exists
   shell:
-    cmd: ". /home/{{ user_name }}/install.sh"
+    cmd: ". /home/{{ ansible_user }}/install.sh"
   
 - name: Remove oh-my-zsh installer
   file:
-    path: "/home/{{ user_name }}/installer.sh"
+    path: "/home/{{ ansible_user }}/installer.sh"
     state: absent
 
 # Get plugins for zsh
@@ -39,41 +39,41 @@
 
 - name: Check to see if 'zsh-syntax-highlighting' is installed
   stat:
-    path: "/home/{{ user_name }}{{ zsh_plugin_location }}/zsh-syntax-highlighting"
+    path: "/home/{{ ansible_user }}{{ zsh_plugin_location }}/zsh-syntax-highlighting"
   register: zsh_highlight_installed
 
 - name: Check to see if 'zsh-autosuggestions' is installed
   stat:
-    path: "/home/{{ user_name }}{{ zsh_plugin_location }}/zsh-autosuggestions"
+    path: "/home/{{ ansible_user }}{{ zsh_plugin_location }}/zsh-autosuggestions"
   register: zsh_autosuggestions_installed
 
 - name: Get 'zsh-syntax-highlighting' plugin from git
   when: not zsh_highlight_installed.stat.exists
   git:
     repo: git@github.com:zsh-users/zsh-syntax-highlighting.git
-    dest: "/home/{{ user_name }}/zsh-plugins/zsh-syntax-highlighting"
+    dest: "/home/{{ ansible_user }}/zsh-plugins/zsh-syntax-highlighting"
 
 - name: Get 'zsh-autosuggestions' plugin
   when: not zsh_autosuggestions_installed.stat.exists
   git:
     repo: git@github.com:zsh-users/zsh-autosuggestions.git
-    dest: "/home/{{ user_name }}/zsh-plugins/zsh-autosuggestions"
+    dest: "/home/{{ ansible_user }}/zsh-plugins/zsh-autosuggestions"
 
-- name: Put 'zsh-syntax-highlighting' plugin in '/home/{{ user_name }}{{ zsh_plugin_location }}'
+- name: Put 'zsh-syntax-highlighting' plugin in '/home/{{ ansible_user }}{{ zsh_plugin_location }}'
   when: not zsh_highlight_installed.stat.exists
   copy:
     remote_src: yes
-    src: /home/{{ user_name }}/zsh-plugins/zsh-syntax-highlighting
-    dest: "/home/{{ user_name }}/{{ zsh_plugin_location }}/"
+    src: /home/{{ ansible_user }}/zsh-plugins/zsh-syntax-highlighting
+    dest: "/home/{{ ansible_user }}/{{ zsh_plugin_location }}/"
 
-- name: Put 'zsh-autosuggestions' plugin in '/home/{{ user_name }}{{ zsh_plugin_location }}'
+- name: Put 'zsh-autosuggestions' plugin in '/home/{{ ansible_user }}{{ zsh_plugin_location }}'
   when: not zsh_autosuggestions_installed.stat.exists
   copy:
     remote_src: yes
-    src: /home/{{ user_name }}/zsh-plugins/zsh-autosuggestions
-    dest: "/home/{{ user_name }}/{{ zsh_plugin_location }}/"
+    src: /home/{{ ansible_user }}/zsh-plugins/zsh-autosuggestions
+    dest: "/home/{{ ansible_user }}/{{ zsh_plugin_location }}/"
 
 - name: Delete local git directory
   file:
-    path: /home/{{ user_name }}/zsh-plugins
+    path: /home/{{ ansible_user }}/zsh-plugins
     state: absent

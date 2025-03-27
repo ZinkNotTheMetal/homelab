@@ -21,7 +21,7 @@ These things can't be done easily with Ansible so I'm just going to do them manu
 4. With root user add the user to the sudo group
 
    ```bash
-   usermod -a -G sudo {{ user_name }}
+   usermod -a -G sudo {{ ansible_user }}
    ```
 
 5. Add SSH Key from Ansible server to configured server
@@ -41,7 +41,7 @@ These things can't be done easily with Ansible so I'm just going to do them manu
 6. Get ssh-key for git
 
    1. Run Ansible common or use the command below
-  
+
       ```bash
       ssh-keygen -t rsa
       ```
@@ -62,17 +62,17 @@ These things can't be done easily with Ansible so I'm just going to do them manu
    git clone git@github.com:zsh-users/zsh-syntax-highlighting.git
    ```
 
-9.  Ensure NAS has proper NFS Permissions
+9. Ensure NAS has proper NFS Permissions
 
-   1. Login to NAS
-   2. Ensure NFS is enabled
-   3. In Control Panel edit folder
-   4. At the top tab go to NFS Permissions
-   5. R/W / Hostname / no squash
-   6. Save
+10. Login to NAS
+11. Ensure NFS is enabled
+12. In Control Panel edit folder
+13. At the top tab go to NFS Permissions
+14. R/W / Hostname / no squash
+15. Save
 
-10. Run ansible command
+16. Run ansible command
 
-   ```bash
-   ansible-playbook -K -i production site.yml
-   ```
+```bash
+ansible-playbook -K -i production site.yml
+```

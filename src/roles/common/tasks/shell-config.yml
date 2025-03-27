@@ -3,10 +3,10 @@
 # Description:
 #  Configures zsh and all plugins needed for .zsh
 #
-- name: Ensure the user '{{ user_name }}' has zsh shell by default.
+- name: Ensure the user '{{ ansible_user }}' has zsh shell by default.
   become: true
   user:
-    name: "{{ user_name }}"
+    name: "{{ ansible_user }}"
     shell: /bin/zsh
     state: present
 
@@ -14,32 +14,32 @@
   become: true
   template:
     src: .zprofile
-    dest: /home/{{ user_name }}/.zprofile
+    dest: /home/{{ ansible_user }}/.zprofile
     owner: root
     group: root
 
 - name: Create '.config' folder
   become: true
   file:
-    path: /home/{{ user_name }}/.config
+    path: /home/{{ ansible_user }}/.config
     state: directory
 
 - name: Ensure that the aliasrc file is loaded
   become: true
   copy:
     src: aliasrc
-    dest: /home/{{ user_name }}/.config/aliasrc
+    dest: /home/{{ ansible_user }}/.config/aliasrc
     owner: root
     group: root
 
 - name: Create '.zshrc' file
   file:
-    path: /home/{{ user_name }}/.zshrc
+    path: /home/{{ ansible_user }}/.zshrc
     state: touch
 
 - name: Add customization to '.zshrc' file
   blockinfile:
-    path: /home/{{ user_name }}/.zshrc
+    path: /home/{{ ansible_user }}/.zshrc
     insertafter: EOF
     block: |
       # Custom WZ Aliases in .config/folder
@@ -47,21 +47,21 @@
       # Load ; should be last.
       source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
 
-- name: Customize '{{ user_name }}' for bureau theme in oh-my-zsh
+- name: Customize '{{ ansible_user }}' for bureau theme in oh-my-zsh
   replace:
-    path: /home/{{ user_name }}/.oh-my-zsh/themes/bureau.zsh-theme
+    path: /home/{{ ansible_user }}/.oh-my-zsh/themes/bureau.zsh-theme
     regexp: "(_USERNAME=\"\\%{\\$fg_bold\\[white)(.*)$"
     replace: '_USERNAME="%{$fg_bold[green]%}%n"'
 
 - name: Customize 'machine name' for bureau theme in oh-my-zsh
   replace:
-    path: /home/{{ user_name }}/.oh-my-zsh/themes/bureau.zsh-theme
+    path: /home/{{ ansible_user }}/.oh-my-zsh/themes/bureau.zsh-theme
     regexp: "(^_USERNAME=\"\\$_USERNAME)(.*)$"
     replace: '_USERNAME="$_USERNAME%{$fg_bold[yellow]%}@%m%{$reset_color%}"'
 
 - name: Customize 'path' for bureau theme in oh-my-zsh
   replace:
-    path: /home/{{ user_name }}/.oh-my-zsh/themes/bureau.zsh-theme
+    path: /home/{{ ansible_user }}/.oh-my-zsh/themes/bureau.zsh-theme
     regexp: '(^_PATH=")(.*)$'
     replace: '_PATH="%{$fg_bold[blue]%}%~%{$reset_color%}"'
 
@@ -69,6 +69,6 @@
   become: true
   template:
     src: .zprofile
-    dest: /home/{{ user_name }}/.zprofile
+    dest: /home/{{ ansible_user }}/.zprofile
     owner: root
     group: root
