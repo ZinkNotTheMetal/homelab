@@ -1,0 +1,8 @@
+## These next two variables are a little bit confusing
+## I am setting up two docker networks so that I can separate
+##  containers that need to talk to the outside world and one
+##  that doesn't need it
+## If you are confused as to why? watch this video
+## https://www.youtube.com/watch?v=bKFMS5C4CG0
+docker_network_ip_outside: 192.168.101.0 # ip range of containers that can talk to the internet
+docker_network_ip_inside: 192.168.144.0 # ip range of only inside allowed traffic

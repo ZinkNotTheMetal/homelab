@@ -1,7 +1,7 @@
 ---
 - hosts: docker
   vars_files:
-    - "common.vars.yml"
+    - "docker.vars.yml"
   roles:
     - role: docker
       tag:
