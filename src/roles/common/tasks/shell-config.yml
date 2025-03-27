@@ -53,7 +53,7 @@
   register: zsh_autosuggestions_installed
 
 - name: Get 'zsh-autosuggestions' plugin
-  when: not zsh_autosuggestions_installed.exists
+  when: not zsh_autosuggestions_installed.stat.exists
   git:
     repo: git@github.com:zsh-users/zsh-autosuggestions.git
     dest: "/home/{{ user_name }}/zsh-plugins/zsh-autosuggestions"
@@ -66,7 +66,7 @@
     dest: "/home/{{ user_name }}/{{ zsh_plugin_location }}/"
 
 - name: Put 'zsh-autosuggestions' plugin in '/home/{{ user_name }}/{{ zsh_plugin_location }}'
-  when: not zsh_autosuggestions.stat.exists
+  when: not zsh_autosuggestions_installed.stat.exists
   copy:
     remote_src: yes
     src: /home/{{ user_name }}/zsh-plugins/zsh-autosuggestions
@@ -103,8 +103,6 @@
       [ -f "$HOME/.config/aliasrc" ] && source "$HOME/.config/aliasrc"
       # Load ; should be last.
       source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
-
-# TODO: Fix the below error
 
 - name: Customize '{{ user_name }}' for bureau theme in oh-my-zsh
   replace:
