@@ -1,0 +1,19 @@
+---
+# all.yml- also known as the master playbook that will drive the roles
+# Documentation on playbooks
+# https://docs.ansible.com/ansible/latest/tips_tricks/sample_setup.html#sample-playbooks-organized-by-function
+
+# Applicable to all linux machines
+- import_playbook: common.yml
+
+# Applicable to machine hosting DNS
+- import_playbook: dns-host.yml
+
+# Applicable to all machines that are running the home environment
+- import_playbook: home.yml
+
+# Applicable to machine hosting all applications (via Docker)
+#- import_playbook: app-server.yml
+
+# Applicable to machine hosting all applications (via Docker)
+#- import_playbook: monitoring.yml

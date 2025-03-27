@@ -1,0 +1,21 @@
+---
+# Run by convention (so we'll pull in the additional yaml files here)
+
+## First we'll do the system configuration first
+
+## Set timezone - Format is in tz format
+## https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#:~:text=Property%20Value%20%20Country%20code%20%20%20,Africa%2FAlgiers%20%20%20%20%20%20%2B01%3A00%20
+- name: Set the {{ time_zone }} timezone
+  become: true
+  file:
+    src: "/usr/share/zoneinfo/{{ time_zone }}"
+    dest: "/etc/localtime"
+    state: link
+    owner: root
+    group: root
+
+# Install common apps & software with apt
+- import_tasks: apt.yml
+
+# Ensure that ZWaveStick is properly setup for Home Assistant
+- import_tasks: setup-zstick.yml

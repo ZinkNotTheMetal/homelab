@@ -1,0 +1,65 @@
+---
+# Setup sudoers
+# Description: Replace sudoers so that users can become su with sudo command
+- name: Install htop
+  become: true
+  apt:
+    name: htop
+    state: latest
+
+- name: Install curl
+  become: true
+  apt:
+    name: curl
+    state: latest
+
+- name: "Install 'net-tools'"
+  become: true
+  apt:
+    name: net-tools
+    state: latest
+
+- name: Install 'nfs' - file sharing
+  become: true
+  apt:
+    name: nfs-common
+    state: latest
+
+- name: Ensure 'at' is installed
+  become: true
+  apt:
+    name: at
+    state: latest
+
+- name: "Install git"
+  become: true
+  apt:
+    name: git
+    state: latest
+
+- name: Install NodeJS (stable)
+  become: true
+  apt:
+    name: ["nodejs", "npm"]
+    state: latest
+
+- name: Node version & NPM version
+  shell: "npm -v && node -v"
+  register: versioninfo
+
+- name: Version Info
+  debug:
+    msg: "Version info {{ versioninfo.stdout_lines }}"
+  when: versioninfo is changed
+
+- name: Install 'samba' - file sharing
+  become: true
+  apt:
+    name: samba
+    state: latest
+
+- name: Install 'unzip'
+  become: true
+  apt:
+    name: unzip
+    state: latest

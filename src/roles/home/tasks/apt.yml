@@ -1,0 +1,23 @@
+- name: Install htop
+  become: true
+  apt:
+    name: htop
+    state: latest
+
+- name: "Install git"
+  become: true
+  apt:
+    name: git
+    state: latest
+
+- name: Install curl
+  become: true
+  apt:
+    name: curl
+    state: latest
+
+- name: Install 'unzip'
+  become: true
+  apt:
+    name: unzip
+    state: latest

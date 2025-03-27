@@ -1,0 +1,14 @@
+---
+#####################################################################
+# Basic server configuration - used for common
+#####################################################################
+user_name: <user_name>
+ssh_port: <ssh_port>
+time_zone: <time_zone>
+# For weather
+location_state_abbr: <current_state_location>
+# For SWS & Weather
+location_city: <current_city_location>
+# Oh my zsh plugin location
+zsh_plugin_location: /.oh-my-zsh/custom/plugins/
+#####################################################################

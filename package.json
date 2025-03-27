@@ -1,0 +1,15 @@
+{
+  "name": "ansible-homelab",
+  "version": "1.0.0",
+  "description": "Home Lab configuration setting up my local environment",
+  "main": "index.js",
+  "scripts": {
+    "ansible": "ansible-playbook -K -i hosts src/all.yml",
+    "ansible:common": "ansible-playbook -K -i hosts src/common.yml",
+    "ansible:home": "ansible-playbook-K -i hosts src/home.yml"
+  },
+  "keywords": [],
+  "author": "William Zink",
+  "license": "ISC",
+  "packageManager": "pnpm@10.6.5"
+}

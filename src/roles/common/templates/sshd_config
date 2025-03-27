@@ -1,0 +1,22 @@
+Port {{ ssh_port }}
+#AddressFamily any
+#ListenAddress 0.0.0.0
+#ListenAddress ::
+
+PermitRootLogin no
+PubkeyAuthentication yes
+AuthorizedKeysFile     .ssh/authorized_keys
+# To disable tunneled clear text passwords, change to no here!
+PasswordAuthentication no
+
+
+# Default settings below
+ChallengeResponseAuthentication yes
+UsePAM no
+X11Forwarding yes
+PrintMotd no
+AcceptEnv LANG LC_*
+Subsystem       sftp    /usr/lib/openssh/sftp-server
+
+# no default banner path
+#Banner none

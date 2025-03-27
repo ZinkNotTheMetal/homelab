@@ -1,0 +1,109 @@
+---
+#
+# Description:
+#  Configures zsh and all plugins needed for .zsh
+#
+- name: Ensure the user '{{ user_name }}' has zsh shell by default.
+  become: true
+  user:
+    name: "{{ user_name }}"
+    shell: /bin/zsh
+    state: present
+
+- name: Ensure that the .zprofile is loaded
+  become: true
+  template:
+    src: .zprofile
+    dest: /home/{{ user_name }}/.zprofile
+    owner: root
+    group: root
+
+- name: Create '.config' folder
+  become: true
+  file:
+    path: /home/{{ user_name }}/.config
+    state: directory
+
+- name: Ensure that the aliasrc file is loaded
+  become: true
+  copy:
+    src: aliasrc
+    dest: /home/{{ user_name }}/.config/aliasrc
+    owner: root
+    group: root
+
+# Get plugins for zsh
+- name: Get 'zsh-syntax-highlighting' plugin from git
+  git:
+    repo: git@github.com:zsh-users/zsh-syntax-highlighting.git
+    dest: "/home/{{ user_name }}/zsh-plugins/zsh-syntax-highlighting"
+
+- name: Get 'zsh-autosuggestions' plugin
+  git:
+    repo: git@github.com:zsh-users/zsh-autosuggestions.git
+    dest: "/home/{{ user_name }}/zsh-plugins/zsh-autosuggestions"
+
+- name: Put 'zsh-syntax-highlighting' plugin in '/home/{{ user_name }}/{{ zsh_plugin_location }}'
+  copy:
+    remote_src: yes
+    src: /home/{{ user_name }}/zsh-plugins/zsh-syntax-highlighting
+    dest: "/home/{{ user_name }}/{{ zsh_plugin_location }}/"
+
+- name: Put 'zsh-autosuggestions' plugin in '/home/{{ user_name }}/{{ zsh_plugin_location }}'
+  copy:
+    remote_src: yes
+    src: /home/{{ user_name }}/zsh-plugins/zsh-autosuggestions
+    dest: "/home/{{ user_name }}/{{ zsh_plugin_location }}/"
+
+- name: Delete local git directory
+  file:
+    path: /home/{{ user_name }}/zsh-plugins
+    state: absent
+
+- name: Add customization to '.zshrc' file
+  blockinfile:
+    path: /home/{{ user_name }}/.zshrc
+    insertafter: EOF
+    block: |
+      # Use lf to switch directories and bind it to ctrl-o
+      lfcd () {
+        tmp="$(mktemp)"
+        lf -last-dir-path="$tmp" "$@"
+        if [ -f "$tmp" ]; then
+          dir="$(cat "$tmp")"
+          rm -f "$tmp"
+          [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
+        fi
+      }
+
+      bindkey -s '^o' 'lfcd\n'
+      # Custom WZ Aliases in .config/folder
+      [ -f "$HOME/.config/aliasrc" ] && source "$HOME/.config/aliasrc"
+      # Load ; should be last.
+      source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
+
+- name: Customize '{{ user_name }}' for bureau theme in oh-my-zsh
+  replace:
+    path: /home/{{ user_name }}/.oh-my-zsh/themes/bureau.zsh-theme
+    regexp: "(_USERNAME=\"\\%{\\$fg_bold\\[white)(.*)$"
+    replace: '_USERNAME="%{$fg_bold[green]%}%n"'
+
+- name: Customize 'machine name' for bureau theme in oh-my-zsh
+  replace:
+    path: /home/{{ user_name }}/.oh-my-zsh/themes/bureau.zsh-theme
+    regexp: "(^_USERNAME=\"\\$_USERNAME)(.*)$"
+    replace: '_USERNAME="$_USERNAME%{$fg_bold[yellow]%}@%m%{$reset_color%}"'
+
+- name: Customize 'path' for bureau theme in oh-my-zsh
+  replace:
+    path: /home/{{ user_name }}/.oh-my-zsh/themes/bureau.zsh-theme
+    regexp: '(^_PATH=")(.*)$'
+    replace: '_PATH="%{$fg_bold[blue]%}%~%{$reset_color%}"'
+
+- name: Ensure that the .zprofile is loaded
+  become: true
+  template:
+    src: .zprofile
+    dest: /home/{{ user_name }}/.zprofile
+    owner: root
+    group: root
