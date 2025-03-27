@@ -37,6 +37,7 @@ portainer_container_ip: 192.168.144.14
 ###########################################################################
 docker_data_traccar: "{{ docker_application_folder }}/traccar"
 traccar_container_ip: 192.168.144.14
+traccar_db_container_ip: 192.168.144.15
 traccar_db_name: traccar
 ###########################################################################
 # Plex Configuration

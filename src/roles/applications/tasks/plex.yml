@@ -1,6 +1,8 @@
+---
 # Plex
 # Documentation: https://www.plex.tv
 # Purpose: Host Plex media center on my network to watch TV / Movies I have ripped from DVD's
+
 - name: Ensure '/mnt/nas' is created
   become: true
   file:
