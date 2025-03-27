@@ -2,6 +2,7 @@
 - hosts: application
   vars_files:
     - "applications.vars.yml"
+    - "common.vars.yml"
   roles:
     - role: applications
       tag:
