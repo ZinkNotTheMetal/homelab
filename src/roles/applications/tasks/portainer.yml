@@ -1,0 +1,39 @@
+# Portainer
+# Documentation: https://docs.portainer.io
+# Purpose: To provide an easy to navigate UI for managing docker containers
+- name: Create nginx data volume
+  become: true
+  file:
+    path: "{{ docker_data_portainer }}"
+    state: directory
+    mode: "0755"
+    owner: root
+
+- name: Run 'Portainer' - Docker Container
+  docker_container:
+    name: portainer
+    image: portainer/portainer-ce:alpine
+    restart_policy: unless-stopped
+    pull: true
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ portainer_container_ip }}"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "{{ docker_data_portainer }}:/data"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:9000/api/system/status || exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "true"
+      traefik.http.routers.portainer.entrypoints: "websecure,web"
+      traefik.http.routers.portainer.tls: "true"
+      traefik.http.routers.portainer.rule: "Host(`portainer.{{ domain_name }}`)"
+      traefik.http.routers.portainer.service: "portainer"
+      traefik.http.services.portainer.loadBalancer.server.port: "9000"
+      traefik.http.routers.portainer.tls.certresolver: "letsencrypt"

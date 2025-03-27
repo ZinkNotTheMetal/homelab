@@ -8,3 +8,9 @@
 - import_tasks: stirling-pdf.yml
 
 - import_tasks: mealie.yml
+
+- import_tasks: netboot.yml
+
+- import_tasks: pgadmin.yml
+
+- import_tasks: portainer.yml

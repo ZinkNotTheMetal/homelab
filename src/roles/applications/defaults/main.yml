@@ -26,3 +26,8 @@ docker_data_netboot: "{{ docker_application_folder }}/netboot"
 ###########################################################################
 docker_data_pgadmin: "{{ docker_application_folder }}/pgadmin"
 pgadmin_container_ip: 192.168.144.12
+###########################################################################
+# Portainer Configuration
+###########################################################################
+docker_data_portainer: "{{ docker_application_folder }}/portainer"
+portainer_container_ip: 192.168.144.13
