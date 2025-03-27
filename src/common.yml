@@ -3,9 +3,6 @@
   vars_files:
     - "common.vars.yml"
   roles:
-    - role: common
-      tag:
-        - common
     - role: gantsign.oh-my-zsh
       users:
         - username: "{{ user_name }}"
@@ -16,3 +13,7 @@
               - debian
               - zsh-syntax-highlighting
               - zsh-autosuggestions
+
+    - role: common
+      tag:
+        - common
