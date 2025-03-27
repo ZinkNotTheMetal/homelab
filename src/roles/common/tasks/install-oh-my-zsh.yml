@@ -7,19 +7,19 @@
 
 - name: Set user shell to zsh
   user:
-    name: "{{ user }}"
+    name: "{{ user_name }}"
     shell: /bin/zsh
   become: true
 
-- name: Download ohmyzsh
+- name: Download oh-my-zsh
   get_url:
     url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
-    dest: "/home/{{ user }}/install.sh"
+    dest: "/home/{{ user_name }}/install.sh"
     mode: '0755'
 
-- name: Install ohmyzsh
+- name: Install oh-my-zsh
   script:
-    cmd: "/home/{{ user }}/install.sh"
+    cmd: "/home/{{ user_name }}/install.sh"
 
 # Get plugins for zsh
 # If Ansible is failing on this step ensure that you get your public RSA token into github
