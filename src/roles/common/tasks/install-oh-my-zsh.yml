@@ -1,0 +1,67 @@
+---
+- name: Install zsh
+  ansible.builtin.package:
+    name: zsh
+    state: present
+  become: true
+
+- name: Set user shell to zsh
+  user:
+    name: "{{ user }}"
+    shell: /bin/zsh
+  become: true
+
+- name: Download ohmyzsh
+  get_url:
+    url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+    dest: "/home/{{ user }}/install.sh"
+    mode: '0755'
+
+- name: Install ohmyzsh
+  script:
+    cmd: "/home/{{ user }}/install.sh"
+
+# Get plugins for zsh
+# If Ansible is failing on this step ensure that you get your public RSA token into github
+# Also run a trial git clone on any repository to ensure that the fingerprint is correct
+
+- name: Check to see if 'zsh-syntax-highlighting' is installed
+  stat:
+    path: "/home/{{ user_name }}{{ zsh_plugin_location }}/zsh-syntax-highlighting"
+  register: zsh_highlight_installed
+
+- name: Check to see if 'zsh-autosuggestions' is installed
+  stat:
+    path: "/home/{{ user_name }}{{ zsh_plugin_location }}/zsh-autosuggestions"
+  register: zsh_autosuggestions_installed
+
+- name: Get 'zsh-syntax-highlighting' plugin from git
+  when: not zsh_highlight_installed.stat.exists
+  git:
+    repo: git@github.com:zsh-users/zsh-syntax-highlighting.git
+    dest: "/home/{{ user_name }}/zsh-plugins/zsh-syntax-highlighting"
+
+- name: Get 'zsh-autosuggestions' plugin
+  when: not zsh_autosuggestions_installed.stat.exists
+  git:
+    repo: git@github.com:zsh-users/zsh-autosuggestions.git
+    dest: "/home/{{ user_name }}/zsh-plugins/zsh-autosuggestions"
+
+- name: Put 'zsh-syntax-highlighting' plugin in '/home/{{ user_name }}{{ zsh_plugin_location }}'
+  when: not zsh_highlight_installed.stat.exists
+  copy:
+    remote_src: yes
+    src: /home/{{ user_name }}/zsh-plugins/zsh-syntax-highlighting
+    dest: "/home/{{ user_name }}/{{ zsh_plugin_location }}/"
+
+- name: Put 'zsh-autosuggestions' plugin in '/home/{{ user_name }}{{ zsh_plugin_location }}'
+  when: not zsh_autosuggestions_installed.stat.exists
+  copy:
+    remote_src: yes
+    src: /home/{{ user_name }}/zsh-plugins/zsh-autosuggestions
+    dest: "/home/{{ user_name }}/{{ zsh_plugin_location }}/"
+
+- name: Delete local git directory
+  file:
+    path: /home/{{ user_name }}/zsh-plugins
+    state: absent

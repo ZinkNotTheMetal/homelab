@@ -20,6 +20,8 @@
 # Install apps & software with apt
 - import_tasks: apt-install.yml
 
+- import_tasks: install-oh-my-zsh.yml
+
 ## This configures everything for .zsh and your profile
 ## This requires {{ user_name }} to be your linux login username
 ## Requirements:
