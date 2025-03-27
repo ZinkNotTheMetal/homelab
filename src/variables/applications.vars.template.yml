@@ -3,15 +3,3 @@
 # This mainly uses docker so there are lot of configuration for that
 #####################################################################
 domain_name: example.duckdns.org
-
-#####################################################################
-# IP Addresses for IPVLAN docker containers 
-#   192.168.101.*
-#####################################################################
-
-
-#####################################################################
-# (Closed to Internet) IP Addresses for IPVLAN docker containers
-#   192.168.144.*
-#####################################################################
-it_tools_container_ip: 192.168.144.50

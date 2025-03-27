@@ -1,4 +1,11 @@
 docker_application_folder: /home/{{ ansible_user }}/.docker
 
-# Place applications below
+###########################################################################
+# IT Tools Configuration
+###########################################################################
+it_tools_container_ip: 192.168.144.10
+###########################################################################
+# Stirling PDF Configuration
+###########################################################################
 docker_data_stirling_pdf: "{{ docker_application_folder }}/stirling-pdf"
+stirling_pdf_container_ip: 192.168.144.11
