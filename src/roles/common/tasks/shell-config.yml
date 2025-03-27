@@ -38,8 +38,13 @@
 
 - name: Check to see if 'zsh-syntax-highlighting' is installed
   stat:
-    path: "{{ zsh_plugin_location }}/zsh-syntax-highlighting"
+    path: "/home/{{ user_name }}{{ zsh_plugin_location }}/zsh-syntax-highlighting"
   register: zsh_highlight_installed
+
+- name: Check to see if 'zsh-autosuggestions' is installed
+  stat:
+    path: "/home/{{ user_name }}{{ zsh_plugin_location }}/zsh-autosuggestions"
+  register: zsh_autosuggestions_installed
 
 - name: Get 'zsh-syntax-highlighting' plugin from git
   when: not zsh_highlight_installed.stat.exists
@@ -47,25 +52,20 @@
     repo: git@github.com:zsh-users/zsh-syntax-highlighting.git
     dest: "/home/{{ user_name }}/zsh-plugins/zsh-syntax-highlighting"
 
-- name: Check to see if 'zsh-autosuggestions' is installed
-  stat:
-    path: "{{ zsh_plugin_location }}/zsh-autosuggestions"
-  register: zsh_autosuggestions_installed
-
 - name: Get 'zsh-autosuggestions' plugin
   when: not zsh_autosuggestions_installed.stat.exists
   git:
     repo: git@github.com:zsh-users/zsh-autosuggestions.git
     dest: "/home/{{ user_name }}/zsh-plugins/zsh-autosuggestions"
 
-- name: Put 'zsh-syntax-highlighting' plugin in '/home/{{ user_name }}/{{ zsh_plugin_location }}'
+- name: Put 'zsh-syntax-highlighting' plugin in '/home/{{ user_name }}{{ zsh_plugin_location }}'
   when: not zsh_highlight_installed.stat.exists
   copy:
     remote_src: yes
     src: /home/{{ user_name }}/zsh-plugins/zsh-syntax-highlighting
     dest: "/home/{{ user_name }}/{{ zsh_plugin_location }}/"
 
-- name: Put 'zsh-autosuggestions' plugin in '/home/{{ user_name }}/{{ zsh_plugin_location }}'
+- name: Put 'zsh-autosuggestions' plugin in '/home/{{ user_name }}{{ zsh_plugin_location }}'
   when: not zsh_autosuggestions_installed.stat.exists
   copy:
     remote_src: yes
