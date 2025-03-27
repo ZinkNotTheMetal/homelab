@@ -16,3 +16,5 @@
 - import_tasks: portainer.yml
 
 - import_tasks: traccar.yml
+
+- import_tasks: plex.yml

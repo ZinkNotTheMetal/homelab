@@ -1,0 +1,75 @@
+# Plex
+# Documentation: https://www.plex.tv
+# Purpose: Host Plex media center on my network to watch TV / Movies I have ripped from DVD's
+- name: Ensure '/mnt/nas' is created
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0777"
+    owner: root
+    group: root
+  with_items:
+    - "/mnt/nas/movies"
+    - "/mnt/nas/tv"
+    - "{{ docker_data_plex }}/config"
+    - "{{ docker_data_plex }}/transcode"
+
+# Test mount
+#  sudo mount -t nfs 10.10.0.10:/volume1/Media/Movies /mnt/nas/movies
+#  sudo mount -t nfs 10.10.0.10:/volume1/Media/TV\ Shows /mnt/nas/tv
+#  sudo mount -t nfs 10.10.0.10:/volume1/Files/Books /mnt/nas/books
+# Test unmount
+#  sudo umount 10.10.0.10:/backups
+- name: Mount 'Movies'
+  become: true
+  mount:
+    src: "{{ nas_ip }}:/volume1/Media/Movies"
+    path: /mnt/nas/movies
+    state: mounted
+    opts: rw,nolock,soft
+    fstype: nfs
+
+- name: Mount 'TV Shows'
+  become: true
+  mount:
+    src: "{{ nas_ip }}:/volume1/Media/TV\ Shows"
+    path: /mnt/nas/tv
+    state: mounted
+    opts: rw,nolock,soft
+    fstype: nfs
+
+- name: Run 'plex' - Docker Container
+  docker_container:
+    name: plex
+    image: lscr.io/linuxserver/plex
+    restart_policy: unless-stopped
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ plex_container_ip }}"
+    pull: true
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "{{ docker_data_plex }}/config:/config"
+      - "{{ docker_data_plex }}/transcode:/transcode"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/mnt/nas/movies:/Movies"
+      - "/mnt/nas/tv:/TV"
+    devices: # More info: https://github.com/plexinc/pms-docker?tab=readme-ov-file#intel-quick-sync-hardware-transcoding-support
+    # AMD Info if needed: https://www.reddit.com/r/unRAID/comments/14x5typ/comment/ktydijf/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+      - /dev/dri:/dev/dri
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      VERSION: "docker"
+      # To Generate a new Plex Claim Token:
+      #  https://www.plex.tv/claim/
+      PLEX_CLAIM: "{{ plex_claim_token }}"
+    healthcheck:
+      test: curl --connect-timeout 15 --silent --show-error --fail http://localhost:32400/identity
+      interval: 1m00s
+      timeout: 15s
+      retries: 3
+      start_period: 1m00s
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
