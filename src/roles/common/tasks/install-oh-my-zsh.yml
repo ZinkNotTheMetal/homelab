@@ -33,6 +33,12 @@
     path: "/home/{{ ansible_user }}/installer.sh"
     state: absent
 
+- name: Set theme in zsh
+  replace:
+    path: /home/{{ ansible_user }}/.zshrc
+    regexp: "^ZSH_THEME(.*)$"
+    replace: "ZSH_THEME=\"bureau\""
+
 # Get plugins for zsh
 # If Ansible is failing on this step ensure that you get your public RSA token into github
 # Also run a trial git clone on any repository to ensure that the fingerprint is correct
