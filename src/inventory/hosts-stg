@@ -1,17 +1,17 @@
 [common]
 ansible-server-test ansible_host=192.168.100.116 ansible_user=william ansible_port=22
 
-[home]
-ansible-server-test ansible_host=192.168.100.116 ansible_user=william ansible_port=22
+[home:children]
+common
 
-[docker]
-ansible-server-test ansible_host=192.168.100.116 ansible_user=william ansible_port=22
+[docker:children]
+common
 
-[application]
-ansible-server-test ansible_host=192.168.100.116 ansible_user=william ansible_port=22
+[application:children]
+common
 
-[media]
-ansible-server-test ansible_host=192.168.100.116 ansible_user=william ansible_port=22
+[media:children]
+common
 
-[dns]
-ansible-server-test ansible_host=192.168.100.116 ansible_host=william ansible_port=22
+[dns:children]
+common
