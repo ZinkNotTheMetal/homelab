@@ -1,0 +1,14 @@
+- name: Setup custom DNS - public
+  become: true
+  copy:
+    src: 02-local-dns.conf
+    dest: "{{ docker_data_pihole }}/etc-dnsmasq.d/02-local-dns.conf"
+    owner: root
+    mode: "0777"
+    group: root
+
+- name: Restart PiHole for DNS entries
+  docker_container:
+    name: pihole
+    state: started
+    restart: true

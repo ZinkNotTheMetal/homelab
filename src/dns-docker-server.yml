@@ -1,7 +1,8 @@
 ---
-- hosts: dns-docker-server
+- hosts: dns
   vars_files:
-    - "pihole.vars.yml"
+    - "common.vars.yml"
+    - "domain.vars.yml"
   roles:
     - role: dns
       tag:

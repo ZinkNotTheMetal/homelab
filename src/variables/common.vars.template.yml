@@ -2,11 +2,18 @@
 #####################################################################
 # Basic server configuration - used for common
 #####################################################################
-ssh_port: <ssh_port>
-time_zone: <time_zone>
-# For weather
+
+# Used to change the custom port of SSH if you want to be non-standard
+custom_ssh_port: <22 | any other port for sshd config>
+
+# Used by many different applications and settings
+time_zone: <America/New_York | time zone lived in>
+
+# Used for the login scripts weather information
 location_state_abbr: <current_state_location>
-# For SWS & Weather
+# Used for the login scripts weather 
 location_city: <current_city_location>
+
+# Synology NAS that I use for mounting drives inside of my homelab
 nas_ip: <synology_nas_ip>
 #####################################################################

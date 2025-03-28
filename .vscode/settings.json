@@ -10,8 +10,10 @@
     "corentinth",
     "curidge",
     "customrequestheaders",
+    "dnsmasq",
     "dpage",
     "frooodle",
+    "FTLCONF",
     "haugene",
     "hkotel",
     "Homelab",
@@ -30,6 +32,7 @@
     "Overseerr",
     "pgadmin",
     "PGDATA",
+    "pihole",
     "Prowlarr",
     "Radarr",
     "redirections",
@@ -47,5 +50,10 @@
     "versioninfo",
     "websecure",
     "zoneinfo"
-  ]
+  ],
+  "material-icon-theme.folders.associations": {
+    "infrastructure": "server",
+    "tf": "terraform",
+    "dns": "routes"
+  }
 }

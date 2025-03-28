@@ -3,6 +3,7 @@
   vars_files:
     - "applications.vars.yml"
     - "common.vars.yml"
+    - "domain.vars.yml"
   roles:
     - role: applications
       tag:

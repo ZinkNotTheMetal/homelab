@@ -3,6 +3,7 @@
   vars_files:
     - "media.vars.yml"
     - "common.vars.yml"
+    - "domain.vars.yml"
   roles:
     - role: media
       tag:

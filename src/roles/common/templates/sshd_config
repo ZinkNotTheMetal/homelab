@@ -1,4 +1,4 @@
-Port {{ ssh_port }}
+Port {{ custom_ssh_port }}
 #AddressFamily any
 #ListenAddress 0.0.0.0
 #ListenAddress ::

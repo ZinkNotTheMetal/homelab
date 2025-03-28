@@ -1,0 +1,17 @@
+---
+# PiHole
+# Documentation: https://github.com/CorentinTh/it-tools
+# Purpose: Ad blocker at the network level
+
+# This setup uses Docker so we need to ensure that it's running
+- name: Ensure Docker is running
+  service:
+    name: docker
+    state: started
+
+- name: Setup 'PiHole' data directory
+  
+
+- import_tasks: pihole.yml
+
+- import_tasks: dns-config.yml

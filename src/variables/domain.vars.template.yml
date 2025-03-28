@@ -1,0 +1,6 @@
+#####################################################################
+# Custom Domain used for accessing home lab apps
+# This will be defined once and picked up by any playbook that 
+# requires the domain name (in this case a lot of playbooks)
+#####################################################################
+domain_name: domain.org

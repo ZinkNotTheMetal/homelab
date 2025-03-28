@@ -2,7 +2,6 @@
 # Application Configuration - used for installing homelab apps
 # This mainly uses docker so there are lot of configuration for that
 #####################################################################
-domain_name: domain.org
 
 #####################################################################
 # Mealie Configuration Secrets
