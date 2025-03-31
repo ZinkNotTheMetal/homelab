@@ -3,5 +3,4 @@ docker_application_folder: /home/{{ ansible_user }}/.docker
 ###########################################################################
 # PiHole Configuration
 ###########################################################################
-docker_data_pihole: "{{ docker_application_folder }}/ajlakdjd" 
-pi_hole_container_ip: 192.168.101.254
+docker_data_pihole: "{{ docker_application_folder }}/pi-hole" 

@@ -8,6 +8,9 @@
     name: pihole
     image: pihole/pihole:latest
     restart_policy: unless-stopped
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ pi_hole_container_ip }}"
     pull: true
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
@@ -22,3 +25,9 @@
       FTLCONF_dns_listeningMode: "all"
     labels:
       com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "true"
+      traefik.http.routers.pihole.entrypoints: "websecure,web"
+      traefik.http.routers.pihole.tls: "true"
+      traefik.http.routers.pihole.rule: "Host(`pihole.{{ domain_name }}`)"
+      traefik.http.routers.pihole.service: "pihole"
+      traefik.http.services.pihole.loadBalancer.server.port: "80"

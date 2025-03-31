@@ -18,6 +18,12 @@
     - "{{ docker_data_pihole }}/etc"
     - "{{ docker_data_pihole }}/etc-dnsmasq.d"
 
+- import_tasks: watchtower.yml
+
 - import_tasks: pihole.yml
+  when: extended_networking == false
+
+- import_tasks: app-server-pihole.yml
+  when: extended_networking == true
 
 - import_tasks: dns-config.yml
