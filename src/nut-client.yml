@@ -1,0 +1,9 @@
+---
+- hosts: nut-client
+  vars_files:
+    - "common.vars.yml"
+    - "nut.client.vars.yml"
+  roles:
+    - role: nut-client
+      tag:
+        - nut-client

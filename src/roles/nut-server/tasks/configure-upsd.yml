@@ -1,0 +1,16 @@
+- name: Check to see if 'upsd.conf' is already backed up
+  stat:
+    path: "/etc/nut/upsd.conf.bak"
+  register: upsd_conf_backed_up
+
+- name: Backup default 'upsd.conf'
+  when: not upsd_conf_backed_up.stat.exists
+  copy:
+    src: /etc/nut/upsd.conf
+    dest: /etc/nut/upsd.conf.bak
+    remote_src: true
+
+- name: Copy 'upsd.conf'
+  copy:
+    src: upsd.conf
+    dest: /etc/nut/upsd.conf

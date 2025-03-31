@@ -1,0 +1,16 @@
+- name: Check to see if 'nut.conf' is already backed up
+  stat:
+    path: "/etc/nut/nut.conf.bak"
+  register: nut_conf_backed_up
+
+- name: Backup default 'nut.conf'
+  when: not nut_conf_backed_up.stat.exists
+  copy:
+    src: /etc/nut/nut.conf
+    dest: /etc/nut/nut.conf.bak
+    remote_src: true
+
+- name: Copy 'nut.conf'
+  copy:
+    src: nut.server.conf
+    dest: /etc/nut/nut.conf

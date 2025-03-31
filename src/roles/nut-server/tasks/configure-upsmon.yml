@@ -1,0 +1,17 @@
+---
+- name: Check to see if 'upsmon.conf' is already backed up
+  stat:
+    path: "/etc/nut/upsmon.conf.bak"
+  register: upsmon_conf_backed_up
+
+- name: Backup default 'upsmon.conf'
+  when: not upsmon_conf_backed_up.stat.exists
+  copy:
+    src: /etc/nut/upsmon.conf
+    dest: /etc/nut/upsmon.conf.bak
+    remote_src: true
+
+- name: Copy 'upsmon.conf' template
+  template:
+    src: upsmon.conf
+    dest: /etc/nut/upsmon.conf

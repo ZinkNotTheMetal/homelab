@@ -1,0 +1,68 @@
+---
+
+- name: Determine if NUT is already running
+  service:
+    name: nut-server
+    state: started
+  register: nut_status
+  ignore_errors: true
+
+- name: Show the status of 'nut' service
+  debug:
+    msg: "The {{ nut_status.name }} service is running and its state is {{ nut_status.state }}"
+
+- name: Run 'lsusb' command
+  shell: lsusb
+  register: lsusb_output
+
+- name: Print lsusb output
+  debug:
+    msg: "{{ lsusb_output.stdout_lines }}"  
+
+- import_tasks: upgrade-packages.yml
+
+- import_tasks: install.yml
+
+- import_tasks: configure-mode.yml
+
+- import_tasks: configure-upsd.yml
+
+- import_tasks: configure-upsmon.yml
+
+- import_tasks: configure_user.yml
+
+- import_tasks: configure_ups.yml
+  when: nut_status.state != "started"
+
+- name: Restart 'nut-server' if initial status was not started
+  when: nut_status.state != "started"
+  become: true
+  service:
+    name: nut-server
+    state: restarted
+
+- name: Restart 'nut-client' if initial status was not started
+  when: nut_status.state != "started"
+  become: true
+  service:
+    name: nut-client
+    state: restarted
+
+- name: Restart 'nut-monitor' if initial status was not started
+  when: nut_service.state != "started"
+  become: true
+  service:
+    name: nut-monitor
+    state: restarted
+
+- name: Restart (stop) 'upsdrvctl' if initial status was not started
+  when: nut_service.state != "started"
+  become: true
+  command:
+    cmd: upsdrvctl stop
+
+- name: Restart (start) 'upsdrvctl' if initial status was not started
+  when: nut_service.state != "started"
+  become: true
+  command:
+    cmd: upsdrvctl start

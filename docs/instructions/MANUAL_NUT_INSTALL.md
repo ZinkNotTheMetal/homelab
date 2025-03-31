@@ -1,9 +1,8 @@
-# Installing NUT Server
+# Install NUT Server on Raspberry Pi
 
-I am utilizing three Raspberry Pi Zero Ws to track UPSes around
-the house.
+## Steps
 
-## Operating System Installation
+### OS Installation
 
 1. Insert SD Card into an SD Card Reader
 2. Use Raspberry Pi Imager (available on brew)
@@ -77,7 +76,7 @@ the house.
 
         ```bash
         RUN_AS_USER root
-        MONITOR <upsname>@localhost 1 <username> <password> master
+        MONITOR <ups_name>@localhost 1 <username> <password> master
         ```
 
 12. Backup example UPSD config
@@ -145,7 +144,7 @@ the house.
 
       ```text
       # Example
-      [monuser]
+      [user]
         password = <password here>
         admin master
       ```

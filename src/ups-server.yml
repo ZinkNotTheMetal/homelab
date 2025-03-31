@@ -1,0 +1,6 @@
+---
+- hosts: nut-server
+  roles:
+    - role: nut-server
+      tag:
+        - nut-server

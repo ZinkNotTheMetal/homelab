@@ -1,0 +1,17 @@
+---
+- name: Check to see if 'upsd.users' is already backed up
+  stat:
+    path: "/etc/nut/upsd.users"
+  register: upsd_conf_backed_up
+
+- name: Backup default 'upsd.users'
+  when: not upsd_conf_backed_up.stat.exists
+  copy:
+    src: /etc/nut/upsd.users
+    dest: /etc/nut/upsd.users.bak
+    remote_src: true
+
+- name: Copy 'upsmon.conf' template
+  template:
+    src: upsd.users 
+    dest: /etc/nut/upsd.users

@@ -1,0 +1,17 @@
+- name: Install 'vim' 
+  become: true
+  apt:
+    name: vim 
+    state: latest
+
+- name: Install 'nut'
+  become: true
+  apt:
+    name: nut
+    state: latest
+
+- name: Install 'nut-server'
+  become: true
+  apt:
+    name: nut-server
+    state: latest

@@ -1,0 +1,42 @@
+---
+- name: Check to see if 'ups.conf' is already backed up
+  stat:
+    path: "/etc/nut/ups.conf"
+  register: ups_conf_backed_up
+
+- name: Backup default 'ups.conf'
+  when: not ups_conf_backed_up.stat.exists
+  copy:
+    src: /etc/nut/ups.conf
+    dest: /etc/nut/ups.conf.bak
+    remote_src: true
+
+
+- name: Run 'nut-scanner' to get UPS information
+  become: true
+  when: not ups_conf_backed_up.stat.exists
+  shell: |
+    sudo nut-scanner -U | grep -E 'driver|port|vendorid|productid|product|serial|vendor'
+  register: nut_scanner_output
+  changed_when: false
+
+- name: Set facts for UPS attributes
+  set_fact:
+    ups_attributes: >-
+      {% set lines = scanner_output.stdout_lines %}
+      {
+        driver: "{{ lines[0].split('=')[1].strip() }}",
+        port: "{{ lines[1].split('=')[1].strip() }}",
+        vendorid: "{{ lines[2].split('=')[1].strip() }}",
+        productid: "{{ lines[3].split('=')[1].strip() }}",
+        product: "{{ lines[4].split('=')[1].strip() }}",
+        serial: "{{ lines[5].split('=')[1].strip() }}",
+        vendor: "{{ lines[6].split('=')[1].strip() }}"
+      }
+
+- name: Create UPS configuration file
+  when: not ups_conf_backed_up.stat.exists
+  template:
+    src: ups.conf.j2
+    dest: /etc/nut/ups.conf
+  
