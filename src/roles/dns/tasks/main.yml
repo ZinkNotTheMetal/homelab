@@ -9,7 +9,7 @@
     name: docker
     state: started
 
-- name: Setup 'PiHole' data directories
+- name: Setup 'Pihole' data directories
   file:
     path: "{{ item }}"
     state: directory
