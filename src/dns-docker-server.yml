@@ -3,6 +3,7 @@
   vars_files:
     - "common.vars.yml"
     - "domain.vars.yml"
+    - "pihole.vars.yml"
   roles:
     - role: docker
       tag:
