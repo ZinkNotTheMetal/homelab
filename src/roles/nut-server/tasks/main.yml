@@ -10,6 +10,7 @@
 - name: Show the status of 'nut' service
   debug:
     msg: "The {{ nut_status.name }} service is running and its state is {{ nut_status.state }}"
+  ignore_errors: true
 
 - name: Run 'lsusb' command
   shell: lsusb
