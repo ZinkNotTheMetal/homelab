@@ -20,22 +20,21 @@
   debug:
     msg: "{{ lsusb_output.stdout_lines }}"  
 
-#- import_tasks: upgrade-packages.yml
+- import_tasks: upgrade-packages.yml
 
-#- import_tasks: install.yml
+- import_tasks: install.yml
 
-#- import_tasks: configure-mode.yml
+- import_tasks: configure-mode.yml
 
-#- import_tasks: configure-upsd.yml
+- import_tasks: configure-upsd.yml
 
-#- import_tasks: configure-upsmon.yml
+- import_tasks: configure-upsmon.yml
 
-#- import_tasks: configure-user.yml
+- import_tasks: configure-user.yml
 
 - import_tasks: configure-ups.yml
 
 - name: Restart 'nut-server' if initial status was not started
-  when: nut_status.state != "started"
   ignore_errors: true
   become: true
   service:
@@ -43,24 +42,18 @@
     state: restarted
 
 - name: Restart 'nut-client' if initial status was not started
-  when: nut_status.state != "started"
-  ignore_errors: true
   become: true
   service:
     name: nut-client
     state: restarted
 
 - name: Restart 'nut-monitor' if initial status was not started
-  when: nut_service.state != "started"
-  ignore_errors: true
   become: true
   service:
     name: nut-monitor
     state: restarted
 
 - name: Restart (stop) 'upsdrvctl' if initial status was not started
-  ignore_errors: true
-  when: nut_service.state != "started"
   become: true
   command:
     cmd: upsdrvctl stop
