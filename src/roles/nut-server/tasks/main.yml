@@ -31,7 +31,7 @@
 
 - import_tasks: configure-user.yml
 
-- import_tasks: configure_ups.yml
+- import_tasks: configure-ups.yml
   when: nut_status.state != "started"
 
 - name: Restart 'nut-server' if initial status was not started
