@@ -29,7 +29,7 @@
 
 - import_tasks: configure-upsmon.yml
 
-- import_tasks: configure_user.yml
+- import_tasks: configure-user.yml
 
 - import_tasks: configure_ups.yml
   when: nut_status.state != "started"
