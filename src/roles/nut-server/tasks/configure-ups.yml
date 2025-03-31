@@ -1,7 +1,7 @@
 ---
 - name: Check to see if 'ups.conf' is already backed up
   stat:
-    path: "/etc/nut/ups.conf"
+    path: "/etc/nut/ups.conf.bak"
   register: ups_conf_backed_up
 
 - name: Backup default 'ups.conf'
@@ -12,7 +12,6 @@
     dest: /etc/nut/ups.conf.bak
     remote_src: true
 
-
 - name: Run 'nut-scanner' to get UPS information
   become: true
   when: not ups_conf_backed_up.stat.exists
@@ -22,6 +21,7 @@
   changed_when: false
 
 - name: Set facts for UPS attributes
+  when: not ups_conf_backed_up.stat.exists
   set_fact:
     ups_attributes: >-
       {% set lines = scanner_output.stdout_lines %}
@@ -41,4 +41,3 @@
   template:
     src: ups.conf.j2
     dest: /etc/nut/ups.conf
-  
