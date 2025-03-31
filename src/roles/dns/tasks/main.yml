@@ -9,8 +9,14 @@
     name: docker
     state: started
 
-- name: Setup 'PiHole' data directory
-  
+- name: Setup 'PiHole' data directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0777"
+  with_items:
+    - "{{ docker_data_pihole }}/etc"
+    - "{{ docker_data_pihole }}/etc-dnsmasq.d"
 
 - import_tasks: pihole.yml
 

@@ -4,6 +4,9 @@
     - "common.vars.yml"
     - "domain.vars.yml"
   roles:
+    - role: docker
+      tag:
+        - docker
     - role: dns
       tag:
         - dns-server
