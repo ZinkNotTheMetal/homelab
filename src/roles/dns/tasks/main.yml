@@ -27,3 +27,4 @@
   when: extended_networking == 'true'
 
 - import_tasks: dns-config.yml
+  when: traefik_ip_address != ''

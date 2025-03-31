@@ -3,4 +3,6 @@
 #####################################################################
 # PiHole Configuration
 pi_hole_password: <pi_hole_web_password>
+
+traefik_ip_address: <if defined>
 #####################################################################
