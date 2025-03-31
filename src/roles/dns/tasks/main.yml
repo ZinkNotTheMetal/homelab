@@ -21,9 +21,9 @@
 - import_tasks: watchtower.yml
 
 - import_tasks: pihole.yml
-  when: extended_networking == false
+  when: extended_networking == 'false'
 
 - import_tasks: app-server-pihole.yml
-  when: extended_networking == true
+  when: extended_networking == 'true'
 
 - import_tasks: dns-config.yml
