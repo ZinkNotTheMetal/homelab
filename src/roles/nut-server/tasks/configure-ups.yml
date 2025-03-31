@@ -23,17 +23,14 @@
 - name: Set facts for UPS attributes
   when: not ups_conf_backed_up.stat.exists
   set_fact:
-    ups_attributes: >-
-      {% set lines = nut_scanner_output.stdout_lines %}
-      {
-        driver: "{{ lines[0].split('=')[1].strip() }}",
-        port: "{{ lines[1].split('=')[1].strip() }}",
-        vendorid: "{{ lines[2].split('=')[1].strip() }}",
-        productid: "{{ lines[3].split('=')[1].strip() }}",
-        product: "{{ lines[4].split('=')[1].strip() }}",
-        serial: "{{ lines[5].split('=')[1].strip() }}",
-        vendor: "{{ lines[6].split('=')[1].strip() }}"
-      }
+    ups_attributes:
+      driver: "{{ nut_scanner_output.stdout_lines[0].split('=')[1].strip() }}"
+      port: "{{ nut_scanner_output.stdout_lines[1].split('=')[1].strip() }}"
+      vendorid: "{{ nut_scanner_output.stdout_lines[2].split('=')[1].strip() }}"
+      productid: "{{ nut_scanner_output.stdout_lines[3].split('=')[1].strip() }}"
+      product: "{{ nut_scanner_output.stdout_lines[4].split('=')[1].strip() }}"
+      serial: "{{ nut_scanner_output.stdout_lines[5].split('=')[1].strip() }}"
+      vendor: "{{ nut_scanner_output.stdout_lines[6].split('=')[1].strip() }}"
 
 - name: Create UPS configuration file
   when: not ups_conf_backed_up.stat.exists

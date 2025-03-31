@@ -20,17 +20,17 @@
   debug:
     msg: "{{ lsusb_output.stdout_lines }}"  
 
-- import_tasks: upgrade-packages.yml
+#- import_tasks: upgrade-packages.yml
 
-- import_tasks: install.yml
+#- import_tasks: install.yml
 
-- import_tasks: configure-mode.yml
+#- import_tasks: configure-mode.yml
 
-- import_tasks: configure-upsd.yml
+#- import_tasks: configure-upsd.yml
 
-- import_tasks: configure-upsmon.yml
+#- import_tasks: configure-upsmon.yml
 
-- import_tasks: configure-user.yml
+#- import_tasks: configure-user.yml
 
 - import_tasks: configure-ups.yml
 
