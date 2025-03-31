@@ -36,6 +36,7 @@
 
 - name: Restart 'nut-server' if initial status was not started
   ignore_errors: true
+  when: not nut_status.state != "started"
   become: true
   service:
     name: nut-server
@@ -49,6 +50,8 @@
 
 - name: Restart 'nut-monitor' if initial status was not started
   become: true
+  ignore_errors: true
+  when: not nut_status.state != started
   service:
     name: nut-monitor
     state: restarted
@@ -59,7 +62,6 @@
     cmd: upsdrvctl stop
 
 - name: Restart (start) 'upsdrvctl' if initial status was not started
-  when: nut_service.state != "started"
   become: true
   command:
     cmd: upsdrvctl start
