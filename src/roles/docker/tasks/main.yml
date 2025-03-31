@@ -3,3 +3,4 @@
 - import_tasks: install.yml
 
 - import_tasks: setup-networks.yml
+  when: "{{ extended_networking }} == enabled"
