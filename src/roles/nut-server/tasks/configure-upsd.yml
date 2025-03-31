@@ -5,12 +5,14 @@
 
 - name: Backup default 'upsd.conf'
   when: not upsd_conf_backed_up.stat.exists
+  become: true
   copy:
     src: /etc/nut/upsd.conf
     dest: /etc/nut/upsd.conf.bak
     remote_src: true
 
 - name: Copy 'upsd.conf'
+  become: true
   copy:
     src: upsd.conf
     dest: /etc/nut/upsd.conf

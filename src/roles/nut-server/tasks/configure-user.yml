@@ -6,12 +6,14 @@
 
 - name: Backup default 'upsd.users'
   when: not upsd_conf_backed_up.stat.exists
+  become: true
   copy:
     src: /etc/nut/upsd.users
     dest: /etc/nut/upsd.users.bak
     remote_src: true
 
 - name: Copy 'upsmon.conf' template
+  become: true
   template:
     src: upsd.users 
     dest: /etc/nut/upsd.users

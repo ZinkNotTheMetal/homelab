@@ -6,6 +6,7 @@
 
 - name: Backup default 'ups.conf'
   when: not ups_conf_backed_up.stat.exists
+  become: true
   copy:
     src: /etc/nut/ups.conf
     dest: /etc/nut/ups.conf.bak
@@ -36,6 +37,7 @@
 
 - name: Create UPS configuration file
   when: not ups_conf_backed_up.stat.exists
+  become: true
   template:
     src: ups.conf.j2
     dest: /etc/nut/ups.conf
