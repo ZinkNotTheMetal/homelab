@@ -4,6 +4,7 @@
   register: nut_conf_backed_up
 
 - name: Backup default 'nut.conf'
+  become: true
   when: not nut_conf_backed_up.stat.exists
   copy:
     src: /etc/nut/nut.conf
