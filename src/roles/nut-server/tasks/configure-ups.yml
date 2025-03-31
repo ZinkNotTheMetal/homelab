@@ -24,7 +24,7 @@
   when: not ups_conf_backed_up.stat.exists
   set_fact:
     ups_attributes: >-
-      {% set lines = scanner_output.stdout_lines %}
+      {% set lines = nut_scanner_output.stdout_lines %}
       {
         driver: "{{ lines[0].split('=')[1].strip() }}",
         port: "{{ lines[1].split('=')[1].strip() }}",
