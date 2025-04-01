@@ -30,3 +30,4 @@
   when: traefik_ip_address != ''
 
 - import_tasks: nebula-sync.yml
+  when: primary_dns == 'true'
