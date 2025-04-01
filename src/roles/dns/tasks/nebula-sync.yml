@@ -10,10 +10,10 @@
     restart_policy: unless-stopped
     pull: true
     env:
-      - PRIMARY: "http://localhost|{{ pi_hole_password }}"
-      - REPLICAS: "{{ pihole_replica_csv }}"
-      - FULL_SYNC: "true"
-      - RUN_GRAVITY: "true"
-      - CRON: "0 * * * *"
+      PRIMARY: "http://localhost|{{ pi_hole_password }}"
+      REPLICAS: "{{ pihole_replica_csv }}"
+      FULL_SYNC: "true"
+      RUN_GRAVITY: "true"
+      CRON: "0 * * * *"
     labels:
       com.centurylinklabs.watchtower.enable: "true"
