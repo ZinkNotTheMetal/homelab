@@ -28,3 +28,5 @@
 
 - import_tasks: dns-config.yml
   when: traefik_ip_address != ''
+
+- import_tasks: nebula-sync.yml
