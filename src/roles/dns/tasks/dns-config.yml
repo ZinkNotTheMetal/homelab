@@ -4,12 +4,11 @@
     src: 02-local-dns.conf
     dest: "{{ docker_data_pihole }}/etc-dnsmasq.d/02-local-dns.conf"
     mode: "0777"
-  notify:
-    - Restart PiHole for DNS entries
+  register: updated_dns_conf
 
-  handlers:
-    - name: Restart PiHole for DNS entries
-      docker_container:
-        name: pihole
-        state: started
-        restart: true
+- name: Restart PiHole for DNS entries (when changed)
+  when: updated_dns_conf.changed
+  docker_container:
+    name: pihole
+    state: started
+    restart: true
