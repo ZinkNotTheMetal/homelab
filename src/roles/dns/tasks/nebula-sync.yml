@@ -10,7 +10,7 @@
     restart_policy: unless-stopped
     pull: true
     env:
-      PRIMARY: "http://localhost|{{ pi_hole_password }}"
+      PRIMARY: "http://pihole|{{ pi_hole_password }}"
       REPLICAS: "{{ pihole_replica_csv }}"
       FULL_SYNC: "true"
       RUN_GRAVITY: "true"
