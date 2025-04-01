@@ -8,6 +8,12 @@
     name: pihole
     image: pihole/pihole:latest
     restart_policy: unless-stopped
+    ports:
+      - 53:53
+      - 80:80
+      - 67:67
+      - 123:123
+      - 443:443
     pull: true
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
