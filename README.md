@@ -1,4 +1,4 @@
-# Ansible Homelab
+# My Homelab
 
 If you are new to 'Homelab'ing I recommend investigating it more, but it allows you
 to have a server that is on my local network so that I don't need to pay for external
