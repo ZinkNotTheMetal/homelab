@@ -37,10 +37,22 @@
     name: git
     state: latest
 
+- name: "Install Vim"
+  become: true
+  apt:
+    name: vim
+    state: latest
+
 - name: Install NodeJS (stable)
   become: true
   apt:
-    name: ["nodejs", "npm"]
+    name: nodejs
+    state: latest
+
+- name: Install NPM
+  become: true
+  apt:
+    name: npm
     state: latest
 
 - name: Node version & NPM version
