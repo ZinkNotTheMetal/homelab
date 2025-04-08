@@ -1,12 +1,12 @@
 locals {
-  purpose      = "ansible"
-  vm_cpu_cores = 2
-  vm_memory_mb = 2048
-  disk_size_gb = 10
+  ansible_purpose      = "ansible"
+  ansible_vm_cpu_cores = 2
+  ansible_vm_memory_mb = 2048
+  ansible_disk_size_gb = 10
 }
 
 resource "proxmox_virtual_environment_vm" "ansible_vm" {
-  name        = local.purpose
+  name        = "${local.ansible_purpose}"
   description = "Managed by Terraform"
   tags        = ["debian", "ansible"]
 
@@ -26,28 +26,29 @@ resource "proxmox_virtual_environment_vm" "ansible_vm" {
   }
 
   cpu {
-    cores = local.vm_cpu_cores
+    cores = local.ansible_vm_cpu_cores
     type  = "x86-64-v2-AES" # recommended for modern CPUs
   }
 
   memory {
-    dedicated = local.vm_memory_mb
-    floating  = local.vm_memory_mb # set equal to dedicated to enable ballooning
+    dedicated = local.ansible_vm_memory_mb
+    floating  = local.ansible_vm_memory_mb # set equal to dedicated to enable ballooning
   }
 
   cdrom {
-    file_id = proxmox_virtual_environment_download_file.debian_12_img.id
+    file_id   = proxmox_virtual_environment_download_file.debian_12_img.id
+    interface = "ide3"
   }
 
   disk {
     datastore_id = local.datastores.vm_raid_storage_id
     interface    = "scsi0"
-    size         = local.disk_size_gb
+    size         = local.ansible_disk_size_gb
   }
 
   network_device {
     bridge  = local.vm_network_bridge
-    vlan_id = local.vlan_ids.iot_open
+    vlan_id = local.vlan_ids.default
   }
 
   operating_system {
@@ -56,17 +57,6 @@ resource "proxmox_virtual_environment_vm" "ansible_vm" {
 
   serial_device {}
 
-  scsi_hardware = "virtio-scsi-single"
+  boot_order = ["scsi0", "ide3", "net0"]
 
-}
-
-resource "random_password" "debian_vm_password" {
-  length           = 16
-  override_special = "_%@"
-  special          = true
-}
-
-output "ubuntu_vm_password" {
-  value     = random_password.debian_vm_password.result
-  sensitive = true
 }

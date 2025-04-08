@@ -13,6 +13,7 @@ inventory/
 # Ignore private key files used for SSH connections and other secrets
 *id_rsa*
 *key*
+!*generate-ssh-keypair*
 
 # Ignore sensitive data like vault passwords
 .vault_pass.txt

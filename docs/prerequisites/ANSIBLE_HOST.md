@@ -7,11 +7,22 @@ Whichever machine will be running the Ansible process needs the following.
 
 1. Ansible host server (currently in Synology)
 
-    1. Install ansible
-    2. Install sudo
-    3. Add user to /etc/sudoers
-    4. Add net-tools
-    5. Add nodejs (not necessary but can help with package.json scripts)
+    1. Install sudo
+    2. Add user to sudo group
+
+        ```bash
+        su -
+        usermod -aG sudo <user>
+        ```
+
+    3. Install git
+    4. Install net-tools
+    5. Install ansible
+    6. Add SSH Key into GitHub to allow pulling my repository
+
+        ```bash
+        ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+        ```
 
 2. Pull down [ansible-homelab](https://github.com/ZinkNotTheMetal/ansible-homelab)
 
