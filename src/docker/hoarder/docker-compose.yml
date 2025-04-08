@@ -1,4 +1,4 @@
-# Pulled directly from https://docs.hoarder.app/Installation/docker/
+# Pulled directly from https:///docs.hoarder.app/Installation/docker/
 # wget: https://raw.githubusercontent.com/hoarder-app/hoarder/main/docker/docker-compose.yml 
 ---
 version: "3.8"
@@ -10,7 +10,7 @@ services:
       # By default, the data is stored in a docker volume called "data".
       # If you want to mount a custom directory, change the volume mapping to:
       # - /path/to/your/directory:/data
-      - ${hoarder_docker_dir}/data:/data
+      - ${docker_data_hoarder}/data:/data
     ports:
       - 3000:3000
     env_file:
@@ -41,4 +41,4 @@ services:
     environment:
       MEILI_NO_ANALYTICS: "true"
     volumes:
-      - ${hoarder_docker_dir}/meilisearch:/meili_data
+      - ${docker_data_hoarder}/meilisearch:/meili_data

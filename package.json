@@ -4,9 +4,13 @@
   "description": "Home Lab configuration setting up my local environment",
   "main": "index.js",
   "scripts": {
-    "ansible": "ansible-playbook -K -i hosts src/all.yml",
-    "ansible:common": "ansible-playbook -K -i hosts src/common.yml",
-    "ansible:home": "ansible-playbook -K -i hosts src/home.yml"
+    "ansible": "ansible-playbook -K -i hosts src/ansible/all.yml",
+    "ansible:common": "ansible-playbook -K -i hosts src/ansible/common.yml",
+    "ansible:home": "ansible-playbook -K -i hosts src/ansible/home.yml",
+    "terraform:fmt": "terraform fmt -recursive",
+    "terraform:init": "terraform -chdir=src/terraform init",
+    "terraform:plan": "terraform -chdir=src/terraform plan --var-file=./config/proxmox001.tfvars -out=proxmox001.tfplan",
+    "terraform:apply": "terraform -chdir=src/terraform apply proxmox001.tfplan"
   },
   "keywords": [],
   "author": "William Zink",

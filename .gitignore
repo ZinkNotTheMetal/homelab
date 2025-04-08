@@ -37,3 +37,61 @@ roles/*/.vault
 # Ignore any custom files or folders added for specific environments
 .env
 .local*
+
+
+# Build Generated Items
+artifacts/
+build/
+dist/
+reports/
+tools/
+node_modules/
+.vscode/
+
+# IDE Generated Items
+[Bb]in/
+[Oo]bj/
+TestResults/
+PrecompiledWeb/
+**/packages/
+*.gpState
+*.suo
+*.user
+*[Rr]e[Ss]harper*
+*.cache
+TestResult.xml
+.vs
+**/.idea/
+
+# Terraform Items
+**/.terraform/*
+**/*.swp
+*.tfstate
+*.tfstate.*
+**/crash.log
+**/tfplan
+**/local.*.tfvars
+**/.terraform.lock.hcl
+**/*.tfplan
+
+# Merge Tool Items
+*.orig
+*.bak
+
+# Misc Items
+*.log
+.env.local
+
+# Local Terraform files
+*.terraform
+.DS_Store
+
+# Linked backend.tf files
+backend.tf
+
+**/azurite/
+
+kubernetes-tmp.config
+.infrastructure/shared/tf/azure/log-analytics-workspace-id.txt
+nul
+.npmrc
