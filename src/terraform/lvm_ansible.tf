@@ -7,14 +7,14 @@ locals {
 
 resource "proxmox_virtual_environment_vm" "ansible_vm" {
   name        = "${local.ansible_purpose}"
-  description = "Managed by Terraform"
+  description = "Ansible Host Server - Managed by Terraform"
   tags        = ["debian", "ansible"]
 
   node_name = var.proxmox_name
 
   agent {
     # read 'Qemu guest agent' section, change to true only when ready
-    enabled = false
+    enabled = true
   }
   # if agent is not enabled, the VM may not be able to shutdown properly, and may need to be forced off
   stop_on_destroy = true
@@ -32,7 +32,6 @@ resource "proxmox_virtual_environment_vm" "ansible_vm" {
 
   memory {
     dedicated = local.ansible_vm_memory_mb
-    floating  = local.ansible_vm_memory_mb # set equal to dedicated to enable ballooning
   }
 
   cdrom {

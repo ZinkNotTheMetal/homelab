@@ -4,7 +4,7 @@ locals {
   datastores = {
     vm_raid_storage_id = "swat1"
     local_1tb_proxmox  = "local"
-    synology_proxmox   = "synology-proxmox"
+    synology_proxmox   = "NAS-Proxmox-10GB"
   }
 
   vlan_ids = {
