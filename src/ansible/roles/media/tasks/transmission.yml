@@ -71,7 +71,7 @@
       com.centurylinklabs.watchtower.enable: "true"
 
 - name: Run 'transmission-openvpn' - Docker Container
-  when: extended_networking == false
+  when: extended_networking != true
   docker_container:
     name: transmission-openvpn
     image: haugene/transmission-openvpn
