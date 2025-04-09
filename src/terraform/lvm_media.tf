@@ -1,12 +1,12 @@
 locals {
-  media_purpose      = "media"
-  media_vm_cpu_cores = 4
-  media_vm_memory_mb = 24576
-  media_disk_size_gb = 10
+  plex_purpose      = "plex"
+  plex_vm_cpu_cores = 4
+  plex_vm_memory_mb = 12488
+  plex_disk_size_gb = 10
 }
 
 resource "proxmox_virtual_environment_vm" "media_vm" {
-  name        = "${local.media_purpose}"
+  name        = "${local.plex_purpose}"
   description = "Plex Server - Managed by Terraform"
   tags        = ["debian", "plex"]
 
@@ -28,12 +28,13 @@ resource "proxmox_virtual_environment_vm" "media_vm" {
   machine = "q35,viommu=virtio"
 
   cpu {
-    cores = local.media_vm_cpu_cores
+    cores = local.plex_vm_cpu_cores
     type  = "x86-64-v2-AES" # recommended for modern CPUs
   }
 
   memory {
-    dedicated = local.media_vm_memory_mb
+    dedicated = local.plex_vm_memory_mb
+    floating = local.plex_vm_memory_mb
   }
 
   cdrom {
@@ -44,7 +45,7 @@ resource "proxmox_virtual_environment_vm" "media_vm" {
   disk {
     datastore_id = local.datastores.vm_raid_storage_id
     interface    = "scsi0"
-    size         = local.media_disk_size_gb
+    size         = local.plex_disk_size_gb
   }
 
   network_device {
@@ -55,6 +56,10 @@ resource "proxmox_virtual_environment_vm" "media_vm" {
   operating_system {
     type = "l26"
   }
+
+  # audio_device {
+  #   driver = "spice"
+  # }
 
   serial_device {}
 

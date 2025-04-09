@@ -1,0 +1,21 @@
+---
+# Watchtower
+# Documentation: https://containrrr.dev/watchtower/
+# Purpose: To automatically upgrade docker containers with the label 'com.centurylinklabs.watchtower.enable: "true"'
+
+- name: Run 'Watchtower' - Docker Container
+  docker_container:
+    name: watchtower
+    image: containrrr/watchtower
+    restart_policy: unless-stopped
+    pull: true
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/timezone:/etc/timezone:ro"
+    env:
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_INCLUDE_RESTARTING: "true"
+      WATCHTOWER_LABEL_ENABLE: "true"
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+    container_default_behavior: compatibility

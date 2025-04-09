@@ -3,8 +3,6 @@
 
 - import_tasks: watchtower.yml
 
-- import_tasks: plex.yml
-
 - import_tasks: prowlarr.yml
 
 - import_tasks: transmission.yml
