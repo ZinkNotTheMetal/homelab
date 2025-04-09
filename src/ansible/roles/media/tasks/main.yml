@@ -10,3 +10,5 @@
 - import_tasks: radarr.yml
 
 - import_tasks: sonarr.yml
+
+- import_tasks: plex.yml

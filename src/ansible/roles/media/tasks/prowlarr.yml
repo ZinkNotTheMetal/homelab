@@ -49,7 +49,7 @@
 
 
 - name: Run 'Prowlarr' - Docker Container
-  when: extended_networking == false
+  when: extended_networking != true
   docker_container:
     name: prowlarr
     image: lscr.io/linuxserver/prowlarr
