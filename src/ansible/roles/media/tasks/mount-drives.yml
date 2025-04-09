@@ -1,0 +1,49 @@
+---
+# Plex
+# Documentation: https://www.plex.tv
+# Purpose: Host Plex media center on my network to watch TV / Movies I have ripped from DVD's
+
+- name: Ensure '/mnt/nas' is created
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0777"
+    owner: root
+    group: root
+  with_items:
+    - "/mnt/nas/movies"
+    - "/mnt/nas/tv"
+
+# Test mount
+#  sudo mount -t nfs 10.10.0.10:/volume1/Media/Movies /mnt/nas/movies
+#  sudo mount -t nfs 10.10.0.10:/volume1/Media/TV\ Shows /mnt/nas/tv
+#  sudo mount -t nfs 10.10.0.10:/volume1/Files/Books /mnt/nas/books
+# Test unmount
+#  sudo umount 10.10.0.10:/backups
+
+# Ensure that permissions are properly setup in NAS to mount directories
+# 1. Login to Synology
+# 2. Open Control Panel
+# 3. Click Share(s) individually (i.e. Media)
+# 4. Right click and hit Edit
+# 5. Go to the NFS permissions Tab
+# 6. Add hostname of the server
+
+- name: Mount 'Movies'
+  become: true
+  mount:
+    src: "{{ nas_ip }}:/volume1/Media/Movies"
+    path: /mnt/nas/movies
+    state: mounted
+    opts: rw,nolock,soft
+    fstype: nfs
+
+- name: Mount 'TV Shows'
+  become: true
+  mount:
+    src: "{{ nas_ip }}:/volume1/Media/TV\ Shows"
+    path: /mnt/nas/tv
+    state: mounted
+    opts: rw,nolock,soft
+    fstype: nfs

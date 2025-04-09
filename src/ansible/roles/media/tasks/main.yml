@@ -3,6 +3,8 @@
 
 - import_tasks: watchtower.yml
 
+- import_tasks: mount-drives.yml
+
 - import_tasks: prowlarr.yml
 
 - import_tasks: transmission.yml
