@@ -6,16 +6,8 @@
     - "domain.vars.yml"
   roles:
     - role: common
-    - role: gantsign.oh-my-zsh
-      users:
-        - username: "{{ user_name }}"
-          oh_my_zsh:
-            theme: bureau
-            plugins:
-              - git
-              - debian
-              - zsh-syntax-highlighting
-              - zsh-autosuggestions
+    - role: mashimom.oh-my-zsh
+      ohmyzsh_theme: "lambda"
     - role: docker
     - role: applications
       tag:
