@@ -30,7 +30,7 @@
   
 - name: Remove oh-my-zsh installer
   file:
-    path: "/home/{{ ansible_user }}/installer.sh"
+    path: "/home/{{ ansible_user }}/install.sh"
     state: absent
 
 - name: Set theme in zsh
