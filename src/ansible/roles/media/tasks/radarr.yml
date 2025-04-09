@@ -12,12 +12,12 @@
     owner: root
 
 - name: Run 'Radarr' - Docker Container
+  when: extended_networking == true
   docker_container:
     name: radarr
     image: lscr.io/linuxserver/radarr
     restart_policy: unless-stopped
     pull: true
-    privileged: true
     networks:
       - name: docker_ipvlan
         ipv4_address: "{{ radarr_container_ip }}"
@@ -46,3 +46,32 @@
       traefik.http.routers.radarr.service: "radarr"
       traefik.http.services.radarr.loadBalancer.server.port: "7878"
       traefik.http.routers.radarr.tls.certresolver: "letsencrypt"
+
+
+- name: Run 'Radarr' - Docker Container
+  when: extended_networking == false
+  docker_container:
+    name: radarr
+    image: lscr.io/linuxserver/radarr
+    restart_policy: unless-stopped
+    pull: true
+    ports:
+      - 7878:7878
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      VERSION: "docker"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "{{ docker_data_radarr }}/config:/config"
+      - "{{ docker_data_transmission }}:/data"
+      - "/mnt/nas/movies:/movies"
+    healthcheck:
+      test: ["CMD", "curl", "-kL", "http://localhost:7878"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
