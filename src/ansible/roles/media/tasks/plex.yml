@@ -93,7 +93,12 @@
     image: lscr.io/linuxserver/plex
     restart_policy: unless-stopped
     ports:
-      - 32400:32400
+      - 1900:1900/udp
+      - 5353:5353/udp
+      - 32400:32400/tcp
+      - 32400:32400/udp
+      - 32410:32410/udp
+      - 32469:32469/tcp
     pull: true
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
