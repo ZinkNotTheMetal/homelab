@@ -19,3 +19,8 @@ docker_data_transmission: "{{ docker_application_folder }}/transmission"
 ###########################################################################
 docker_data_sonarr: "{{ docker_application_folder }}/sonarr"
 sonarr_container_ip: 192.168.101.220
+###########################################################################
+# Plex Configuration
+###########################################################################
+docker_data_plex: "{{ docker_application_folder }}/plex"
+plex_container_ip: 192.168.101.230
