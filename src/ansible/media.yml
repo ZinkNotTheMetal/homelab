@@ -5,6 +5,8 @@
     - "common.vars.yml"
     - "domain.vars.yml"
   roles:
+    - role: common
+    - role: docker
     - role: media
       tag:
         - media

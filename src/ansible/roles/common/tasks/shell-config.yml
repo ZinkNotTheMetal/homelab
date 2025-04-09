@@ -3,6 +3,7 @@
 # Description:
 #  Configures zsh and all plugins needed for .zsh
 #
+
 - name: Ensure the user '{{ ansible_user }}' has zsh shell by default.
   become: true
   user:
@@ -72,3 +73,15 @@
     dest: /home/{{ ansible_user }}/.zprofile
     owner: root
     group: root
+
+- name: Install zsh
+  package:
+    name: zsh
+    state: present
+  become: true
+
+- name: Set user shell to zsh
+  user:
+    name: "{{ ansible_user }}"
+    shell: /bin/zsh
+  become: true

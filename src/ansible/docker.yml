@@ -3,6 +3,7 @@
   vars_files:
     - "docker.vars.yml"
   roles:
+    - role: common
     - role: docker
       tag:
         - docker 

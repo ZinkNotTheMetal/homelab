@@ -1,16 +1,4 @@
 ---
-- name: Install zsh
-  package:
-    name: zsh
-    state: present
-  become: true
-
-- name: Set user shell to zsh
-  user:
-    name: "{{ ansible_user }}"
-    shell: /bin/zsh
-  become: true
-
 - name: Check if oh-my-zsh is installed
   stat:
     path: "/home/{{ ansible_user }}/.oh-my-zsh"

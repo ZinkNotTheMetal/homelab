@@ -1,14 +1,14 @@
 locals {
-  media_purpose      = "media"
-  media_vm_cpu_cores = 2
-  media_vm_memory_mb = 4096
-  media_disk_size_gb = 10
+  apps_purpose      = "apps"
+  apps_vm_cpu_cores = 2
+  apps_vm_memory_mb = 4096
+  apps_disk_size_gb = 10
 }
 
-resource "proxmox_virtual_environment_vm" "media_management_vm" {
-  name        = "${local.media_purpose}"
-  description = "Media Management Server - Managed by Terraform"
-  tags        = ["debian", "media"]
+resource "proxmox_virtual_environment_vm" "apps_vm" {
+  name        = "${local.apps_purpose}"
+  description = "Standalone Apps & Traefik for Homelab - Managed by Terraform"
+  tags        = ["debian", "applications"]
 
   node_name = var.proxmox_name
 
@@ -16,6 +16,7 @@ resource "proxmox_virtual_environment_vm" "media_management_vm" {
     # read 'Qemu guest agent' section, change to true only when ready
     enabled = true 
   }
+
   # if agent is not enabled, the VM may not be able to shutdown properly, and may need to be forced off
   stop_on_destroy = true
 
@@ -31,8 +32,8 @@ resource "proxmox_virtual_environment_vm" "media_management_vm" {
   }
 
   memory {
-    dedicated = local.media_vm_memory_mb
-    floating = local.media_vm_memory_mb
+    dedicated = local.apps_vm_memory_mb
+    floating = local.apps_vm_memory_mb
   }
 
   cdrom {
@@ -43,7 +44,7 @@ resource "proxmox_virtual_environment_vm" "media_management_vm" {
   disk {
     datastore_id = local.datastores.vm_raid_storage_id
     interface    = "scsi0"
-    size         = local.media_disk_size_gb
+    size         = local.apps_disk_size_gb
   }
 
   network_device {

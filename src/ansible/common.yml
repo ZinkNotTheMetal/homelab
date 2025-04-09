@@ -6,3 +6,14 @@
     - role: common
       tag:
         - common
+    - role: gantsign.oh-my-zsh
+      users:
+        - username: "{{ user_name }}"
+          oh_my_zsh:
+            theme: bureau
+            plugins:
+              - git
+              - debian
+              - zsh-syntax-highlighting
+              - zsh-autosuggestions
+    - role: zsh-plugins
