@@ -1,9 +1,20 @@
 ---
 - hosts: docker
   vars_files:
+    - "common.vars.yml"
     - "docker.vars.yml"
   roles:
     - role: common
+    - role: gantsign.oh-my-zsh
+      users:
+        - username: "{{ user_name }}"
+          oh_my_zsh:
+            theme: bureau
+            plugins:
+              - git
+              - debian
+              - zsh-syntax-highlighting
+              - zsh-autosuggestions
     - role: docker
       tag:
         - docker 
