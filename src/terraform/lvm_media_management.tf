@@ -1,7 +1,7 @@
 locals {
   media_purpose      = "media"
   media_vm_cpu_cores = 2
-  media_vm_memory_mb = 2096
+  media_vm_memory_mb = 4096
   media_disk_size_gb = 10
 }
 
