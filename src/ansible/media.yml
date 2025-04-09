@@ -1,5 +1,5 @@
 ---
-- hosts: application
+- hosts: media 
   vars_files:
     - "media.vars.yml"
     - "common.vars.yml"
