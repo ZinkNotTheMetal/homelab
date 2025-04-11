@@ -6,8 +6,9 @@
     - "domain.vars.yml"
   roles:
     - role: common
+      # https://galaxy.ansible.com/ui/standalone/roles/mashimom/oh-my-zsh/install/
     - role: mashimom.oh-my-zsh
-      ohmyzsh_theme: "lambda"
+      ohmyzsh_theme: "bureau"
     - role: docker
     - role: applications
       tag:
