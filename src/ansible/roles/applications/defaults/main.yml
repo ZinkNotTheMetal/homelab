@@ -3,60 +3,55 @@ docker_application_folder: /home/{{ ansible_user }}/.docker
 ###########################################################################
 # IT Tools Configuration
 ###########################################################################
-it_tools_container_ip: 192.168.144.10
+it_tools_container_ip: 192.168.88.10
 ###########################################################################
 # Stirling PDF Configuration
 ###########################################################################
 docker_data_stirling_pdf: "{{ docker_application_folder }}/stirling-pdf"
-stirling_pdf_container_ip: 192.168.144.20
+stirling_pdf_container_ip: 192.168.88.20
 ###########################################################################
 # Mealie Configuration
 ###########################################################################
 docker_data_mealie: "{{ docker_application_folder }}/mealie"
-mealie_container_ip: 192.168.101.10
-mealie_db_container_ip: 192.168.101.11
+mealie_container_ip: 192.168.86.10
+mealie_db_container_ip: 192.168.86.11
 mealie_db_name: mealie
 mealie_url: mealie.{{ domain_name }}
 ###########################################################################
 # Netbootxyz Configuration
 ###########################################################################
 docker_data_netboot: "{{ docker_application_folder }}/netboot"
-netboot_container_ip: 192.168.144.30
+netboot_container_ip: 192.168.88.30
 ###########################################################################
 # pgAdmin Configuration
 ###########################################################################
 docker_data_pgadmin: "{{ docker_application_folder }}/pgadmin"
-pgadmin_container_ip: 192.168.144.40
+pgadmin_container_ip: 192.168.88.40
 ###########################################################################
 # Portainer Configuration
 ###########################################################################
 docker_data_portainer: "{{ docker_application_folder }}/portainer"
-portainer_container_ip: 192.168.144.50
+portainer_container_ip: 192.168.88.50
 ###########################################################################
 # Traccar Configuration
 ###########################################################################
 docker_data_traccar: "{{ docker_application_folder }}/traccar"
-traccar_container_ip: 192.168.144.60
-traccar_db_container_ip: 192.168.144.61
+traccar_container_ip: 192.168.88.60
+traccar_db_container_ip: 192.168.88.61
 traccar_db_name: traccar
-###########################################################################
-# Plex Configuration
-###########################################################################
-docker_data_plex: "{{ docker_application_folder }}/plex"
-plex_container_ip: 192.168.101.20
 ###########################################################################
 # Tautulli Configuration
 ###########################################################################
 docker_data_tautulli: "{{ docker_application_folder }}/tautulli"
-tautulli_container_ip: 192.168.101.30
+tautulli_container_ip: 192.168.86.30
 ###########################################################################
 # traefik Configuration
 ###########################################################################
 docker_data_traefik: "{{ docker_application_folder }}/traefik"
-traefik_container_ip: 192.168.101.40 
+traefik_container_ip: 192.168.86.40 
 ###########################################################################
 # Overseerr Configuration
 ###########################################################################
 docker_data_overseerr: "{{ docker_application_folder }}/overseerr"
-overseerr_container_ip: 192.168.101.50 
+overseerr_container_ip: 192.168.86.50 
 ###########################################################################
