@@ -5,16 +5,9 @@
     - "docker.vars.yml"
   roles:
     - role: common
-    - role: gantsign.oh-my-zsh
-      users:
-        - username: "{{ user_name }}"
-          oh_my_zsh:
-            theme: bureau
-            plugins:
-              - git
-              - debian
-              - zsh-syntax-highlighting
-              - zsh-autosuggestions
+    # https://galaxy.ansible.com/ui/standalone/roles/mashimom/oh-my-zsh/install/
+    - role: mashimom.oh-my-zsh
+      ohmyzsh_theme: "bureau"
     - role: docker
       tag:
         - docker 
