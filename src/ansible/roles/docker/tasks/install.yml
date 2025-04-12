@@ -49,7 +49,6 @@
       - docker.io
       - docker-compose
       - docker-registry
-      - docker-compose-plugin
     state: latest
     update_cache: true
   when: docker_valid.failed
