@@ -1,7 +1,7 @@
 locals {
   apps_purpose      = "apps"
   apps_vm_cpu_cores = 2
-  apps_vm_memory_mb = 4096
+  apps_vm_memory_mb = 12288 
   apps_disk_size_gb = 10
 }
 
