@@ -17,8 +17,6 @@
 
 - import_tasks: traccar.yml
 
-- import_tasks: plex.yml
-
 - import_tasks: tautulli.yml
 
 # Changed to setup as it's expecting a traefik config if not prefixed
