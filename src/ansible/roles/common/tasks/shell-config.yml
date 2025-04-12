@@ -48,23 +48,23 @@
       # Load ; should be last.
       source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
 
-- name: Customize '{{ ansible_user }}' for bureau theme in oh-my-zsh
-  replace:
-    path: /home/{{ ansible_user }}/.oh-my-zsh/themes/bureau.zsh-theme
-    regexp: "(_USERNAME=\"\\%{\\$fg_bold\\[white)(.*)$"
-    replace: '_USERNAME="%{$fg_bold[green]%}%n"'
+# - name: Customize '{{ ansible_user }}' for bureau theme in oh-my-zsh
+#   replace:
+#     path: /home/{{ ansible_user }}/.oh-my-zsh/themes/bureau.zsh-theme
+#     regexp: "(_USERNAME=\"\\%{\\$fg_bold\\[white)(.*)$"
+#     replace: '_USERNAME="%{$fg_bold[green]%}%n"'
 
-- name: Customize 'machine name' for bureau theme in oh-my-zsh
-  replace:
-    path: /home/{{ ansible_user }}/.oh-my-zsh/themes/bureau.zsh-theme
-    regexp: "(^_USERNAME=\"\\$_USERNAME)(.*)$"
-    replace: '_USERNAME="$_USERNAME%{$fg_bold[yellow]%}@%m%{$reset_color%}"'
+# - name: Customize 'machine name' for bureau theme in oh-my-zsh
+#   replace:
+#     path: /home/{{ ansible_user }}/.oh-my-zsh/themes/bureau.zsh-theme
+#     regexp: "(^_USERNAME=\"\\$_USERNAME)(.*)$"
+#     replace: '_USERNAME="$_USERNAME%{$fg_bold[yellow]%}@%m%{$reset_color%}"'
 
-- name: Customize 'path' for bureau theme in oh-my-zsh
-  replace:
-    path: /home/{{ ansible_user }}/.oh-my-zsh/themes/bureau.zsh-theme
-    regexp: '(^_PATH=")(.*)$'
-    replace: '_PATH="%{$fg_bold[blue]%}%~%{$reset_color%}"'
+# - name: Customize 'path' for bureau theme in oh-my-zsh
+#   replace:
+#     path: /home/{{ ansible_user }}/.oh-my-zsh/themes/bureau.zsh-theme
+#     regexp: '(^_PATH=")(.*)$'
+#     replace: '_PATH="%{$fg_bold[blue]%}%~%{$reset_color%}"'
 
 - name: Ensure that the .zprofile is loaded
   become: true
