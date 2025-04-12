@@ -2,7 +2,7 @@ locals {
   apps_purpose      = "apps"
   apps_vm_cpu_cores = 2
   apps_vm_memory_mb = 12288 
-  apps_disk_size_gb = 10
+  apps_disk_size_gb = 300
 }
 
 resource "proxmox_virtual_environment_vm" "apps_vm" {
