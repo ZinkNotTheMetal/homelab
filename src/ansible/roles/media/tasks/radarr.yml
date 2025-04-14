@@ -29,6 +29,8 @@
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
+      - "/mnt/nas/torrent-data:/data"
+      - "/mnt/nas/torrent-data/completed/radarr:/data/completed/radarr"
       - "{{ docker_data_radarr }}/config:/config"
       - "/mnt/nas/torrent-data:/data:/data"
       - "/mnt/nas/movies:/movies"
