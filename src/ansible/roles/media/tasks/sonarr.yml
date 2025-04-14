@@ -30,8 +30,7 @@
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
       - "{{ docker_data_sonarr }}/config:/config"
-      - "{{ docker_data_transmission }}:/data"
-      - "{{ docker_data_transmission }}/completed/tv-sonarr:data/completed/tv-sonarr"
+      - "/mnt/nas/torrent-data:/data:/data"
       - "/mnt/nas/tv:/tv"
     ports:
       - 8989:8989

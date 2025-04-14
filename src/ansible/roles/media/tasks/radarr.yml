@@ -30,8 +30,7 @@
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
       - "{{ docker_data_radarr }}/config:/config"
-      - "{{ docker_data_transmission }}:/data"
-      - "{{ docker_data_transmission }}/completed/radarr:data/completed/radarr"
+      - "/mnt/nas/torrent-data:/data:/data"
       - "/mnt/nas/movies:/movies"
     healthcheck:
       test: ["CMD", "curl", "-kL", "http://localhost:7878"]
