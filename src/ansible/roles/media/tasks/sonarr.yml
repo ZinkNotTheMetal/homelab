@@ -30,6 +30,7 @@
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
       - "{{ docker_data_sonarr }}/config:/config"
+      - "/mnt/nas/torrent-data:/data/downloads"
       - "/mnt/nas/torrent-data:/data"
       - "/mnt/nas/torrent-data/completed/tv-sonarr:/data/completed/tv-sonarr"
       - "/mnt/nas/tv:/tv"
