@@ -18,8 +18,8 @@
 - name: Mount 'Smart-Home Backups'
   become: true
   mount:
-    src: "{{ nas_ip }}:/volume1/Media/Movies"
-    path: /mnt/nas/movies
+    src: "{{ nas_ip }}:/volume1/Media/Smart-Home-Backups"
+    path: /mnt/nas/shbackups
     state: mounted
     opts: rw,nolock,soft
     fstype: nfs

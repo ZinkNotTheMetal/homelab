@@ -44,7 +44,7 @@ resource "proxmox_virtual_environment_vm" "home_vm" {
   disk {
     datastore_id = local.datastores.vm_raid_storage_id
     interface    = "scsi0"
-    size         = local.apps_disk_size_gb
+    size         = local.home_disk_size_gb
   }
 
   network_device {
