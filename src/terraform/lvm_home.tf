@@ -1,14 +1,14 @@
 locals {
-  apps_purpose      = "apps"
-  apps_vm_cpu_cores = 2
-  apps_vm_memory_mb = 12288 
-  apps_disk_size_gb = 300
+  home_purpose      = "home"
+  home_vm_cpu_cores = 2
+  home_vm_memory_mb = 6144
+  home_disk_size_gb = 100
 }
 
-resource "proxmox_virtual_environment_vm" "apps_vm" {
-  name        = "${local.apps_purpose}"
-  description = "Standalone Apps & Traefik for Homelab - Managed by Terraform"
-  tags        = ["debian", "applications"]
+resource "proxmox_virtual_environment_vm" "home_vm" {
+  name        = "${local.home_purpose}"
+  description = "SmartHome Linux VM - Managed by Terraform"
+  tags        = ["debian", "home"]
 
   node_name = var.proxmox_name
 
@@ -27,13 +27,13 @@ resource "proxmox_virtual_environment_vm" "apps_vm" {
   }
 
   cpu {
-    cores = local.apps_vm_cpu_cores
+    cores = local.home_vm_cpu_cores
     type  = "x86-64-v2-AES" # recommended for modern CPUs
   }
 
   memory {
-    dedicated = local.apps_vm_memory_mb
-    floating = local.apps_vm_memory_mb
+    dedicated = local.home_vm_memory_mb
+    floating = local.home_vm_memory_mb
   }
 
   cdrom {
