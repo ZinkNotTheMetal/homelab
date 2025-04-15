@@ -79,7 +79,7 @@
     pull: true
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "/mnt/nas/torrent-data:/data"
+      - "/mnt/nas/torrent-data:/data:rw"
       - "/etc/timezone:/etc/timezone:ro"
     env:
       OPENVPN_PROVIDER: "{{ vpn_provider }}"

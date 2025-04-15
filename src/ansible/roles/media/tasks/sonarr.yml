@@ -26,14 +26,12 @@
       PGID: "1000"
       VERSION: "docker"
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/mnt/nas/torrent-data:/data:rw"
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
-      - "{{ docker_data_sonarr }}/config:/config"
-      - "/mnt/nas/torrent-data:/data/downloads"
-      - "/mnt/nas/torrent-data:/data"
-      - "/mnt/nas/torrent-data/completed/tv-sonarr:/data/completed/tv-sonarr"
       - "/mnt/nas/tv:/tv"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "{{ docker_data_sonarr }}/config:/config"
     ports:
       - 8989:8989
     healthcheck:
