@@ -1,6 +1,16 @@
 ---
 - hosts: home
+  vars_files:
+    - "common.vars.yml"
+    - "home.vars.yml"
   roles:
+    - role: common
+    # https://galaxy.ansible.com/ui/standalone/roles/mashimom/oh-my-zsh/install/
+    - role: mashimom.oh-my-zsh
+      ohmyzsh_theme: "bureau"
+    - role: docker
+      tag:
+        - docker 
     - role: home
       tag:
-        - home 
+        - home

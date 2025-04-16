@@ -30,24 +30,7 @@ oidc_pgadmin_client_secret: <oidc_client_secret>
 #####################################################################
 
 #####################################################################
-# Traccar Configuration Secrets
-#####################################################################
-traccar_db_user: <db_user_name>
-traccar_db_password: <db_password>
-traccar_url: <base_url> - traccar.domain.org
-# OIDC Configuration
-traccar_client_id: <oidc_client_id>
-traccar_client_secret: <oidc_client_secret>
-#####################################################################
-
-#####################################################################
-# Plex Configuration Secrets
-#####################################################################
-plex_claim_token: <fill in token from plex>
-
-#####################################################################
 # Traefik Configuration Secrets
 #####################################################################
 cf_dns_api_token: <fill in token from cloudflare>
-
 #####################################################################
