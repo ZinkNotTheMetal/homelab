@@ -5,3 +5,4 @@
 - import_tasks: setup-networks.yml
   when: extended_networking == true
  
+- import_tasks: watchtower.yml
