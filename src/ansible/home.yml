@@ -2,6 +2,7 @@
 - hosts: home
   vars_files:
     - "common.vars.yml"
+    - "domain.vars.yml"
     - "home.vars.yml"
   vars:
     extended_networking: true
