@@ -3,6 +3,8 @@
   vars_files:
     - "common.vars.yml"
     - "home.vars.yml"
+  vars:
+    extended_networking: true
   roles:
     - role: common
     # https://galaxy.ansible.com/ui/standalone/roles/mashimom/oh-my-zsh/install/
