@@ -33,13 +33,6 @@ pgadmin_container_ip: 192.168.88.40
 docker_data_portainer: "{{ docker_application_folder }}/portainer"
 portainer_container_ip: 192.168.88.50
 ###########################################################################
-# Traccar Configuration
-###########################################################################
-docker_data_traccar: "{{ docker_application_folder }}/traccar"
-traccar_container_ip: 192.168.88.60
-traccar_db_container_ip: 192.168.88.61
-traccar_db_name: traccar
-###########################################################################
 # Tautulli Configuration
 ###########################################################################
 docker_data_tautulli: "{{ docker_application_folder }}/tautulli"
