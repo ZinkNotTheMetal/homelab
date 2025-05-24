@@ -3,7 +3,7 @@ docker_application_folder: /home
 ###########################################################################
 # Traccar Configuration
 ###########################################################################
-docker_data_traccar: "{{ docker_application_folder }}/traccar"
+docker_data_traccar: "/home/william/.docker/traccar"
 traccar_container_ip: 192.168.101.10
 traccar_db_container_ip: 192.168.101.11
 traccar_db_name: traccar
