@@ -5,6 +5,8 @@
 
 - import_tasks: mount-drives.yml
 
+- import_tasks: flaresolverr.yml
+
 - import_tasks: prowlarr.yml
 
 - import_tasks: transmission.yml
