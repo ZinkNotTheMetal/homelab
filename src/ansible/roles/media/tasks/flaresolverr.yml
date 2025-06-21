@@ -1,0 +1,61 @@
+- name: Run 'Flaresolverr' - Docker Container
+  when: extended_networking == true
+  docker_container:
+    name: flaresolverr 
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    restart_policy: unless-stopped
+    pull: true
+    privileged: true
+    networks:
+      - name: docker_ipvlan
+        ipv4_address: "{{ flaresolverr_container_ip }}"
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      VERSION: "docker"
+      TZ: "{{ time_zone }}"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    healthcheck:
+      test: ["CMD", "curl", "-kL", "http://localhost:8191"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "true"
+      traefik.http.routers.prowlarr.entrypoints: "websecure,web"
+      traefik.http.routers.prowlarr.tls: "true"
+      traefik.http.routers.prowlarr.rule: "Host(`prowlarr.{{ domain_name }}`)"
+      traefik.http.routers.prowlarr.service: "prowlarr"
+      traefik.http.services.prowlarr.loadBalancer.server.port: "8191"
+      traefik.http.routers.prowlarr.tls.certresolver: "letsencrypt"
+
+- name: Run 'Flaresolverr' - Docker Container
+  when: extended_networking != true
+  docker_container:
+    name: flaresolverr
+    image: ghcr.io/flaresolverr/flaresolverr:latest 
+    restart_policy: unless-stopped
+    pull: true
+    privileged: true
+    ports:
+      - 8191:8191
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      VERSION: "docker"
+      TZ: "{{ time_zone }}"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    healthcheck:
+      test: ["CMD", "curl", "-kL", "http://localhost:8191"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
