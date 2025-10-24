@@ -3,6 +3,12 @@
 # Documentation: https://www.plex.tv
 # Purpose: Host Plex media center on my network to watch TV / Movies I have ripped from DVD's
 
+- name: "Install nfs-common"
+  become: true
+  apt:
+    name: nfs-common
+    state: latest
+
 - name: Ensure '/mnt/nas' is created
   become: true
   file:
@@ -31,7 +37,6 @@
 # 4. Right click and hit Edit
 # 5. Go to the NFS permissions Tab
 # 6. Add hostname of the server
-
 - name: Mount 'Movies'
   become: true
   mount:
