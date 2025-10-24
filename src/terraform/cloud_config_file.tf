@@ -36,6 +36,9 @@ resource "proxmox_virtual_environment_file" "cloud_config_file" {
       - openssh-server
       - sudo
       - htop
+      - git
+      - vim
+      - nfs
     
     write_files:
       - path: /etc/cloud/cloud.cfg.d/99-custom.cfg
