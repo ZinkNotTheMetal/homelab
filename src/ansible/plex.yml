@@ -1,0 +1,13 @@
+---
+- hosts: plex
+  vars_files:
+    - "common.vars.yml"
+    - "docker.vars.yml"
+    - "plex.vars.yml"
+    - "domain.vars.yml"
+  roles:
+    - role: common
+    - role: docker
+    - role: plex
+      tag:
+        - plex
