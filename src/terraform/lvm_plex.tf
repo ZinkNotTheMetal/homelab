@@ -63,7 +63,7 @@ resource "proxmox_virtual_environment_vm" "plex_vm" {
 
     user_account {
       username = "william"
-      keys     = [trimspace(data.local_file.ssh_public_key.content)]
+      keys     = [trimspace(data.local_file.mac_ssh_public_key.content)]
     }
 
     user_data_file_id = proxmox_virtual_environment_file.cloud_config_file["plex"].id

@@ -33,7 +33,6 @@ resource "proxmox_virtual_environment_vm" "media_management_vm" {
 
   memory {
     dedicated = local.media_vm_memory_mb
-    floating  = local.media_vm_memory_mb
   }
 
   disk {
