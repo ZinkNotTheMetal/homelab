@@ -1,5 +1,7 @@
 locals {
+  proxmox_node_name = "proxmox001"
   vm_network_bridge = "vmbr1"
+  default_username  = "william"
 
   datastores = {
     vm_raid_storage_id = "swat1"

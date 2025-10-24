@@ -1,12 +1,12 @@
 locals {
-  ansible_purpose      = "ansible"
+  ansible_hostname     = "ansible"
   ansible_vm_cpu_cores = 2
   ansible_vm_memory_mb = 2048
   ansible_disk_size_gb = 10
 }
 
 resource "proxmox_virtual_environment_vm" "ansible_vm" {
-  name        = "${local.ansible_purpose}"
+  name        = local.ansible_hostname
   description = "Ansible Host Server - Managed by Terraform"
   tags        = ["debian", "ansible"]
 
@@ -34,16 +34,13 @@ resource "proxmox_virtual_environment_vm" "ansible_vm" {
     dedicated = local.ansible_vm_memory_mb
   }
 
-  cdrom {
-    file_id   = proxmox_virtual_environment_download_file.debian_12_img.id
-    interface = "ide3"
-  }
-
   disk {
     datastore_id = local.datastores.vm_raid_storage_id
     interface    = "scsi0"
     size         = local.ansible_disk_size_gb
   }
+
+  boot_order = ["scsi0", "net0"]
 
   network_device {
     bridge  = local.vm_network_bridge
@@ -54,12 +51,6 @@ resource "proxmox_virtual_environment_vm" "ansible_vm" {
     type = "l26"
   }
 
-  # audio_device {
-  #   driver = "spice"
-  # }
-
   serial_device {}
-
-  boot_order = ["scsi0", "ide3", "net0"]
 
 }

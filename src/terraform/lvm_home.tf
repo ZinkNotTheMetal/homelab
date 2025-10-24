@@ -1,23 +1,22 @@
 locals {
-  home_purpose      = "home"
+  home_hostname     = "home"
   home_vm_cpu_cores = 2
   home_vm_memory_mb = 6144
-  home_disk_size_gb = 100
+  home_disk_size_gb = 130
 }
 
 resource "proxmox_virtual_environment_vm" "home_vm" {
-  name        = "${local.home_purpose}"
+  name        = local.home_hostname
+  vm_id       = 104
   description = "SmartHome Linux VM - Managed by Terraform"
   tags        = ["debian", "home"]
 
   node_name = var.proxmox_name
 
   agent {
-    # read 'Qemu guest agent' section, change to true only when ready
-    enabled = true 
+    enabled = true
   }
 
-  # if agent is not enabled, the VM may not be able to shutdown properly, and may need to be forced off
   stop_on_destroy = true
 
   startup {
@@ -33,12 +32,6 @@ resource "proxmox_virtual_environment_vm" "home_vm" {
 
   memory {
     dedicated = local.home_vm_memory_mb
-    floating = local.home_vm_memory_mb
-  }
-
-  cdrom {
-    file_id   = proxmox_virtual_environment_download_file.debian_12_img.id
-    interface = "ide3"
   }
 
   disk {
@@ -57,6 +50,16 @@ resource "proxmox_virtual_environment_vm" "home_vm" {
   }
 
   serial_device {}
+
+  usb {
+    host = "1-1.2"
+    usb3 = false
+  }
+
+  usb {
+    host = "1-10"
+    usb3 = false
+  }
 
   boot_order = ["scsi0", "ide3", "net0"]
 

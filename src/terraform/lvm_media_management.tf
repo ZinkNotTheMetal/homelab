@@ -1,12 +1,13 @@
 locals {
-  media_purpose      = "media"
+  media_mgt_hostname = "media"
   media_vm_cpu_cores = 2
   media_vm_memory_mb = 4096
   media_disk_size_gb = 10
 }
 
 resource "proxmox_virtual_environment_vm" "media_management_vm" {
-  name        = "${local.media_purpose}"
+  name        = local.media_mgt_hostname
+  vm_id       = 102
   description = "Media Management Server - Managed by Terraform"
   tags        = ["debian", "media"]
 
@@ -14,7 +15,7 @@ resource "proxmox_virtual_environment_vm" "media_management_vm" {
 
   agent {
     # read 'Qemu guest agent' section, change to true only when ready
-    enabled = true 
+    enabled = true
   }
   # if agent is not enabled, the VM may not be able to shutdown properly, and may need to be forced off
   stop_on_destroy = true
@@ -32,12 +33,7 @@ resource "proxmox_virtual_environment_vm" "media_management_vm" {
 
   memory {
     dedicated = local.media_vm_memory_mb
-    floating = local.media_vm_memory_mb
-  }
-
-  cdrom {
-    file_id   = proxmox_virtual_environment_download_file.debian_12_img.id
-    interface = "ide3"
+    floating  = local.media_vm_memory_mb
   }
 
   disk {
@@ -57,6 +53,6 @@ resource "proxmox_virtual_environment_vm" "media_management_vm" {
 
   serial_device {}
 
-  boot_order = ["scsi0", "ide3", "net0"]
+  boot_order = ["scsi0", "net0"]
 
 }
