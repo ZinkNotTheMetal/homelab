@@ -1,22 +1,21 @@
 locals {
-  plex_purpose      = "plex"
+  plex_hostname     = "plex"
   plex_vm_cpu_cores = 4
   plex_vm_memory_mb = 12488
-  plex_disk_size_gb = 10
+  plex_disk_size_gb = 75
 }
 
-resource "proxmox_virtual_environment_vm" "media_vm" {
-  name        = "${local.plex_purpose}"
+resource "proxmox_virtual_environment_vm" "plex_vm" {
+  name        = local.plex_hostname
+  vm_id       = 101
   description = "Plex Server - Managed by Terraform"
   tags        = ["debian", "plex"]
 
-  node_name = var.proxmox_name
-
   agent {
-    # read 'Qemu guest agent' section, change to true only when ready
     enabled = true
   }
-  # if agent is not enabled, the VM may not be able to shutdown properly, and may need to be forced off
+
+  node_name       = var.proxmox_name
   stop_on_destroy = true
 
   startup {
@@ -25,8 +24,6 @@ resource "proxmox_virtual_environment_vm" "media_vm" {
     down_delay = "60"
   }
 
-  machine = "q35,viommu=virtio"
-
   cpu {
     cores = local.plex_vm_cpu_cores
     type  = "x86-64-v2-AES" # recommended for modern CPUs
@@ -34,17 +31,17 @@ resource "proxmox_virtual_environment_vm" "media_vm" {
 
   memory {
     dedicated = local.plex_vm_memory_mb
-    floating = local.plex_vm_memory_mb
   }
 
-  cdrom {
-    file_id   = proxmox_virtual_environment_download_file.debian_12_img.id
-    interface = "ide3"
-  }
+  boot_order = ["scsi0"]
 
+  # Main disk - using the uploaded cloud image
   disk {
     datastore_id = local.datastores.vm_raid_storage_id
     interface    = "scsi0"
+    file_id      = "${local.datastores.synology_proxmox}:import/debian-13-genericcloud-amd64.qcow2"
+    file_format  = "raw"
+    discard      = "on"
     size         = local.plex_disk_size_gb
   }
 
@@ -53,16 +50,27 @@ resource "proxmox_virtual_environment_vm" "media_vm" {
     vlan_id = local.vlan_ids.iot_open
   }
 
-  operating_system {
-    type = "l26"
-  }
-
-  # audio_device {
-  #   driver = "spice"
-  # }
-
   serial_device {}
 
-  boot_order = ["scsi0", "ide3", "net0"]
+  initialization {
+    datastore_id = local.datastores.vm_raid_storage_id
 
+    ip_config {
+      ipv4 {
+        address = "dhcp"
+      }
+    }
+
+    user_account {
+      username = "william"
+      keys     = [trimspace(data.local_file.ssh_public_key.content)]
+    }
+
+    user_data_file_id = proxmox_virtual_environment_file.cloud_config_file["plex"].id
+
+  }
+}
+
+output "plex_ipv4_address" {
+  value = try(proxmox_virtual_environment_vm.plex_vm.ipv4_addresses[1][0], "IP N/A - Enable Agent after startup")
 }
