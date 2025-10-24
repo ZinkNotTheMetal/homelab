@@ -52,7 +52,7 @@
 
 - name: Run 'plex' - Docker Container
   when: extended_networking == true
-  docker_container:
+  community.docker.docker_container:
     name: plex
     image: lscr.io/linuxserver/plex
     restart_policy: unless-stopped
@@ -68,7 +68,7 @@
       - "/mnt/nas/movies:/Movies"
       - "/mnt/nas/tv:/TV"
     devices: # More info: https://github.com/plexinc/pms-docker?tab=readme-ov-file#intel-quick-sync-hardware-transcoding-support
-    # AMD Info if needed: https://www.reddit.com/r/unRAID/comments/14x5typ/comment/ktydijf/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+      # AMD Info if needed: https://www.reddit.com/r/unRAID/comments/14x5typ/comment/ktydijf/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
       - /dev/dri:/dev/dri
     env:
       PUID: "1000"
@@ -88,7 +88,7 @@
 
 - name: Run 'plex' - Docker Container
   when: extended_networking != true
-  docker_container:
+  community.docker.docker_container:
     name: plex
     image: lscr.io/linuxserver/plex
     restart_policy: unless-stopped
@@ -108,7 +108,7 @@
       - "/mnt/nas/movies:/Movies"
       - "/mnt/nas/tv:/TV"
     devices: # More info: https://github.com/plexinc/pms-docker?tab=readme-ov-file#intel-quick-sync-hardware-transcoding-support
-    # AMD Info if needed: https://www.reddit.com/r/unRAID/comments/14x5typ/comment/ktydijf/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+      # AMD Info if needed: https://www.reddit.com/r/unRAID/comments/14x5typ/comment/ktydijf/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
       - /dev/dri:/dev/dri
     env:
       PUID: "1000"

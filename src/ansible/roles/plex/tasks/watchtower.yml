@@ -4,7 +4,7 @@
 # Purpose: To automatically upgrade docker containers with the label 'com.centurylinklabs.watchtower.enable: "true"'
 
 - name: Run 'Watchtower' - Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: watchtower
     image: containrrr/watchtower
     restart_policy: unless-stopped

@@ -6,9 +6,17 @@
     - "plex.vars.yml"
     - "domain.vars.yml"
   roles:
-    # https://galaxy.ansible.com/ui/standalone/roles/mashimom/oh-my-zsh/install/
-    - role: mashimom.oh-my-zsh
-      ohmyzsh_theme: "bureau"
+    - role: gantsign.oh-my-zsh
+      users:
+        - username: "{{ user_name }}"
+          oh_my_zsh:
+            theme: bureau
+            plugins:
+              - git
+              - debian
+              - docker
+              - zsh-syntax-highlighting
+              - zsh-autosuggestions
     - role: common
     - role: docker
     - role: plex
