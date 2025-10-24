@@ -34,8 +34,3 @@
     #     to_ip: any
     #     comment: Block internet access for ipvlan_no_internet network
     #     direction: out
-
-- name: Create custom bridge docker network
-  become: true
-  docker_network:
-    name: curidge

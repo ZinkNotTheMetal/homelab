@@ -1,8 +1,13 @@
 ---
-# Install Debian flavor of Docker (followed recommended steps) 
+# Install Debian flavor of Docker (followed recommended steps)
 - import_tasks: install.yml
 
 - import_tasks: setup-networks.yml
   when: extended_networking == true
- 
+
+- name: Create custom bridge docker network
+  become: true
+  docker_network:
+    name: curidge
+
 - import_tasks: watchtower.yml
