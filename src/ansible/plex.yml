@@ -6,8 +6,11 @@
     - "plex.vars.yml"
     - "domain.vars.yml"
   roles:
+    - stat:
+        path: "/home/{{ ansible-user }}/.oh-my-zsh"
+        register: ohmyzsh_dir
     - role: mashimom.oh-my-zsh
-      when: not ansible_facts['user_dir'] is defined or not (ansible_facts['user_dir'] + '/.oh-my-zsh') | path_exists
+      when: not ohmyzsh_dir.stat.exists
       ohmyzsh_theme: "bureau"
     - role: common
     - role: docker
