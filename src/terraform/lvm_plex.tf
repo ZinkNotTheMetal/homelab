@@ -84,6 +84,14 @@ resource "proxmox_virtual_environment_vm" "plex_vm" {
   }
 }
 
+// If Docker fails to start:
+
+// Turnoff apparmor on the VM
+// sudo systemctl edit docker
+//  [Service]
+//  Environment=container="disable apparmor"
+// sudo systemctl restart docker
+
 output "plex_ipv4_address" {
   value = try(proxmox_virtual_environment_vm.plex_vm.ipv4_addresses[1][0], "IP N/A - Retry apply after Cloud-Init setup")
 }
