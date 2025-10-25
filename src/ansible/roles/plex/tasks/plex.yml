@@ -112,9 +112,9 @@
       - "/etc/timezone:/etc/timezone:ro"
       - "/mnt/nas/movies:/Movies"
       - "/mnt/nas/tv:/TV"
-    devices: # More info: https://github.com/plexinc/pms-docker?tab=readme-ov-file#intel-quick-sync-hardware-transcoding-support
-      # AMD Info if needed: https://www.reddit.com/r/unRAID/comments/14x5typ/comment/ktydijf/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-      - /dev/dri:/dev/dri
+    # devices: # More info: https://github.com/plexinc/pms-docker?tab=readme-ov-file#intel-quick-sync-hardware-transcoding-support
+    #   # AMD Info if needed: https://www.reddit.com/r/unRAID/comments/14x5typ/comment/ktydijf/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+    #   - /dev/dri:/dev/dri
     env:
       PUID: "1000"
       PGID: "1000"

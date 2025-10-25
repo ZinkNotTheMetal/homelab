@@ -6,18 +6,9 @@
     - "plex.vars.yml"
     - "domain.vars.yml"
   roles:
-    - role: gantsign.oh-my-zsh
-      users:
-        - username: "{{ user_name }}"
-          oh_my_zsh:
-            theme: bureau
-            plugins:
-              - git
-              - debian
-              - docker
-              - zsh-syntax-highlighting
-              - zsh-autosuggestions
     - role: common
+    - role: mashimom.oh-my-zsh
+      ohmyzsh_theme: "bureau"
     - role: docker
     - role: plex
       tag:
