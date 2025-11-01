@@ -22,9 +22,9 @@ resource "proxmox_virtual_environment_file" "cloud_config_file" {
         groups: [sudo, users]
         shell: /bin/bash
         ssh_authorized_keys:
-          - ${trimspace(data.local_file.ssh_public_key.content)}
+          - ${trimspace(data.local_file.mac_ssh_public_key.content)}
+          - ${trimspace(data.local_file.ansible_ssh_public_key.content)}
         sudo: ALL=(ALL) NOPASSWD:ALL
-        lock_passwd: false
     
     package_update: true
     package_upgrade: true
@@ -35,6 +35,10 @@ resource "proxmox_virtual_environment_file" "cloud_config_file" {
       - curl
       - openssh-server
       - sudo
+      - htop
+      - git
+      - vim
+      - nfs
     
     write_files:
       - path: /etc/cloud/cloud.cfg.d/99-custom.cfg

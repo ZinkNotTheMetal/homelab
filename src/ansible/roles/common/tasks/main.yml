@@ -15,19 +15,9 @@
     owner: root
     group: root
 
-- import_tasks: generate-ssh-keypair.yml
-
-# Install apps & software with apt
-- import_tasks: apt-install.yml
-
 ## This configures everything for .zsh and your profile
 ## This requires {{ ansible_user }} to be your linux login username
 ## Requirements:
 ## - templates/.zprofile
 ## - files/aliasrc
 - import_tasks: shell-config.yml
-
-## This requires {{ ansible_user }} to be your linux login username
-## Requirements:
-## - templates/sshd_config
-- import_tasks: ssh-config.yml

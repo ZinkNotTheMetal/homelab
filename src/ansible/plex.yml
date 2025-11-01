@@ -1,0 +1,21 @@
+---
+- hosts: plex
+  vars_files:
+    - "common.vars.yml"
+    - "docker.vars.yml"
+    - "plex.vars.yml"
+    - "domain.vars.yml"
+  pre_tasks:
+    - name: Check if oh-my-zsh is installed
+      stat:
+        path: "/home/{{ ansible_user }}/.oh-my-zsh"
+      register: ohmyzsh_dir
+  roles:
+    - role: mashimom.oh-my-zsh
+      when: not ohmyzsh_dir.stat.exists
+      ohmyzsh_theme: "bureau"
+    - role: common
+    - role: docker
+    - role: plex
+      tags:
+        - plex

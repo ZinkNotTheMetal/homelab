@@ -3,6 +3,12 @@
 # Documentation: https://www.plex.tv
 # Purpose: Host Plex media center on my network to watch TV / Movies I have ripped from DVD's
 
+- name: "Install nfs-common"
+  become: true
+  apt:
+    name: nfs-common
+    state: latest
+
 - name: Ensure '/mnt/nas' is created
   become: true
   file:
@@ -31,7 +37,6 @@
 # 4. Right click and hit Edit
 # 5. Go to the NFS permissions Tab
 # 6. Add hostname of the server
-
 - name: Mount 'Movies'
   become: true
   mount:
@@ -52,7 +57,7 @@
 
 - name: Run 'plex' - Docker Container
   when: extended_networking == true
-  docker_container:
+  community.docker.docker_container:
     name: plex
     image: lscr.io/linuxserver/plex
     restart_policy: unless-stopped
@@ -67,13 +72,14 @@
       - "/etc/timezone:/etc/timezone:ro"
       - "/mnt/nas/movies:/Movies"
       - "/mnt/nas/tv:/TV"
-    devices: # More info: https://github.com/plexinc/pms-docker?tab=readme-ov-file#intel-quick-sync-hardware-transcoding-support
-    # AMD Info if needed: https://www.reddit.com/r/unRAID/comments/14x5typ/comment/ktydijf/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-      - /dev/dri:/dev/dri
+    # devices: # More info: https://github.com/plexinc/pms-docker?tab=readme-ov-file#intel-quick-sync-hardware-transcoding-support
+    #   # AMD Info if needed: https://www.reddit.com/r/unRAID/comments/14x5typ/comment/ktydijf/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+    #   - /dev/dri:/dev/dri
     env:
       PUID: "1000"
       PGID: "1000"
       VERSION: "docker"
+      TZ: "{{ time_zone }}"
       # To Generate a new Plex Claim Token:
       #  https://www.plex.tv/claim/
       PLEX_CLAIM: "{{ plex_claim_token }}"
@@ -88,7 +94,7 @@
 
 - name: Run 'plex' - Docker Container
   when: extended_networking != true
-  docker_container:
+  community.docker.docker_container:
     name: plex
     image: lscr.io/linuxserver/plex
     restart_policy: unless-stopped
@@ -104,16 +110,16 @@
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "{{ docker_data_plex }}/config:/config"
       - "{{ docker_data_plex }}/transcode:/transcode"
-      - "/etc/timezone:/etc/timezone:ro"
       - "/mnt/nas/movies:/Movies"
       - "/mnt/nas/tv:/TV"
-    devices: # More info: https://github.com/plexinc/pms-docker?tab=readme-ov-file#intel-quick-sync-hardware-transcoding-support
-    # AMD Info if needed: https://www.reddit.com/r/unRAID/comments/14x5typ/comment/ktydijf/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-      - /dev/dri:/dev/dri
+    # devices: # More info: https://github.com/plexinc/pms-docker?tab=readme-ov-file#intel-quick-sync-hardware-transcoding-support
+    #   # AMD Info if needed: https://www.reddit.com/r/unRAID/comments/14x5typ/comment/ktydijf/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+    #   - /dev/dri:/dev/dri
     env:
       PUID: "1000"
       PGID: "1000"
       VERSION: "docker"
+      TZ: "{{ time_zone }}"
       # To Generate a new Plex Claim Token:
       #  https://www.plex.tv/claim/
       PLEX_CLAIM: "{{ plex_claim_token }}"

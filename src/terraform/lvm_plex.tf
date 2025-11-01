@@ -11,6 +11,10 @@ resource "proxmox_virtual_environment_vm" "plex_vm" {
   description = "Plex Server - Managed by Terraform"
   tags        = ["debian", "plex"]
 
+  // Plex Specific settings
+  machine = "q35"
+  bios    = "ovmf"
+
   agent {
     enabled = true
   }
@@ -26,7 +30,7 @@ resource "proxmox_virtual_environment_vm" "plex_vm" {
 
   cpu {
     cores = local.plex_vm_cpu_cores
-    type  = "x86-64-v2-AES" # recommended for modern CPUs
+    type  = "host" # Better for GPU passthrough
   }
 
   memory {
@@ -52,6 +56,15 @@ resource "proxmox_virtual_environment_vm" "plex_vm" {
 
   serial_device {}
 
+
+  hostpci {
+    device = "hostpci0"
+    id     = "0000:00:02.0"
+    pcie   = true
+    xvga   = false
+    rombar = true
+  }
+
   initialization {
     datastore_id = local.datastores.vm_raid_storage_id
 
@@ -63,7 +76,7 @@ resource "proxmox_virtual_environment_vm" "plex_vm" {
 
     user_account {
       username = "william"
-      keys     = [trimspace(data.local_file.ssh_public_key.content)]
+      keys     = [trimspace(data.local_file.mac_ssh_public_key.content)]
     }
 
     user_data_file_id = proxmox_virtual_environment_file.cloud_config_file["plex"].id
@@ -71,6 +84,14 @@ resource "proxmox_virtual_environment_vm" "plex_vm" {
   }
 }
 
+// If Docker fails to start:
+
+// Turnoff apparmor on the VM
+// sudo systemctl edit docker
+//  [Service]
+//  Environment=container="disable apparmor"
+// sudo systemctl restart docker
+
 output "plex_ipv4_address" {
-  value = try(proxmox_virtual_environment_vm.plex_vm.ipv4_addresses[1][0], "IP N/A - Enable Agent after startup")
+  value = try(proxmox_virtual_environment_vm.plex_vm.ipv4_addresses[1][0], "IP N/A - Retry apply after Cloud-Init setup")
 }
