@@ -1,0 +1,54 @@
+---
+# IngressRoute for home.zinkzone.tech
+# Routes traffic to your home VM (192.168.10.246 with ipvlan 192.168.101.2)
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: home-zinkzone
+  namespace: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`home.zinkzone.tech`)
+      kind: Rule
+      services:
+        - name: home-vm-service
+          port: 80
+  tls:
+    certResolver: cloudflare
+    domains:
+      - main: "*.zinkzone.tech"
+        sans:
+          - "zinkzone.tech"
+---
+# External service pointing to home VM
+# This creates a Service that points to an external IP
+apiVersion: v1
+kind: Service
+metadata:
+  name: home-vm-service
+  namespace: traefik
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+---
+# Endpoints for external service
+# Points to the home VM's Docker ipvlan IP
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: home-vm-service
+  namespace: traefik
+subsets:
+  - addresses:
+      # Home VM Docker ipvlan IP
+      - ip: 192.168.101.2
+    ports:
+      - name: http
+        port: 80
+        protocol: TCP
