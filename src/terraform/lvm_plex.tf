@@ -1,7 +1,7 @@
 locals {
   plex_hostname     = "plex"
   plex_vm_cpu_cores = 4
-  plex_vm_memory_mb = 12488
+  plex_vm_memory_mb = 12288 # 12GB
   plex_disk_size_gb = 75
 }
 

@@ -113,32 +113,3 @@
         name: k3s-agent
         state: started
         enabled: yes
-
-# ============================================================================
-# POST-INSTALLATION
-# ============================================================================
-- name: Create kubeconfig directory for user
-  file:
-    path: "/home/{{ ansible_user }}/.kube"
-    state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: '0755'
-
-- name: Copy kubeconfig for user access (control plane only)
-  when: k3s_role == "server"
-  become: true
-  copy:
-    src: /etc/rancher/k3s/k3s.yaml
-    dest: "/home/{{ ansible_user }}/.kube/config"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: '0600'
-    remote_src: yes
-
-- name: Update kubeconfig server address (control plane only)
-  when: k3s_role == "server"
-  replace:
-    path: "/home/{{ ansible_user }}/.kube/config"
-    regexp: 'https://127.0.0.1:6443'
-    replace: "https://{{ ansible_default_ipv4.address }}:6443"

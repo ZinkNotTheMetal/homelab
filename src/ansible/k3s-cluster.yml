@@ -8,6 +8,46 @@
 # 3. Install K3S workers and join them to the cluster
 # 4. Apply taint to control plane
 
+- name: Pre-flight Check - Display Target Hosts
+  hosts: k3s_prod
+  gather_facts: no
+  tasks:
+    - name: Display all target hosts
+      debug:
+        msg:
+          - "=========================================="
+          - "K3S CLUSTER INSTALLATION PRE-FLIGHT CHECK"
+          - "=========================================="
+          - ""
+          - "The following hosts will be configured:"
+          - ""
+          - "CONTROL PLANE:"
+          - "  {{ groups['k3s_control_plane'] | map('extract', hostvars, 'ansible_host') | list | join(', ') }}"
+          - ""
+          - "WORKERS:"
+          - "  {{ groups['k3s_workers'] | map('extract', hostvars, 'ansible_host') | list | join(', ') }}"
+          - ""
+          - "TOTAL NODES: {{ groups['k3s_prod'] | length }}"
+          - ""
+          - "Actions that will be performed:"
+          - "  1. Run 'common' role (OS config, packages, users)"
+          - "  2. Install K3S server on control plane"
+          - "  3. Install K3S agents on workers"
+          - "  4. Join workers to cluster"
+          - "  5. Apply taint to control plane"
+          - ""
+          - "=========================================="
+      run_once: true
+
+    - name: Pause for confirmation
+      pause:
+        prompt: |
+          
+          ⚠️  VERIFY THE IP ADDRESSES ABOVE ARE CORRECT! ⚠️
+          
+          Press ENTER to continue or Ctrl+C to abort
+      run_once: true
+
 - name: Setup K3S Control Plane
   hosts: k3s_control_plane
   vars_files:
@@ -16,7 +56,14 @@
   tasks:
     - name: Display control plane setup
       debug:
-        msg: "Setting up K3S control plane on {{ inventory_hostname }}"
+        msg: 
+          - "=========================================="
+          - "Installing K3S Control Plane"
+          - "=========================================="
+          - "Hostname: {{ inventory_hostname }}"
+          - "IP Address: {{ ansible_host }}"
+          - "User: {{ ansible_user }}"
+          - "=========================================="
     
     - name: Include common role
       include_role:
@@ -53,7 +100,15 @@
   tasks:
     - name: Display worker setup
       debug:
-        msg: "Setting up K3S worker on {{ inventory_hostname }}"
+        msg: 
+          - "=========================================="
+          - "Installing K3S Worker Node"
+          - "=========================================="
+          - "Hostname: {{ inventory_hostname }}"
+          - "IP Address: {{ ansible_host }}"
+          - "User: {{ ansible_user }}"
+          - "Joining: {{ hostvars[groups['k3s_control_plane'][0]]['cluster_server_url'] }}"
+          - "=========================================="
     
     - name: Include common role
       include_role:

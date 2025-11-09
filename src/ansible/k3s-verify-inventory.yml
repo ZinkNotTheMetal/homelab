@@ -1,0 +1,63 @@
+---
+# Verify K3S Inventory - Shows exactly what hosts will be targeted
+# Run this to double-check before running the actual installation
+
+- name: Verify K3S Cluster Inventory
+  hosts: k3s_prod
+  gather_facts: yes
+  
+  tasks:
+    - name: Display detailed host information
+      debug:
+        msg:
+          - "=========================================="
+          - "Host: {{ inventory_hostname }}"
+          - "IP Address: {{ ansible_host }}"
+          - "User: {{ ansible_user }}"
+          - "Port: {{ ansible_port }}"
+          - "Actual IP: {{ ansible_default_ipv4.address | default('N/A') }}"
+          - "OS: {{ ansible_distribution | default('N/A') }} {{ ansible_distribution_version | default('') }}"
+          - "Groups: {{ group_names | join(', ') }}"
+          - "=========================================="
+
+    - name: Test sudo access
+      become: true
+      command: whoami
+      register: sudo_test
+      changed_when: false
+
+    - name: Display sudo test result
+      debug:
+        msg: "✓ Sudo access works (running as: {{ sudo_test.stdout }})"
+
+- name: Summary
+  hosts: localhost
+  gather_facts: no
+  
+  tasks:
+    - name: Display inventory summary
+      debug:
+        msg:
+          - ""
+          - "=========================================="
+          - "K3S CLUSTER INVENTORY SUMMARY"
+          - "=========================================="
+          - ""
+          - "CONTROL PLANE NODES ({{ groups['k3s_control_plane'] | length }}):"
+          - "{% for host in groups['k3s_control_plane'] %}"
+          - "  - {{ host }}: {{ hostvars[host]['ansible_host'] }}"
+          - "{% endfor %}"
+          - ""
+          - "WORKER NODES ({{ groups['k3s_workers'] | length }}):"
+          - "{% for host in groups['k3s_workers'] %}"
+          - "  - {{ host }}: {{ hostvars[host]['ansible_host'] }}"
+          - "{% endfor %}"
+          - ""
+          - "TOTAL NODES: {{ groups['k3s_prod'] | length }}"
+          - ""
+          - "=========================================="
+          - ""
+          - "If these IPs look correct, run:"
+          - "  pnpm ansible:k3s"
+          - ""
+          - "=========================================="
