@@ -1,0 +1,52 @@
+---
+# Install K3S Worker Nodes
+# Run this AFTER control plane is installed
+# 
+# Usage:
+#   ansible-playbook -K -i src/ansible/inventory/hosts src/ansible/k3s-workers.yml \
+#     -e k3s_token="<token-from-control-plane>" \
+#     -e k3s_server_url="https://192.168.10.161:6443"
+
+- hosts: k3s_workers
+  vars_files:
+    - "common.vars.yml"
+  
+  pre_tasks:
+    - name: Verify required variables
+      assert:
+        that:
+          - k3s_token is defined
+          - k3s_token != ""
+          - k3s_server_url is defined
+          - k3s_server_url != ""
+        fail_msg: |
+          ERROR: Missing required variables!
+          
+          You must provide:
+            -e k3s_token="<token-from-control-plane>"
+            -e k3s_server_url="https://<control-plane-ip>:6443"
+          
+          Get the token by running on control plane:
+            sudo cat /var/lib/rancher/k3s/server/node-token
+
+    - name: Display target hosts
+      debug:
+        msg: "Installing K3S worker on {{ inventory_hostname }}, joining {{ k3s_server_url }}"
+  
+  roles:
+    - role: common
+      tags:
+        - common
+    
+    - role: k3s
+      tags:
+        - k3s
+      vars:
+        k3s_role: "agent"
+
+  post_tasks:
+    - name: Display next steps
+      debug:
+        msg: 
+          - "✓ K3S worker node installed successfully!"
+          - "Verify on control plane with: kubectl get nodes"

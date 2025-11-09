@@ -1,0 +1,110 @@
+---
+# Complete K3S Cluster Setup
+# This playbook sets up the entire production K3S cluster
+#
+# It will:
+# 1. Configure OS settings on all nodes
+# 2. Install K3S control plane
+# 3. Install K3S workers and join them to the cluster
+# 4. Apply taint to control plane
+
+- name: Setup K3S Control Plane
+  hosts: k3s_control_plane
+  vars_files:
+    - "common.vars.yml"
+  
+  tasks:
+    - name: Display control plane setup
+      debug:
+        msg: "Setting up K3S control plane on {{ inventory_hostname }}"
+    
+    - name: Include common role
+      include_role:
+        name: common
+      tags:
+        - common
+    
+    - name: Include K3S role (server mode)
+      include_role:
+        name: k3s
+      vars:
+        k3s_role: "server"
+        k3s_server_args: "--disable=traefik --disable=servicelb --write-kubeconfig-mode=644 --tls-san={{ ansible_default_ipv4.address }}"
+        k3s_taint_control_plane: true
+      tags:
+        - k3s
+
+    - name: Fetch K3S token for workers
+      become: true
+      slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: control_plane_token
+
+    - name: Set token fact
+      set_fact:
+        cluster_token: "{{ control_plane_token.content | b64decode | trim }}"
+        cluster_server_url: "https://{{ ansible_default_ipv4.address }}:6443"
+
+- name: Setup K3S Worker Nodes
+  hosts: k3s_workers
+  vars_files:
+    - "common.vars.yml"
+  
+  tasks:
+    - name: Display worker setup
+      debug:
+        msg: "Setting up K3S worker on {{ inventory_hostname }}"
+    
+    - name: Include common role
+      include_role:
+        name: common
+      tags:
+        - common
+    
+    - name: Include K3S role (agent mode)
+      include_role:
+        name: k3s
+      vars:
+        k3s_role: "agent"
+        k3s_token: "{{ hostvars[groups['k3s_control_plane'][0]]['cluster_token'] }}"
+        k3s_server_url: "{{ hostvars[groups['k3s_control_plane'][0]]['cluster_server_url'] }}"
+      tags:
+        - k3s
+
+- name: Verify Cluster
+  hosts: k3s_control_plane
+  tasks:
+    - name: Get cluster nodes
+      become: true
+      command: k3s kubectl get nodes -o wide
+      register: cluster_nodes
+      changed_when: false
+
+    - name: Display cluster status
+      debug:
+        msg: "{{ cluster_nodes.stdout_lines }}"
+
+    - name: Success message
+      debug:
+        msg:
+          - "=========================================="
+          - "✓ K3S Production Cluster Setup Complete!"
+          - "=========================================="
+          - ""
+          - "Cluster Details:"
+          - "  Control Plane: {{ ansible_hostname }} ({{ ansible_default_ipv4.address }})"
+          - "  Workers: {{ groups['k3s_workers'] | length }}"
+          - ""
+          - "Next Steps:"
+          - "1. Copy kubeconfig to your workstation:"
+          - "   scp {{ ansible_user }}@{{ ansible_default_ipv4.address }}:~/.kube/config ~/.kube/config-homelab"
+          - ""
+          - "2. Test access:"
+          - "   export KUBECONFIG=~/.kube/config-homelab"
+          - "   kubectl get nodes"
+          - ""
+          - "3. Deploy infrastructure:"
+          - "   - MetalLB (LoadBalancer)"
+          - "   - Traefik (Ingress)"
+          - "   - cert-manager (SSL certs)"
+          - "=========================================="
