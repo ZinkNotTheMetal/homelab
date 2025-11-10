@@ -9,32 +9,67 @@ spec:
   chart:
     spec:
       chart: prowlarr
-      version: "4.5.2"
+      version: "21.0.0"
       sourceRef:
         kind: HelmRepository
-        name: k8s-at-home
+        name: truecharts
         namespace: flux-system
       interval: 12h
 
-  # Helm values to configure Prowlarr
+  # Helm values to configure Prowlarr with TrueCharts
   values:
-    # Image configuration
-    image:
-      repository: linuxserver/prowlarr
-      tag: latest
-      pullPolicy: IfNotPresent
-      # tag: defaults to chart appVersion
+    # Global settings (applies to all containers)
+    global:
+      stopAll: false
 
-    # Environment variables
-    env:
-      TZ: America/New_York
+    # TrueCharts global timezone setting
+    TZ: America/New_York
+
+    # Disable metrics (requires Prometheus Operator CRDs)
+    metrics:
+      main:
+        enabled: false
+        type: servicemonitor
+
+    # Workload configuration
+    workload:
+      main:
+        podSpec:
+          containers:
+            main:
+              # Image configuration
+              imageSelector: image
+              probes:
+                liveness:
+                  enabled: true
+                  type: http
+                  path: /ping
+                  port: 9696
+                readiness:
+                  enabled: true
+                  type: http
+                  path: /ping
+                  port: 9696
+                startup:
+                  enabled: true
+                  type: http
+                  path: /ping
+                  port: 9696
 
     # Service configuration
     service:
       main:
         ports:
-          http:
+          main:
+            protocol: http
             port: 9696
+      flaresolverr:
+        enabled: true
+        ports:
+          flaresolverr:
+            enabled: true
+            protocol: http
+            port: 8191
 
     # Ingress (disabled - using Traefik IngressRoute)
     ingress:
@@ -45,16 +80,25 @@ spec:
     persistence:
       config:
         enabled: true
+        type: pvc
         mountPath: /config
+        size: 512Mi
         storageClass: longhorn
         accessMode: ReadWriteOnce
-        size: 512Mi
 
-    # Resource limits
+    # Security context
+    securityContext:
+      container:
+        runAsNonRoot: false
+        readOnlyRootFilesystem: false
+        runAsUser: 0
+        runAsGroup: 0
+
+    # Resources
     resources:
-      requests:
-        cpu: 100m
-        memory: 256Mi
       limits:
         cpu: 500m
         memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
