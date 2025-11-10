@@ -1,0 +1,121 @@
+---
+# K3S Installation and Configuration
+
+# ============================================================================
+# PREREQUISITES
+# ============================================================================
+- name: Install prerequisites (open-iscsi for Longhorn)
+  import_tasks: prerequisites.yml
+
+- name: Check if K3S is already installed
+  stat:
+    path: /usr/local/bin/k3s
+  register: k3s_binary
+
+- name: Display K3S role
+  debug:
+    msg: "Installing K3S as {{ k3s_role }}"
+
+# ============================================================================
+# CONTROL PLANE INSTALLATION
+# ============================================================================
+- name: Install K3S Server (Control Plane)
+  when: k3s_role == "server"
+  block:
+    - name: Download and install K3S server
+      become: true
+      shell: |
+        curl -sfL https://get.k3s.io | sh -s - server {{ k3s_server_args }}
+      args:
+        creates: /usr/local/bin/k3s
+      environment:
+        INSTALL_K3S_VERSION: "{{ k3s_version | default('') }}"
+
+    - name: Wait for K3S to be ready
+      become: true
+      wait_for:
+        path: /etc/rancher/k3s/k3s.yaml
+        timeout: 120
+
+    - name: Get K3S node token
+      become: true
+      slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: k3s_node_token
+
+    - name: Display node token (save this for workers)
+      debug:
+        msg: "K3S Node Token: {{ k3s_node_token.content | b64decode | trim }}"
+
+    - name: Set fact for node token
+      set_fact:
+        k3s_cluster_token: "{{ k3s_node_token.content | b64decode | trim }}"
+
+    - name: Wait for K3S service to be active
+      become: true
+      systemd:
+        name: k3s
+        state: started
+        enabled: yes
+
+    - name: Verify K3S is running
+      become: true
+      command: k3s kubectl get nodes
+      register: k3s_nodes
+      changed_when: false
+
+    - name: Display cluster nodes
+      debug:
+        var: k3s_nodes.stdout_lines
+
+# ============================================================================
+# TAINT CONTROL PLANE (NoSchedule)
+# ============================================================================
+- name: Apply taint to control plane
+  when: 
+    - k3s_role == "server"
+    - k3s_taint_control_plane | bool
+  become: true
+  shell: |
+    k3s kubectl taint nodes {{ ansible_hostname }} node-role.kubernetes.io/control-plane=true:NoSchedule --overwrite
+  register: taint_result
+  changed_when: "'tainted' in taint_result.stdout or 'modified' in taint_result.stdout"
+  failed_when: false
+
+- name: Display taint result
+  when: 
+    - k3s_role == "server"
+    - k3s_taint_control_plane | bool
+  debug:
+    var: taint_result.stdout
+
+# ============================================================================
+# WORKER NODE INSTALLATION
+# ============================================================================
+- name: Install K3S Agent (Worker Node)
+  when: k3s_role == "agent"
+  block:
+    - name: Verify required variables
+      assert:
+        that:
+          - k3s_server_url is defined
+          - k3s_server_url != ""
+          - k3s_token is defined
+          - k3s_token != ""
+        fail_msg: "k3s_server_url and k3s_token must be set for agent nodes"
+
+    - name: Download and install K3S agent
+      become: true
+      shell: |
+        curl -sfL https://get.k3s.io | K3S_URL={{ k3s_server_url }} K3S_TOKEN={{ k3s_token }} sh -s - agent {{ k3s_agent_args }}
+      args:
+        creates: /usr/local/bin/k3s
+      environment:
+        INSTALL_K3S_VERSION: "{{ k3s_version | default('') }}"
+
+    - name: Wait for K3S agent service to be active
+      become: true
+      systemd:
+        name: k3s-agent
+        state: started
+        enabled: yes

@@ -1,9 +1,12 @@
 resource "proxmox_virtual_environment_file" "cloud_config_file" {
   for_each = {
     plex = local.plex_hostname
-    # Add more VMs here as needed
-    # media = "media-server"
-    # apps = "apps"
+    # Test cluster (single node)
+    k3s-test-cp-1 = local.k3s_test_hostname
+    # Production cluster
+    k3s-prod-cp-1   = local.k3s_prod_cp_hostname
+    k3s-prod-node-1 = "${local.k3s_prod_node_hostname_prefix}-1"
+    k3s-prod-node-2 = "${local.k3s_prod_node_hostname_prefix}-2"
   }
 
   content_type = "snippets"

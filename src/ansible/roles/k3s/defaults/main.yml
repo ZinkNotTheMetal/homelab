@@ -1,0 +1,28 @@
+---
+# K3S Installation Defaults
+
+# K3S version - leave blank for latest
+k3s_version: ""
+
+# K3S role - server (control plane) or agent (worker)
+k3s_role: "agent"
+
+# Control plane server URL (for agents to join)
+k3s_server_url: ""
+
+# K3S token for cluster joining (will be fetched from control plane)
+k3s_token: ""
+
+# Disable built-in components
+k3s_disable_components:
+  - traefik  # We'll install our own Traefik with custom config
+  - servicelb  # We'll use MetalLB instead
+
+# Taint control plane nodes (NoSchedule)
+k3s_taint_control_plane: true
+
+# Additional server args
+k3s_server_args: "--disable=traefik --disable=servicelb --write-kubeconfig-mode=644"
+
+# Additional agent args
+k3s_agent_args: ""

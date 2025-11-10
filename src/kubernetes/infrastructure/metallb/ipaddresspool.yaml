@@ -1,0 +1,26 @@
+---
+# MetalLB IP Address Pool
+# This defines the range of IPs MetalLB can assign to LoadBalancer services
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: homelab-prod-pool
+  namespace: metallb-system
+spec:
+  addresses:
+    # Reserved range: 192.168.11.240 - 192.168.11.250
+    # This is outside the DHCP range (192.168.10.11 - 192.168.10.239)
+    # I changed Unifi Controller to not allow past 11.239, which then MetalLB will own these IP ranges
+    - 192.168.11.240-192.168.11.250
+  autoAssign: true
+---
+# L2 Advertisement
+# This makes MetalLB respond to ARP requests for the assigned IPs
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: homelab-l2
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - homelab-prod-pool

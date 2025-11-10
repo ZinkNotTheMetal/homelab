@@ -1,6 +1,6 @@
 locals {
   ansible_hostname     = "ansible"
-  ansible_vm_cpu_cores = 2
+  ansible_vm_cpu_cores = 1
   ansible_vm_memory_mb = 2048
   ansible_disk_size_gb = 10
 }
@@ -20,7 +20,7 @@ resource "proxmox_virtual_environment_vm" "ansible_vm" {
   stop_on_destroy = true
 
   startup {
-    order      = "3"
+    order      = "4"
     up_delay   = "60"
     down_delay = "60"
   }

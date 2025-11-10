@@ -1,0 +1,35 @@
+---
+# Install K3S Control Plane
+# Run this FIRST to set up the control plane node
+
+- hosts: k3s_control_plane
+  vars_files:
+    - "common.vars.yml"
+  pre_tasks:
+    - name: Display target hosts
+      debug:
+        msg: "Installing K3S control plane on {{ inventory_hostname }}"
+  
+  roles:
+    - role: common
+      tags:
+        - common
+    
+    - role: k3s
+      tags:
+        - k3s
+      vars:
+        k3s_role: "server"
+        k3s_server_args: "--disable=traefik --disable=servicelb --write-kubeconfig-mode=644 --tls-san={{ ansible_default_ipv4.address }}"
+        k3s_taint_control_plane: true
+
+  post_tasks:
+    - name: Display next steps
+      debug:
+        msg: 
+          - "✓ K3S control plane installed successfully!"
+          - "Next steps:"
+          - "1. Copy the node token displayed above"
+          - "2. Run the k3s-workers.yml playbook with the token"
+          - "3. Or manually: export K3S_TOKEN='<token>'"
+          - "4. kubectl get nodes (should show this control plane)"

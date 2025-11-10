@@ -1,0 +1,19 @@
+---
+# ExternalName Service for External-DNS to create CNAME record for Home Assistant
+# Creates: home.zinkzone.tech → traefik.zinkzone.tech (CNAME)
+# Traffic is then routed by Traefik IngressRoute to the actual Home Assistant IP:port
+apiVersion: v1
+kind: Service
+metadata:
+  name: home-external-dns
+  namespace: traefik
+  annotations:
+    # Tell External-DNS to create home.zinkzone.tech → traefik.zinkzone.tech
+    external-dns.alpha.kubernetes.io/hostname: home.zinkzone.tech
+spec:
+  type: ExternalName
+  externalName: traefik.zinkzone.tech
+  ports:
+    - port: 80
+      protocol: TCP
+      name: http
