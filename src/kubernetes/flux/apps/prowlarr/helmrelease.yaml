@@ -12,7 +12,7 @@ spec:
       version: "21.0.0"
       sourceRef:
         kind: HelmRepository
-        name: prowlarr-oci-helm
+        name: oci-truecharts
         namespace: flux-system
       interval: 12h
 
