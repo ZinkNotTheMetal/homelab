@@ -1,0 +1,3 @@
+# This directory will contain application deployments
+# Each app should have its own subdirectory
+# Example: apps/sonarr/, apps/radarr/, etc.
