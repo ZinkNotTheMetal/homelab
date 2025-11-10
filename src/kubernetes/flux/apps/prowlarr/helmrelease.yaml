@@ -9,49 +9,47 @@ spec:
   chart:
     spec:
       chart: prowlarr
-      version: '4.x'
+      version: "4.5.2"
       sourceRef:
         kind: HelmRepository
         name: k8s-at-home
         namespace: flux-system
       interval: 12h
-  
+
   # Helm values to configure Prowlarr
   values:
     # Image configuration
     image:
-      repository: lscr.io/linuxserver/prowlarr
+      repository: linuxserver/prowlarr
       tag: latest
       pullPolicy: IfNotPresent
-    
+      # tag: defaults to chart appVersion
+
     # Environment variables
     env:
-      TZ: America/New_York  # Change to your timezone
-      PUID: "1000"          # User ID
-      PGID: "1000"          # Group ID
-    
+      TZ: America/New_York
+
     # Service configuration
     service:
       main:
         ports:
           http:
             port: 9696
-    
-    # Ingress configuration (disabled - using Traefik IngressRoute)
+
+    # Ingress (disabled - using Traefik IngressRoute)
     ingress:
       main:
         enabled: false
-    
+
     # Persistence for configuration
     persistence:
       config:
         enabled: true
-        type: persistentVolumeClaim
+        mountPath: /config
         storageClass: longhorn
         accessMode: ReadWriteOnce
         size: 512Mi
-        retain: true
-    
+
     # Resource limits
     resources:
       requests:
