@@ -2,15 +2,15 @@
 # Helm Repository Sources
 # These repositories are used by HelmReleases in the apps/ directory
 
-# k8s-at-home - Community Helm charts for home lab applications
+# TrueCharts - Community Helm charts for home lab applications
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
-  name: k8s-at-home
+  name: truecharts
   namespace: flux-system
 spec:
   interval: 1h
-  url: https://k8s-at-home.com/charts/
+  url: https://charts.truecharts.org
 ---
 # Prometheus Community - Monitoring stack
 apiVersion: source.toolkit.fluxcd.io/v1beta2
