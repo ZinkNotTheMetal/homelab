@@ -1,0 +1,21 @@
+---
+# K3S Prerequisites - Required packages for K3S and storage providers
+
+- name: Install open-iscsi for Longhorn storage
+  become: true
+  apt:
+    name: open-iscsi
+    state: present
+    update_cache: yes
+  register: iscsi_install
+
+- name: Enable iscsid service
+  become: true
+  systemd:
+    name: iscsid
+    enabled: yes
+    state: started
+
+- name: Display open-iscsi installation result
+  debug:
+    msg: "open-iscsi installed and iscsid service is running"

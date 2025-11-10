@@ -42,6 +42,17 @@ deployment:
   kind: Deployment
   replicas: 1 # Single replica required for ACME with local-path storage
 
+  initContainers:
+    - name: acme-permissions
+      image: busybox:latest
+      command:
+        - sh
+        - -c
+        - |
+          touch /data/acme.json
+          chmod 600 /data/acme.json
+          echo "Set acme.json permissions to 600"
+
   # Pod anti-affinity - spread across nodes
   podAnnotations:
     prometheus.io/scrape: "true"

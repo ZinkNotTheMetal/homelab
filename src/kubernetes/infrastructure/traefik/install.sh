@@ -53,7 +53,23 @@ echo "6. Applying middleware (HTTPS redirect, security headers)..."
 kubectl apply -f "$(dirname "$0")/middleware.yaml"
 
 echo ""
-echo "7. Verifying installation..."
+echo "7. Creating Traefik dashboard IngressRoute..."
+kubectl apply -f "$(dirname "$0")/dashboard-ingressroute.yaml"
+
+echo ""
+echo "8. Scaling Traefik to 2 replicas (now that ACME validation is bypassed)..."
+kubectl scale deployment -n traefik traefik --replicas=2
+
+echo ""
+echo "9. Waiting for second replica to be ready..."
+sleep 5
+kubectl wait --namespace traefik \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/name=traefik \
+  --timeout=120s
+
+echo ""
+echo "10. Verifying installation..."
 kubectl get pods -n traefik
 
 echo ""
@@ -66,15 +82,12 @@ echo ""
 TRAEFIK_IP=$(kubectl get svc -n traefik traefik -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 echo "Traefik LoadBalancer IP: $TRAEFIK_IP"
 echo ""
+echo ""
 echo "Next steps:"
-echo "  1. Update DNS: Point *.zinkzone.tech → $TRAEFIK_IP"
-echo "  2. Wait 5-10 minutes for DNS to propagate"
-echo "  3. Test SSL: curl https://traefik.zinkzone.tech/dashboard/"
-echo "  4. Once SSL works, configure home.zinkzone.tech routing"
+echo "  1. Wait 5-10 minutes for DNS to propagate"
+echo "  2. Test dashboard: https://traefik.zinkzone.tech/dashboard/"
+echo "  3. Run external-services as needed for all *.zinkzone.tech routing."
 echo ""
 echo "Note: SSL certificates will be auto-generated on first request"
 echo "      (may take 30-60 seconds for first access)"
-echo ""
-echo "Home IngressRoute setup skipped - apply manually when ready:"
-echo "  kubectl apply -f $(dirname "$0")/home-ingressroute.yaml"
 echo ""

@@ -1,6 +1,12 @@
 ---
 # K3S Installation and Configuration
 
+# ============================================================================
+# PREREQUISITES
+# ============================================================================
+- name: Install prerequisites (open-iscsi for Longhorn)
+  import_tasks: prerequisites.yml
+
 - name: Check if K3S is already installed
   stat:
     path: /usr/local/bin/k3s

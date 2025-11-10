@@ -1,0 +1,19 @@
+---
+# ExternalName Service for External-DNS to create CNAME record for NAS
+# Creates: nas.zinkzone.tech → traefik.zinkzone.tech (CNAME)
+# Traffic is then routed by Traefik IngressRoute to the actual NAS IP:port
+apiVersion: v1
+kind: Service
+metadata:
+  name: nas-external-dns
+  namespace: traefik
+  annotations:
+    # Tell External-DNS to create nas.zinkzone.tech → traefik.zinkzone.tech
+    external-dns.alpha.kubernetes.io/hostname: nas.zinkzone.tech
+spec:
+  type: ExternalName
+  externalName: traefik.zinkzone.tech
+  ports:
+    - port: 80
+      protocol: TCP
+      name: http

@@ -1,0 +1,19 @@
+---
+# ExternalName Service for External-DNS to create CNAME record
+# This is a workaround since External-DNS doesn't watch Traefik IngressRoutes
+# Creates: longhorn.zinkzone.tech → traefik.zinkzone.tech (CNAME)
+apiVersion: v1
+kind: Service
+metadata:
+  name: longhorn-external-dns
+  namespace: longhorn-system
+  annotations:
+    # Tell External-DNS to create longhorn.zinkzone.tech → traefik.zinkzone.tech
+    external-dns.alpha.kubernetes.io/hostname: longhorn.zinkzone.tech
+spec:
+  type: ExternalName
+  externalName: traefik.zinkzone.tech
+  ports:
+    - port: 80
+      protocol: TCP
+      name: http
