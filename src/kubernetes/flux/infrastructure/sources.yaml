@@ -10,7 +10,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1h
-  url: https://charts.truecharts.org
+  url: https://charts.trueforge.org
 ---
 # Prometheus Community - Monitoring stack
 apiVersion: source.toolkit.fluxcd.io/v1beta2
