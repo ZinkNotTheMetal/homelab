@@ -139,7 +139,7 @@ spec:
 **Example: Helm Release**
 ```yaml
 # flux/apps/sonarr/helmrelease.yaml
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: sonarr
