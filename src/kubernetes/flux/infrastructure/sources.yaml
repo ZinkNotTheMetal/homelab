@@ -1,16 +1,6 @@
 ---
 # Helm Repository Sources
 # These repositories are used by HelmReleases in the apps/ directory
-
-# TrueCharts - Community Helm charts for home lab applications
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
-metadata:
-  name: truecharts
-  namespace: flux-system
-spec:
-  interval: 1h
-  url: https://charts.trueforge.org
 ---
 # Prometheus Community - Monitoring stack
 apiVersion: source.toolkit.fluxcd.io/v1beta2
