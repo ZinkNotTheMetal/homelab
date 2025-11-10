@@ -1,0 +1,62 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: prowlarr
+  namespace: media
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: prowlarr
+      version: '4.x'
+      sourceRef:
+        kind: HelmRepository
+        name: k8s-at-home
+        namespace: flux-system
+      interval: 12h
+  
+  # Helm values to configure Prowlarr
+  values:
+    # Image configuration
+    image:
+      repository: lscr.io/linuxserver/prowlarr
+      tag: latest
+      pullPolicy: IfNotPresent
+    
+    # Environment variables
+    env:
+      TZ: America/New_York  # Change to your timezone
+      PUID: "1000"          # User ID
+      PGID: "1000"          # Group ID
+    
+    # Service configuration
+    service:
+      main:
+        ports:
+          http:
+            port: 9696
+    
+    # Ingress configuration (disabled - using Traefik IngressRoute)
+    ingress:
+      main:
+        enabled: false
+    
+    # Persistence for configuration
+    persistence:
+      config:
+        enabled: true
+        type: persistentVolumeClaim
+        storageClass: longhorn
+        accessMode: ReadWriteOnce
+        size: 512Mi
+        retain: true
+    
+    # Resource limits
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
