@@ -17,37 +17,37 @@ spec:
         app: flaresolverr
     spec:
       containers:
-      - name: flaresolverr
-        image: ghcr.io/flaresolverr/flaresolverr:latest
-        ports:
-        - containerPort: 8191
-          name: http
-          protocol: TCP
-        env:
-        - name: LOG_LEVEL
-          value: "info"
-        - name: LOG_HTML
-          value: "false"
-        - name: CAPTCHA_SOLVER
-          value: "none"
-        - name: TZ
-          value: "America/New_York"
-        resources:
-          requests:
-            cpu: 100m
-            memory: 256Mi
-          limits:
-            cpu: 1000m
-            memory: 1Gi
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 8191
-          initialDelaySeconds: 30
-          periodSeconds: 30
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 8191
-          initialDelaySeconds: 10
-          periodSeconds: 10
+        - name: flaresolverr
+          image: ghcr.io/flaresolverr/flaresolverr:latest
+          ports:
+            - containerPort: 8191
+              name: http
+              protocol: TCP
+          env:
+            - name: LOG_LEVEL
+              value: "info"
+            - name: LOG_HTML
+              value: "false"
+            - name: CAPTCHA_SOLVER
+              value: "none"
+            - name: TZ
+              value: "America/New_York"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 2000m
+              memory: 3Gi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8191
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8191
+            initialDelaySeconds: 10
+            periodSeconds: 10
