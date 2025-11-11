@@ -19,7 +19,7 @@ spec:
   # Helm values to configure Prowlarr with TrueCharts
   values:
     image:
-      repository: linuxserver/prowlarr:2.2.0
+      repository: linuxserver/prowlarr
       tag: 2.2.0
       pullPolicy: IfNotPresent
     # Global settings (applies to all containers)
