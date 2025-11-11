@@ -1,0 +1,40 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: nfs-subdir-provisioner-repo
+  namespace: flux-system
+spec:
+  interval: 12h
+  url: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nfs-media-provisioner
+  # Install this in a system namespace like kube-system or default
+  namespace: kube-system 
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: nfs-subdir-external-provisioner
+      version: "4.0.18" # Use a specific, recent version
+      sourceRef:
+        kind: HelmRepository
+        name: nfs-subdir-provisioner-repo
+        namespace: flux-system
+  values:
+    # This provisioner will create a StorageClass for us
+    storageClass:
+      name: nfs-media-tv # <--- THIS IS THE MAGIC NAME
+      defaultClass: false
+      reclaimPolicy: Retain # Retain data when PVC is deleted
+      accessModes: ReadWriteMany # Allow multiple pods to mount
+    
+    # Point this to your Synology NAS
+    nfs:
+      server: "192.168.1.197"
+      path: "/volume1/Media/TV Shows"
+      mountOptions:
+        - "nfsvers=4" # Use NFSv4 if supported

@@ -2,26 +2,27 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: prowlarr
+  name: sonarr
   namespace: media
 spec:
   interval: 30m
   chart:
     spec:
-      chart: prowlarr
-      version: "21.0.0"
+      chart: sonarr
+      version: "25.0.1"
       sourceRef:
         kind: HelmRepository
         name: oci-truecharts
         namespace: flux-system
       interval: 12h
 
-  # Helm values to configure Prowlarr with TrueCharts
+  # Helm values to configure Sonarr with TrueCharts
   values:
     image:
-      repository: linuxserver/prowlarr:2.2.0
-      tag: 2.2.0
+      repository: linuxserver/sonarr
+      tag: "4.0.15"
       pullPolicy: IfNotPresent
+
     # Global settings (applies to all containers)
     global:
       stopAll: false
@@ -48,17 +49,17 @@ spec:
                   enabled: true
                   type: http
                   path: /ping
-                  port: 9696
+                  port: 8989
                 readiness:
                   enabled: true
                   type: http
                   path: /ping
-                  port: 9696
+                  port: 8989
                 startup:
                   enabled: true
                   type: http
                   path: /ping
-                  port: 9696
+                  port: 8989
 
     # Service configuration
     service:
@@ -66,14 +67,7 @@ spec:
         ports:
           main:
             protocol: http
-            port: 9696
-      flaresolverr:
-        enabled: true
-        ports:
-          flaresolverr:
-            enabled: true
-            protocol: http
-            port: 8191
+            port: 8989
 
     # Ingress (disabled - using Traefik IngressRoute)
     ingress:
@@ -89,6 +83,12 @@ spec:
         size: 512Mi
         storageClass: longhorn
         accessMode: ReadWriteOnce
+      tv:
+        enabled: true
+        type: pvc
+        mountPath: /tv
+        storageClass: nfs-media-tv
+        accessMode: ReadWriteMany
 
     # Security context
     securityContext:
@@ -106,3 +106,5 @@ spec:
       requests:
         cpu: 100m
         memory: 256Mi
+
+
