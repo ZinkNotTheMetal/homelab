@@ -89,7 +89,7 @@ spec:
         mountPath: /media
         storageClass: nfs-media-static
         accessMode: ReadWriteMany
-        size: 100Ti
+        size: 25Ti
 
     # Security context
     securityContext:
