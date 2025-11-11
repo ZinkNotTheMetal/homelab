@@ -37,4 +37,6 @@ spec:
       server: "192.168.1.197"
       path: "/volume1/Media/TV Shows"
       mountOptions:
-        - "nfsvers=4" # Use NFSv4 if supported
+        - "nfsvers=3"
+        - "tcp"
+        - "nolock"
