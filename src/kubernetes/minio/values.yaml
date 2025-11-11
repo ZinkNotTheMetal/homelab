@@ -1,0 +1,83 @@
+# Set the mode - standalone is fine for learning/homelab
+mode: standalone
+
+# Root credentials - change these!
+rootUser: admin
+rootPassword: minio-admin
+
+# Persistence configuration - this is where Longhorn comes in
+persistence:
+  enabled: true
+  storageClass: "longhorn" # Use your Longhorn storage class
+  accessMode: ReadWriteOnce
+  size: 30Gi # Adjust based on your needs
+
+# Resource limits (adjust for your cluster)
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 250m
+  limits:
+    memory: 1Gi
+    cpu: 500m
+
+# Ingress configuration
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: ca-issuer
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+  hosts:
+    - minio.k3s.internal
+  tls:
+    - secretName: minio-tls
+      hosts:
+        - minio.k3s.internal
+
+# Console ingress (MinIO's admin UI)
+consoleIngress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: ca-issuer
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+  hosts:
+    - minio-ui.k3s.internal
+  tls:
+    - secretName: minio-console-tls
+      hosts:
+        - minio-ui.k3s.internal
+
+# Enable metrics for Prometheus
+metrics:
+  serviceMonitor:
+    enabled: true
+    namespace: monitoring
+    additionalLabels:
+      release: kube-prometheus-stack
+
+# Buckets to create automatically on startup
+buckets:
+  - name: backups
+    policy: none
+    purge: false
+  - name: terraform
+    policy: none
+    purge: false
+  - name: test
+    policy: download # Public read access
+    purge: false
+
+# Users to create (optional)
+users:
+  - accessKey: backup-user
+    secretKey: backup-user-password-change-me
+    policy: readwrite
+
+# Policies for users (optional)
+policies:
+  - name: readwrite
+    statements:
+      - resources:
+          - "arn:aws:s3:::*"
+        actions:
+          - "s3:*"

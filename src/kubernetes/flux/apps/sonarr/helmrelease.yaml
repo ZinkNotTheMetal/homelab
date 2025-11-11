@@ -83,11 +83,11 @@ spec:
         size: 512Mi
         storageClass: longhorn
         accessMode: ReadWriteOnce
-      tv:
+      media:
         enabled: true
         type: pvc
-        mountPath: /tv
-        storageClass: nfs-media-tv
+        mountPath: /media
+        storageClass: nfs-media
         accessMode: ReadWriteMany
 
     # Security context

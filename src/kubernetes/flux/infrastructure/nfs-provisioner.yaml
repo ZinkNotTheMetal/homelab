@@ -27,15 +27,15 @@ spec:
   values:
     # This provisioner will create a StorageClass for us
     storageClass:
-      name: nfs-media-tv # <--- THIS IS THE MAGIC NAME
+      name: nfs-media # <--- Storage class for all media
       defaultClass: false
       reclaimPolicy: Retain # Retain data when PVC is deleted
       accessModes: ReadWriteMany # Allow multiple pods to mount
     
-    # Point this to your Synology NAS
+    # Point this to your Synology NAS - mount parent Media directory
     nfs:
       server: "192.168.1.197"
-      path: "/volume1/Media/TV Shows"
+      path: "/volume1/Media"
       mountOptions:
         - "nfsvers=3"
         - "tcp"
