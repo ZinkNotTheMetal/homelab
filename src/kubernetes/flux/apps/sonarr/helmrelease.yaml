@@ -87,8 +87,9 @@ spec:
         enabled: true
         type: pvc
         mountPath: /media
-        storageClass: nfs-media
+        storageClass: nfs-media-static
         accessMode: ReadWriteMany
+        size: 100Ti
 
     # Security context
     securityContext:
