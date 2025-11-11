@@ -26,4 +26,4 @@ kind: StorageClass
 metadata:
   name: nfs-media-static
 provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer
+volumeBindingMode: Immediate
