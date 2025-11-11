@@ -20,7 +20,7 @@ spec:
   values:
     image:
       repository: linuxserver/prowlarr
-      tag: 2.2.0
+      tag: 2.1.5
       pullPolicy: IfNotPresent
     # Global settings (applies to all containers)
     global:
