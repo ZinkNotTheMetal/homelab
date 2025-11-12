@@ -22,6 +22,17 @@ spec:
   interval: 1h
   url: https://grafana.github.io/helm-charts
 ---
+---
+# Loeken at Home - Alternative media charts
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: loeken-at-home
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://loeken.github.io/helm-charts/
+---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:

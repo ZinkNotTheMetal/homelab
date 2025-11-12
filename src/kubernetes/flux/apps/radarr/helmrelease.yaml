@@ -9,77 +9,91 @@ spec:
   chart:
     spec:
       chart: radarr
-      version: "25.0.1"
+      version: "5.27.0-nightly"
       sourceRef:
         kind: HelmRepository
-        name: oci-truecharts
+        name: loeken-at-home
         namespace: flux-system
       interval: 12h
 
-  # Helm values to configure Radarr with TrueCharts
+  # Helm values to configure Radarr with loeken-at-home
   values:
-    image:
-      repository: linuxserver/radarr
-      tag: "5.28.0"
-      pullPolicy: IfNotPresent
-
-    # Global settings (applies to all containers)
-    global:
-      stopAll: false
-
-    # TrueCharts global timezone setting
-    TZ: America/New_York
-
-    # Disable metrics (requires Prometheus Operator CRDs)
-    metrics:
+    # Use LinuxServer image instead of default loeken image
+    controllers:
       main:
-        enabled: false
-        type: servicemonitor
-
-    # Workload configuration
-    workload:
-      main:
-        podSpec:
-          containers:
-            main:
-              # Image configuration
-              imageSelector: image
-              env:
-                RADARR__SERVER__PORT: "7878"
-                RADARR__AUTH__METHOD: ""
-                RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
-              probes:
-                liveness:
-                  enabled: true
-                  type: http
-                  path: /ping
-                  port: 7878
+        containers:
+          main:
+            image:
+              repository: linuxserver/radarr
+              tag: "5.28.0"
+              pullPolicy: IfNotPresent
+            
+            # Environment variables
+            env:
+              TZ: America/New_York
+              PUID: 568
+              PGID: 568
+              RADARR__SERVER__PORT: "7878"
+              RADARR__AUTH__METHOD: ""
+              RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
+            
+            # Health checks with 60 second startup delay
+            probes:
+              liveness:
+                enabled: true
+                type: HTTP
+                spec:
                   initialDelaySeconds: 60
-                  periodSeconds: 15
-                  failureThreshold: 3
-                readiness:
-                  enabled: true
-                  type: http
-                  path: /ping
-                  port: 7878
-                  initialDelaySeconds: 30
                   periodSeconds: 10
-                startup:
-                  enabled: true
-                  type: http
-                  path: /ping
-                  port: 7878
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                type: HTTP
+                spec:
                   initialDelaySeconds: 60
-                  periodSeconds: 15
-                  failureThreshold: 6
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              startup:
+                enabled: true
+                type: HTTP
+                spec:
+                  initialDelaySeconds: 60
+                  timeoutSeconds: 1
+                  # This means it has a maximum of 5*30=150 seconds to start up before it fails
+                  periodSeconds: 5
+                  failureThreshold: 30
+            
+            # Increased CPU limits to handle startup spikes
+            resources:
+              limits:
+                cpu: 1500m
+                memory: 1Gi
+              requests:
+                cpu: 100m
+                memory: 256Mi
+            
+            # Container-level security context for non-root execution
+            securityContext:
+              runAsUser: 568
+              runAsGroup: 568
+        
+        # Pod-level security context
+        pod:
+          securityContext:
+            fsGroup: 568
 
     # Service configuration
     service:
       main:
+        enabled: true
         ports:
-          main:
-            protocol: http
+          http:
+            enabled: true
+            primary: true
             port: 7878
+            protocol: HTTP
 
     # Ingress (disabled - using Traefik IngressRoute)
     ingress:
@@ -90,28 +104,16 @@ spec:
     persistence:
       config:
         enabled: true
-        type: pvc
+        type: persistentVolumeClaim
         mountPath: /config
-        size: 512Mi
+        size: 2Gi
         storageClass: longhorn
         accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /config
       media:
         enabled: true
-        type: pvc
-        mountPath: /media
+        type: persistentVolumeClaim
         existingClaim: shared-media
-        accessMode: ReadWriteMany
-
-    # Security context - minimal to avoid supplementary group issues
-    securityContext:
-      container:
-        runAsNonRoot: true
-
-    # Resources
-    resources:
-      limits:
-        cpu: 1000m
-        memory: 1Gi
-      requests:
-        cpu: 100m
-        memory: 256Mi
+        globalMounts:
+          - path: /media
