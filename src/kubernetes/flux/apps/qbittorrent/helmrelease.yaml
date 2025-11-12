@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: qbittorrent
-      version: "21.0.0"
+      version: "24.0.1"
       sourceRef:
         kind: HelmRepository
         name: oci-truecharts
@@ -18,164 +18,105 @@ spec:
 
   values:
     image:
-      repository: oci.trueforge.org/containerforge/qbittorrent
-      tag: 5.1.3
+      repository: linuxserver/qbittorrent
+      tag: 5.1.2
       pullPolicy: IfNotPresent
 
-    # Global settings
-    global:
-      stopAll: false
+    replicaCount: 1
 
-    # Timezone
-    TZ: America/New_York
-
-    # Disable metrics
-    metrics:
-      main:
-        enabled: false
-
-    # Security context
-    securityContext:
-      container:
-        readOnlyRootFilesystem: false
-        runAsNonRoot: false
-        runAsUser: 0
-        runAsGroup: 0
-
-    # Port forwarding (disabled for now, can enable later)
-    qbitportforward:
-      enabled: false
-
-    # Services
+    # Service configuration
     service:
       main:
-        ports:
-          main:
-            port: 10095
-      torrent:
-        enabled: true
-        ports:
-          torrent:
-            enabled: true
-            port: 6881
-            protocol: tcp
-          torrentudp:
-            enabled: true
-            port: 6881
-            protocol: udp
-      gluetun:
         enabled: true
         type: ClusterIP
         ports:
-          gluetun:
+          webui:
             enabled: true
-            port: 8000
-            targetPort: 8000
-            protocol: http
-
-    # Workload with Gluetun sidecar
-    workload:
-      main:
-        podSpec:
-          containers:
-            main:
-              env:
-                QBT_WEBUI_PORT: "10095"
-                QBT_TORRENTING_PORT: "6881"
-              probes:
-                liveness:
-                  enabled: true
-                  type: http
-                  path: /
-                  port: 10095
-                readiness:
-                  enabled: true
-                  type: http
-                  path: /
-                  port: 10095
-                startup:
-                  enabled: true
-                  type: http
-                  path: /
-                  port: 10095
-      # Gluetun VPN sidecar
-      gluetun:
-        enabled: true
-        type: Deployment
-        podSpec:
-          containers:
-            gluetun:
-              primary: true
-              enabled: true
-              imageSelector: gluetunImage
-              securityContext:
-                capabilities:
-                  add:
-                    - NET_ADMIN
-              env:
-                VPN_SERVICE_PROVIDER: private internet access
-                VPN_TYPE: openvpn
-                SERVER_REGIONS: US East
-                OPENVPN_USER:
-                  secretKeyRef:
-                    name: qbittorrent-vpn
-                    key: VPN_USER
-                OPENVPN_PASSWORD:
-                  secretKeyRef:
-                    name: qbittorrent-vpn
-                    key: VPN_PASSWORD
-                FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16
-                FIREWALL_VPN_INPUT_PORTS: 10095,6881
-                HEALTH_VPN_DURATION_INITIAL: 30s
-              probes:
-                liveness:
-                  enabled: true
-                  type: http
-                  path: /v1/publicip/ip
-                  port: 8000
-                readiness:
-                  enabled: true
-                  type: http
-                  path: /v1/publicip/ip
-                  port: 8000
-                startup:
-                  enabled: true
-                  type: http
-                  path: /v1/publicip/ip
-                  port: 8000
-
-    # Additional images
-    gluetunImage:
-      repository: qmcgaw/gluetun
-      tag: v3.39.1
-      pullPolicy: IfNotPresent
-
-    # Ingress
-    ingress:
-      main:
-        enabled: false
+            port: 8080
+            protocol: tcp
 
     # Persistence
     persistence:
       config:
         enabled: true
-        type: pvc
         mountPath: /config
-        size: 1Gi
+        size: 512Mi
+        accessModes:
+          - ReadWriteOnce
         storageClass: longhorn
-        accessMode: ReadWriteOnce
       downloads:
         enabled: true
-        type: pvc
-        mountPath: /downloads
         existingClaim: shared-downloads
-        accessMode: ReadWriteMany
+        mountPath: /downloads
+
+    # Environment variables
+    environment:
+      PUID: "568"
+      PGID: "568"
+      TZ: America/New_York
+      WEBUI_PORT: "8080"
+
+    # Gluetun VPN addon
+    addons:
+      gluetun:
+        enabled: true
+        image:
+          repository: qmcgaw/gluetun
+          tag: v3.39.1
+          pullPolicy: IfNotPresent
+        container:
+          env:
+            VPN_SERVICE_PROVIDER: private internet access
+            VPN_TYPE: openvpn
+            # PIA credentials from secret
+            OPENVPN_USER:
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-vpn
+                  key: VPN_USER
+            OPENVPN_PASSWORD:
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-vpn
+                  key: VPN_PASSWORD
+            SERVER_REGIONS: US East
+            FIREWALL: "on"
+            FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16,192.168.10.0/23
+            HEALTH_TARGET_ADDRESS: 1.1.1.1
+            DOT: "on"
+            LOG_LEVEL: info
+          ports:
+            gluetun:
+              enabled: true
+              port: 8888
+              targetPort: 8888
+              protocol: tcp
+
+    # Port forwarding (disabled for now - can enable later if needed)
+    qbitportforward:
+      enabled: false
+
+    # Networking - route through VPN
+    network:
+      mode: addon.networkMode
 
     # Resources
     resources:
       limits:
-        cpu: 1000m
-        memory: 1Gi
+        cpu: 2000m
+        memory: 4Gi
       requests:
-        cpu: 200m
-        memory: 512Mi
+        cpu: 500m
+        memory: 1Gi
+
+    # Security context
+    securityContext:
+      runAsUser: 568
+      runAsGroup: 568
+      fsGroup: 568
+      readOnlyRootFilesystem: false
+
+    # Ingress disabled - using Traefik IngressRoute
+    ingress:
+      main:
+        enabled: false
