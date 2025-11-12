@@ -20,7 +20,7 @@ spec:
   values:
     image:
       repository: linuxserver/sonarr
-      tag: "4.0.15"
+      tag: "4.0.16"
       pullPolicy: IfNotPresent
 
     # Global settings (applies to all containers)
@@ -107,5 +107,3 @@ spec:
       requests:
         cpu: 100m
         memory: 256Mi
-
-

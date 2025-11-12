@@ -98,4 +98,4 @@ nul
 .npmrc
 
 # WZ - By default ignore any file marked with .secret.* in it's filename
-*.secret.*src/kubernetes/flux/apps/qbittorrent/secret.yaml
+*.secret.*

@@ -20,7 +20,7 @@ spec:
   values:
     image:
       repository: linuxserver/radarr
-      tag: "5.16.3"
+      tag: "5.28.0"
       pullPolicy: IfNotPresent
 
     # Global settings (applies to all containers)
