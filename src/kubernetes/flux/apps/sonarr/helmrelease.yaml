@@ -93,10 +93,7 @@ spec:
     # Security context
     securityContext:
       container:
-        runAsNonRoot: false
-        readOnlyRootFilesystem: false
-        runAsUser: 0
-        runAsGroup: 0
+        runAsNonRoot: true
 
     # Resources
     resources:
