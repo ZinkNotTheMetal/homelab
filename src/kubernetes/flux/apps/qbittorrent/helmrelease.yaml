@@ -128,9 +128,8 @@ spec:
         enabled: true
         type: pvc
         mountPath: /downloads
-        storageClass: nfs-downloads-static
+        existingClaim: shared-downloads
         accessMode: ReadWriteMany
-        size: 5Ti
 
     # Security context
     securityContext:

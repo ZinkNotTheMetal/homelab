@@ -1,0 +1,30 @@
+---
+# Shared PVC for /media - all apps (Sonarr, Radarr, qBittorrent) reference this
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: shared-media
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs-media-static
+  volumeName: nfs-media
+  resources:
+    requests:
+      storage: 25Ti
+---
+# Shared PVC for /downloads - qBittorrent writes here, Sonarr/Radarr can read
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: shared-downloads
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs-downloads-static
+  volumeName: nfs-downloads
+  resources:
+    requests:
+      storage: 5Ti
