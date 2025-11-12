@@ -16,11 +16,10 @@ spec:
         namespace: flux-system
       interval: 12h
 
-  # Helm values to configure qBittorrent with Gluetun VPN
   values:
     image:
-      repository: linuxserver/qbittorrent
-      tag: "4.6.7"
+      repository: oci.trueforge.org/containerforge/qbittorrent
+      tag: 5.1.3
       pullPolicy: IfNotPresent
 
     # Global settings
@@ -34,43 +33,73 @@ spec:
     metrics:
       main:
         enabled: false
-        type: servicemonitor
 
-    # Workload configuration with Gluetun VPN sidecar
+    # Security context
+    securityContext:
+      container:
+        readOnlyRootFilesystem: false
+        runAsNonRoot: false
+        runAsUser: 0
+        runAsGroup: 0
+
+    # Port forwarding (disabled for now, can enable later)
+    qbitportforward:
+      enabled: false
+
+    # Services
+    service:
+      main:
+        ports:
+          main:
+            port: 10095
+      torrent:
+        enabled: true
+        ports:
+          torrent:
+            enabled: true
+            port: 6881
+            protocol: tcp
+          torrentudp:
+            enabled: true
+            port: 6881
+            protocol: udp
+      gluetun:
+        enabled: true
+        type: ClusterIP
+        ports:
+          gluetun:
+            enabled: true
+            port: 8000
+            targetPort: 8000
+            protocol: http
+
+    # Workload with Gluetun sidecar
     workload:
       main:
         podSpec:
           containers:
             main:
-              imageSelector: image
-              probes:
-                liveness:
-                  enabled: true
-                  type: http
-                  path: /
-                  port: 8080
-                readiness:
-                  enabled: true
-                  type: http
-                  path: /
-                  port: 8080
-                startup:
-                  enabled: true
-                  type: http
-                  path: /
-                  port: 8080
-            
-            # Gluetun VPN sidecar
+              env:
+                QBT_WEBUI_PORT: "10095"
+                QBT_TORRENTING_PORT: "6881"
+      # Gluetun VPN sidecar
+      gluetun:
+        enabled: true
+        type: Deployment
+        podSpec:
+          containers:
             gluetun:
+              primary: true
               enabled: true
               imageSelector: gluetunImage
+              securityContext:
+                capabilities:
+                  add:
+                    - NET_ADMIN
               env:
-                VPN_SERVICE_PROVIDER: "private internet access"
-                VPN_TYPE: "openvpn"
-                SERVER_REGIONS: "US East"
-                FIREWALL_OUTBOUND_SUBNETS: "10.42.0.0/16,10.43.0.0/16"
-                FIREWALL_VPN_INPUT_PORTS: "8080"
-                HEALTH_VPN_DURATION_INITIAL: "30s"
+                VPN_SERVICE_PROVIDER: private internet access
+                VPN_TYPE: openvpn
+                SERVER_REGIONS: US East
                 OPENVPN_USER:
                   secretKeyRef:
                     name: qbittorrent-vpn
@@ -79,43 +108,17 @@ spec:
                   secretKeyRef:
                     name: qbittorrent-vpn
                     key: VPN_PASSWORD
-              securityContext:
-                capabilities:
-                  add:
-                    - NET_ADMIN
-              probes:
-                liveness:
-                  enabled: true
-                  type: http
-                  path: /v1/publicip/ip
-                  port: 9999
-                readiness:
-                  enabled: true
-                  type: http
-                  path: /v1/publicip/ip
-                  port: 9999
-                startup:
-                  enabled: true
-                  type: http
-                  path: /v1/publicip/ip
-                  port: 9999
+                FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16
+                FIREWALL_VPN_INPUT_PORTS: 10095,6881
+                HEALTH_VPN_DURATION_INITIAL: 30s
 
     # Additional images
     gluetunImage:
       repository: qmcgaw/gluetun
-      tag: "v3.39.1"
+      tag: v3.39.1
       pullPolicy: IfNotPresent
 
-    # Service configuration
-    service:
-      main:
-        ports:
-          main:
-            protocol: http
-            port: 8080
-            targetPort: 8080
-
-    # Ingress disabled
+    # Ingress
     ingress:
       main:
         enabled: false
@@ -135,14 +138,6 @@ spec:
         mountPath: /downloads
         existingClaim: shared-downloads
         accessMode: ReadWriteMany
-
-    # Security context
-    securityContext:
-      container:
-        runAsNonRoot: false
-        readOnlyRootFilesystem: false
-        runAsUser: 0
-        runAsGroup: 0
 
     # Resources
     resources:
