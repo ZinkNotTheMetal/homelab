@@ -44,9 +44,6 @@ spec:
             main:
               # Image configuration
               imageSelector: image
-              env:
-                PUID: "0"
-                PGID: "0"
               probes:
                 liveness:
                   enabled: true
