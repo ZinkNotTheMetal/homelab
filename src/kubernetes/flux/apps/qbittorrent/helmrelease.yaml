@@ -127,6 +127,22 @@ spec:
                 FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16
                 FIREWALL_VPN_INPUT_PORTS: 10095,6881
                 HEALTH_VPN_DURATION_INITIAL: 30s
+              probes:
+                liveness:
+                  enabled: true
+                  type: http
+                  path: /v1/publicip/ip
+                  port: 8000
+                readiness:
+                  enabled: true
+                  type: http
+                  path: /v1/publicip/ip
+                  port: 8000
+                startup:
+                  enabled: true
+                  type: http
+                  path: /v1/publicip/ip
+                  port: 8000
 
     # Additional images
     gluetunImage:
