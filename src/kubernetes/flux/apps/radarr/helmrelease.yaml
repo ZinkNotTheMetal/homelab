@@ -44,28 +44,34 @@ spec:
             main:
               # Image configuration
               imageSelector: image
+              env:
+                PUID: "911"
+                PGID: "1001"
+                TZ: "America/New_York"
               probes:
                 liveness:
                   enabled: true
                   type: http
                   path: /ping
                   port: 7878
-                  initialDelaySeconds: 30
-                  periodSeconds: 10
+                  initialDelaySeconds: 45
+                  periodSeconds: 15
                   failureThreshold: 3
                 readiness:
                   enabled: true
                   type: http
                   path: /ping
                   port: 7878
+                  initialDelaySeconds: 45
+                  periodSeconds: 10
                 startup:
                   enabled: true
                   type: http
                   path: /ping
                   port: 7878
-                  initialDelaySeconds: 30
-                  periodSeconds: 10
-                  failureThreshold: 4
+                  initialDelaySeconds: 45
+                  periodSeconds: 15
+                  failureThreshold: 6
 
     # Service configuration
     service:
@@ -95,6 +101,14 @@ spec:
         mountPath: /media
         existingClaim: shared-media
         accessMode: ReadWriteMany
+
+    # Security context - use existing abc user (UID 911)
+    securityContext:
+      container:
+        runAsNonRoot: true
+        readOnlyRootFilesystem: false
+        runAsUser: 911
+        runAsGroup: 1001
 
     # Resources
     resources:
