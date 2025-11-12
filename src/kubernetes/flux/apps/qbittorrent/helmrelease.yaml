@@ -82,6 +82,22 @@ spec:
               env:
                 QBT_WEBUI_PORT: "10095"
                 QBT_TORRENTING_PORT: "6881"
+              probes:
+                liveness:
+                  enabled: true
+                  type: http
+                  path: /
+                  port: 10095
+                readiness:
+                  enabled: true
+                  type: http
+                  path: /
+                  port: 10095
+                startup:
+                  enabled: true
+                  type: http
+                  path: /
+                  port: 10095
       # Gluetun VPN sidecar
       gluetun:
         enabled: true
