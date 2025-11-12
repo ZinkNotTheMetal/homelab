@@ -19,8 +19,8 @@ spec:
   # Helm values to configure Radarr with TrueCharts
   values:
     image:
-      repository: oci.trueforge.org/containerforge/radarr
-      tag: "6.0.3.10276"
+      repository: linuxserver/radarr
+      tag: "5.28.0"
       pullPolicy: IfNotPresent
 
     # Global settings (applies to all containers)
