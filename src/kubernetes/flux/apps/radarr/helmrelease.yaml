@@ -50,6 +50,9 @@ spec:
                   type: http
                   path: /ping
                   port: 7878
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  failureThreshold: 3
                 # readiness:
                 #   enabled: true
                 #   type: http
@@ -60,6 +63,9 @@ spec:
                   type: http
                   path: /ping
                   port: 7878
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  failureThreshold: 4
 
     # Service configuration
     service:
