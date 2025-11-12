@@ -5,7 +5,7 @@ metadata:
   name: nfs-media
 spec:
   capacity:
-    storage: 25Ti
+    storage: 35Ti
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain

@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: overseerr
+  namespace: media
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`overseerr.zinkzone.tech`)
+      kind: Rule
+      services:
+        - name: overseerr
+          port: 5055
+  tls:
+    secretName: tls-cert

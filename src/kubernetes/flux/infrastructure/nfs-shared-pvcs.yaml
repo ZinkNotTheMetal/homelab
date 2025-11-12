@@ -12,7 +12,7 @@ spec:
   volumeName: nfs-media
   resources:
     requests:
-      storage: 25Ti
+      storage: 35Ti
 ---
 # Shared PVC for /downloads - qBittorrent writes here, Sonarr/Radarr can read
 apiVersion: v1
