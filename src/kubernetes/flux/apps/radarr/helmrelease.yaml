@@ -50,11 +50,11 @@ spec:
                   type: http
                   path: /ping
                   port: 7878
-                readiness:
-                  enabled: true
-                  type: http
-                  path: /ping
-                  port: 7878
+                # readiness:
+                #   enabled: true
+                #   type: http
+                #   path: /ping
+                #   port: 7878
                 startup:
                   enabled: true
                   type: http
