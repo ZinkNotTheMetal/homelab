@@ -53,11 +53,11 @@ spec:
                   initialDelaySeconds: 30
                   periodSeconds: 10
                   failureThreshold: 3
-                # readiness:
-                #   enabled: true
-                #   type: http
-                #   path: /ping
-                #   port: 7878
+                readiness:
+                  enabled: true
+                  type: http
+                  path: /ping
+                  port: 7878
                 startup:
                   enabled: true
                   type: http
@@ -95,14 +95,6 @@ spec:
         mountPath: /media
         existingClaim: shared-media
         accessMode: ReadWriteMany
-
-    # Security context
-    securityContext:
-      container:
-        runAsNonRoot: false
-        readOnlyRootFilesystem: false
-        runAsUser: 0
-        runAsGroup: 0
 
     # Resources
     resources:
