@@ -64,14 +64,15 @@ spec:
             gluetun:
               enabled: true
               imageSelector: gluetunImage
+              envFrom:
+                - secretRef:
+                    name: qbittorrent-vpn
               env:
                 VPN_SERVICE_PROVIDER: "private internet access"
                 VPN_TYPE: "openvpn"
-                OPENVPN_USER: "YOUR_PIA_USERNAME"
-                OPENVPN_PASSWORD: "YOUR_PIA_PASSWORD"
                 SERVER_REGIONS: "US East"
-                FIREWALL_OUTBOUND_SUBNETS: "10.42.0.0/16,10.43.0.0/16"  # k3s pod/service CIDRs
-                FIREWALL_VPN_INPUT_PORTS: "8080"  # qBittorrent WebUI
+                FIREWALL_OUTBOUND_SUBNETS: "10.42.0.0/16,10.43.0.0/16"
+                FIREWALL_VPN_INPUT_PORTS: "8080"
                 HEALTH_VPN_DURATION_INITIAL: "30s"
               securityContext:
                 capabilities:
@@ -127,16 +128,9 @@ spec:
         enabled: true
         type: pvc
         mountPath: /downloads
-        storageClass: nfs-media-static
+        storageClass: nfs-downloads-static
         accessMode: ReadWriteMany
-        size: 25Ti
-      media:
-        enabled: true
-        type: pvc
-        mountPath: /media
-        storageClass: nfs-media-static
-        accessMode: ReadWriteMany
-        size: 25Ti
+        size: 5Ti
 
     # Security context
     securityContext:
