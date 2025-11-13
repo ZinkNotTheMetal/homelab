@@ -11,7 +11,7 @@ locals {
   k3s_prod_node_hostname_prefix = "k3s-prod-node"
   k3s_prod_node_count           = 2
 
-  k3s_prod_node_cpu_cores      = 4
+  k3s_prod_node_cpu_cores      = 6
   k3s_prod_node_memory_mb      = 28672 # 28GB
   k3s_prod_node_disk_size_gb   = 180
   k3s_prod_node_starting_vm_id = 202 # 302, 303

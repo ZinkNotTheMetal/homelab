@@ -8,8 +8,8 @@
 
 locals {
   k3s_prod_cp_hostname          = "k3s-prod-cp-1"
-  k3s_prod_cp_node_cpu_cores    = 3
-  k3s_prod_cp_node_memory_mb    = 12288 # 12GB
+  k3s_prod_cp_node_cpu_cores    = 2
+  k3s_prod_cp_node_memory_mb    = 6144 # 6GB
   k3s_prod_cp_node_disk_size_gb = 60
 }
 
