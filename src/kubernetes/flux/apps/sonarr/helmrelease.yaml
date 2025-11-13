@@ -106,8 +106,15 @@ spec:
         size: 2Gi
         storageClass: longhorn
         accessMode: ReadWriteOnce
+      # Mount PostgreSQL config.xml from ConfigMap
+      postgres-config:
+        enabled: true
+        type: configMap
+        name: sonarr-postgres-config
         globalMounts:
-          - path: /config
+          - path: /config/config.xml
+            subPath: config.xml
+            readOnly: false
       media:
         enabled: true
         type: persistentVolumeClaim
