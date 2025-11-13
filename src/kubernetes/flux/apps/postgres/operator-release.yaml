@@ -14,3 +14,5 @@ spec:
         name: cloud-native-postgres
         namespace: flux-system
       interval: 12h
+  values:
+    {}
