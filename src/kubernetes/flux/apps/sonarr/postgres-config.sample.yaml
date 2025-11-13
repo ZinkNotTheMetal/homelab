@@ -1,0 +1,37 @@
+---
+# Sample PostgreSQL config.xml ConfigMap for Sonarr
+# Copy this file to postgres-config.secret.yaml and fill in the actual password
+# Then apply with: kubectl apply -f postgres-config.secret.yaml
+#
+# Get password from: kubectl get secret -n pg-database cnpg-cluster-release-superuser -o jsonpath='{.data.password}' | base64 -d
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sonarr-postgres-config
+  namespace: media
+data:
+  config.xml: |
+    <Config>
+      <LogLevel>info</LogLevel>
+      <UrlBase></UrlBase>
+      <BindAddress>*</BindAddress>
+      <Port>8989</Port>
+      <SslPort>9898</SslPort>
+      <EnableSsl>False</EnableSsl>
+      <LaunchBrowser>False</LaunchBrowser>
+      <ApiKey></ApiKey>
+      <AuthenticationMethod>None</AuthenticationMethod>
+      <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>
+      <Branch>main</Branch>
+      <SslCertPath></SslCertPath>
+      <SslCertPassword></SslCertPassword>
+      <UpdateMechanism>Docker</UpdateMechanism>
+      <InstanceName>Sonarr</InstanceName>
+      <PostgresUser>postgres</PostgresUser>
+      <PostgresPassword><GET_FROM_cnpg-cluster-release-superuser_SECRET></PostgresPassword>
+      <PostgresPort>5432</PostgresPort>
+      <PostgresHost>cnpg-cluster-release-rw.pg-database.svc.cluster.local</PostgresHost>
+      <PostgresMainDb>sonarr-main</PostgresMainDb>
+      <PostgresLogDb>sonarr-log</PostgresLogDb>
+    </Config>
