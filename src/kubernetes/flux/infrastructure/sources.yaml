@@ -3,7 +3,7 @@
 # These repositories are used by HelmReleases in the apps/ directory
 ---
 # Prometheus Community - Monitoring stack
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: prometheus-community
@@ -13,7 +13,7 @@ spec:
   url: https://prometheus-community.github.io/helm-charts
 ---
 # Grafana - Observability dashboards
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: grafana
@@ -22,9 +22,8 @@ spec:
   interval: 1h
   url: https://grafana.github.io/helm-charts
 ---
----
 # Loeken at Home - Alternative media charts
-apiVersion: source.toolkit.fluxcd.io/v1beta2
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: loeken-at-home
@@ -42,3 +41,13 @@ spec:
   type: oci
   interval: 1h
   url: oci://oci.trueforge.org/truecharts
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: cloud-native-postgres
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://cloudnative-pg.github.io/charts
+---
