@@ -15,9 +15,14 @@ spec:
         namespace: flux-system
       interval: 12h
   values:
-    # Load all environment variables from the secret
-    envVarsFromSecrets:
-      - pgadmin-credentials
+    # Use existing secret for password (per chart documentation)
+    existingSecret: pgadmin-credentials
+    secretKeys:
+      pgadminPasswordKey: PGADMIN_PASSWORD
+    
+    # Email from secret - using env.email approach
+    env:
+      email: williamdzink@gmail.com
     
     persistentVolume:
       enabled: true
@@ -38,5 +43,5 @@ spec:
         cpu: "100m"
         memory: "256Mi"
       limits:
-        cpu: "500m"
+        cpu: "1000m"
         memory: "1Gi"
