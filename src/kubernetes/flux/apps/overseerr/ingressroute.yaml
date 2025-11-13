@@ -14,4 +14,4 @@ spec:
         - name: overseerr
           port: 5055
   tls:
-    secretName: tls-cert
+    certResolver: cloudflare
