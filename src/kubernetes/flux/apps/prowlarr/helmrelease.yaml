@@ -9,56 +9,76 @@ spec:
   chart:
     spec:
       chart: prowlarr
-      version: "21.0.0"
+      version: "1.37.0"
       sourceRef:
         kind: HelmRepository
-        name: oci-truecharts
+        name: loeken-at-home
         namespace: flux-system
       interval: 12h
 
-  # Helm values to configure Prowlarr with TrueCharts
+  # Helm values to configure Prowlarr with loeken-at-home (following Sonarr pattern)
   values:
-    image:
-      repository: linuxserver/prowlarr
-      tag: 2.1.5
-      pullPolicy: IfNotPresent
-    # Global settings (applies to all containers)
-    global:
-      stopAll: false
-
-    # TrueCharts global timezone setting
-    TZ: America/New_York
-
-    # Disable metrics (requires Prometheus Operator CRDs)
-    metrics:
+    # Use LinuxServer image
+    controllers:
       main:
-        enabled: false
-        type: servicemonitor
-
-    # Workload configuration
-    workload:
-      main:
-        podSpec:
-          containers:
-            main:
-              # Image configuration
-              imageSelector: image
-              probes:
-                liveness:
-                  enabled: true
-                  type: http
-                  path: /ping
-                  port: 9696
-                readiness:
-                  enabled: true
-                  type: http
-                  path: /ping
-                  port: 9696
-                startup:
-                  enabled: true
-                  type: http
-                  path: /ping
-                  port: 9696
+        containers:
+          main:
+            image:
+              repository: linuxserver/prowlarr
+              tag: 2.1.5
+              pullPolicy: IfNotPresent
+            
+            # Environment variables (following Sonarr pattern)
+            env:
+              TZ: America/New_York
+              PUID: 568
+              PGID: 568
+            
+            # Health checks
+            probes:
+              liveness:
+                enabled: true
+                type: HTTP
+                spec:
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                type: HTTP
+                spec:
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              startup:
+                enabled: true
+                type: HTTP
+                spec:
+                  initialDelaySeconds: 60
+                  timeoutSeconds: 1
+                  periodSeconds: 5
+                  failureThreshold: 30
+            
+            # CPU limits optimized for homelab
+            resources:
+              limits:
+                cpu: 500m
+                memory: 512Mi
+              requests:
+                cpu: 100m
+                memory: 256Mi
+            
+            # Container-level security context for non-root execution
+            securityContext:
+              runAsUser: 568
+              runAsGroup: 568
+        
+        # Pod-level security context
+        pod:
+          securityContext:
+            fsGroup: 568
 
     # Service configuration
     service:
@@ -83,21 +103,11 @@ spec:
     # Persistence for configuration
     persistence:
       config:
-        enabled: true
-        type: pvc
+        type: persistentVolumeClaim
         mountPath: /config
         size: 512Mi
         storageClass: longhorn
         accessMode: ReadWriteOnce
-      # Mount PostgreSQL config.xml from ConfigMap
-      postgres-config:
-        enabled: true
-        type: configMap
-        name: prowlarr-postgres-config
-        globalMounts:
-          - path: /config/config.xml
-            subPath: config.xml
-            readOnly: false
 
     # Security context
     securityContext:
