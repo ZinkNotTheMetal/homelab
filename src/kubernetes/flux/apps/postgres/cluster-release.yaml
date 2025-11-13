@@ -27,10 +27,11 @@ spec:
 
       # Resource management for PostgreSQL instance
       # Single instance for homelab - no HA needed
+      # Memory increased to 2Gi to support multiple Servarr app databases
       resources:
         requests:
           cpu: "100m"
-          memory: "256Mi"
+          memory: "512Mi"
         limits:
           cpu: "500m"
-          memory: "1Gi"
+          memory: "2Gi"
