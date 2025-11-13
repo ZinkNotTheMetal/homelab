@@ -9,7 +9,7 @@ metadata:
     external-dns.alpha.kubernetes.io/hostname: pgadmin.zinkzone.tech
 spec:
   type: ExternalName
-  externalName: pgadmin.zinkzone.tech
+  externalName: traefik.zinkzone.tech
   ports:
     - port: 80
       protocol: TCP
