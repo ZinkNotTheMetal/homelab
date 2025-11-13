@@ -46,6 +46,9 @@ spec:
     securityContext:
       container:
         readOnlyRootFilesystem: false
+        runAsNonRoot: false
+        runAsUser: 0
+        runAsGroup: 0
 
     # Resources
     resources:
