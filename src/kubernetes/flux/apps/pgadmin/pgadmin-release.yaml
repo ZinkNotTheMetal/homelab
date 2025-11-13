@@ -14,4 +14,30 @@ spec:
         name: pgadmin-helm-repo
         namespace: flux-system
       interval: 12h
-  values: {}
+  values:
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+    readinessProbe:
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+    livenessProbe:
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 20
+      timeoutSeconds: 5
+      failureThreshold: 3
+    startupProbe:
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 0
+      periodSeconds: 2
+      timeoutSeconds: 1
+      failureThreshold: 30
