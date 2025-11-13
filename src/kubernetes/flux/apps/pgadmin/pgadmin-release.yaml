@@ -15,23 +15,9 @@ spec:
         namespace: flux-system
       interval: 12h
   values:
-    env:
-      # Required by chart but will be overridden by variables
-      email: williamdzink@gmail.com
-      password: placeholder
-      
-      # Custom environment variables that reference the secret
-      variables:
-        - name: PGADMIN_DEFAULT_EMAIL
-          valueFrom:
-            secretKeyRef:
-              name: pgadmin-credentials
-              key: PGADMIN_EMAIL
-        - name: PGADMIN_DEFAULT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: pgadmin-credentials
-              key: PGADMIN_PASSWORD
+    # Load all environment variables from the secret
+    envVarsFromSecrets:
+      - pgadmin-credentials
     
     persistentVolume:
       enabled: true
