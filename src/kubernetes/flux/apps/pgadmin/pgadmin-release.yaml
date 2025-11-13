@@ -28,3 +28,12 @@ spec:
       timeoutSeconds: 5
       failureThreshold: 30
       successThreshold: 1
+
+    # Resource management for pgAdmin
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+      limits:
+        cpu: "500m"
+        memory: "1Gi"
