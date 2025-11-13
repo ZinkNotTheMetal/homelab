@@ -111,6 +111,15 @@ spec:
         accessMode: ReadWriteOnce
         globalMounts:
           - path: /config
+      # Mount PostgreSQL config.xml from ConfigMap
+      postgres-config:
+        enabled: true
+        type: configMap
+        name: radarr-postgres-config
+        globalMounts:
+          - path: /config/config.xml
+            subPath: config.xml
+            readOnly: false
       media:
         enabled: true
         type: persistentVolumeClaim
