@@ -86,17 +86,20 @@ spec:
     # Service configuration
     service:
       main:
+        enabled: true
         ports:
-          main:
-            protocol: http
+          http:
+            enabled: true
+            primary: true
             port: 9696
+            protocol: HTTP
       flaresolverr:
         enabled: true
         ports:
           flaresolverr:
             enabled: true
-            protocol: http
             port: 8191
+            protocol: HTTP
 
     # Ingress (disabled - using Traefik IngressRoute)
     ingress:
@@ -106,17 +109,11 @@ spec:
     # Persistence for configuration
     persistence:
       config:
+        enabled: true
         type: persistentVolumeClaim
         mountPath: /config
         size: 512Mi
         storageClass: longhorn
         accessMode: ReadWriteOnce
 
-    # Resources
-    resources:
-      limits:
-        cpu: 500m
-        memory: 512Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
+
