@@ -15,6 +15,8 @@ spec:
         namespace: flux-system
       interval: 12h
   values:
+    envVarsFromSecrets:
+      - pgadmin-credentials
     persistentVolume:
       enabled: true
       storageClass: "longhorn"
