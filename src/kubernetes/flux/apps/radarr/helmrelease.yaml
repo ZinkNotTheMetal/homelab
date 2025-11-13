@@ -65,10 +65,10 @@ spec:
                   periodSeconds: 5
                   failureThreshold: 30
             
-            # Increased CPU limits to handle startup spikes
+            # CPU limits optimized for homelab with startup spike headroom
             resources:
               limits:
-                cpu: 1500m
+                cpu: 1000m
                 memory: 1Gi
               requests:
                 cpu: 100m

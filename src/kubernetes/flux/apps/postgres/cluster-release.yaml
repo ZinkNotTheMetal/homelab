@@ -26,10 +26,11 @@ spec:
         storageClass: longhorn
 
       # Resource management for PostgreSQL instances
+      # Optimized for homelab usage with light database load
       resources:
         requests:
-          cpu: "250m"
-          memory: "512Mi"
+          cpu: "100m"
+          memory: "256Mi"
         limits:
-          cpu: "1000m"
-          memory: "2Gi"
+          cpu: "500m"
+          memory: "1Gi"
