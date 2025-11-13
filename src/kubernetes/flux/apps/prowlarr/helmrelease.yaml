@@ -97,10 +97,10 @@ spec:
             port: 9696
             protocol: HTTP
       flaresolverr:
-        enabled: true
+        enabled: false
         ports:
           flaresolverr:
-            enabled: true
+            enabled: false
             port: 8191
             protocol: HTTP
 
