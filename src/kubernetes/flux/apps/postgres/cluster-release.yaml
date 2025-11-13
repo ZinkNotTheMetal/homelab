@@ -19,14 +19,14 @@ spec:
       postgresql: "18"
 
     cluster:
-      instances: 3
+      instances: 1
 
       storage:
         size: "4Gi"
         storageClass: longhorn
 
-      # Resource management for PostgreSQL instances
-      # Optimized for homelab usage with light database load
+      # Resource management for PostgreSQL instance
+      # Single instance for homelab - no HA needed
       resources:
         requests:
           cpu: "100m"
