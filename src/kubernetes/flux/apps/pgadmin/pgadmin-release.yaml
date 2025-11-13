@@ -19,3 +19,10 @@ spec:
       enabled: true
       storageClass: "longhorn"
       size: "2Gi"
+    startupProbe:
+      enabled: true
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 30
+      successThreshold: 1
