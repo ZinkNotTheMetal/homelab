@@ -15,12 +15,6 @@ spec:
         namespace: flux-system
       interval: 12h
   values:
-    startupProbe:
-      httpGet:
-        path: /
-        port: http
-      failureThreshold: 30
-      periodSeconds: 2
     persistentVolume:
       enabled: true
       storageClass: "longhorn"
