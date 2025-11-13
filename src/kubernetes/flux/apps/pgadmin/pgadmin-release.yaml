@@ -16,14 +16,22 @@ spec:
       interval: 12h
   values:
     env:
-      # Email will be read from existingSecret
-      email: williamdzink@gmail.com  # Used as default, but overridden by secret
-      # Password will be read from existingSecret
-    
-    # Use existing secret for credentials
-    existingSecret: pgadmin-credentials
-    secretKeys:
-      pgadminPasswordKey: PGADMIN_PASSWORD
+      # Required by chart but will be overridden by variables
+      email: williamdzink@gmail.com
+      password: placeholder
+      
+      # Custom environment variables that reference the secret
+      variables:
+        - name: PGADMIN_DEFAULT_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: pgadmin-credentials
+              key: PGADMIN_EMAIL
+        - name: PGADMIN_DEFAULT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pgadmin-credentials
+              key: PGADMIN_PASSWORD
     
     persistentVolume:
       enabled: true
