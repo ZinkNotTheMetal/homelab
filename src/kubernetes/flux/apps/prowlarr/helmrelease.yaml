@@ -61,31 +61,41 @@ spec:
                   name: media-postgres-credentials
                   key: POSTGRES_PASSWORD
 
-            # Health checks - disabled due to loeken-at-home chart bug
-            # The chart ignores custom probe configuration and uses port 8191
-            # Prowlarr is running correctly on port 9696 and connecting to PostgreSQL
+            # Health checks - custom probes for port 9696
             probes:
               liveness:
                 enabled: true
+                custom: true
                 spec:
-                  initialDelaySeconds: 35
-                  periodSeconds: 15
+                  httpGet:
+                    path: /ping
+                    port: 9696
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
                   timeoutSeconds: 3
                   failureThreshold: 5
               readiness:
                 enabled: true
+                custom: true
                 spec:
-                  initialDelaySeconds: 35
-                  periodSeconds: 15
+                  httpGet:
+                    path: /ping
+                    port: 9696
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
                   timeoutSeconds: 3
                   failureThreshold: 5
               startup:
                 enabled: true
+                custom: true
                 spec:
-                  initialDelaySeconds: 25
-                  periodSeconds: 10
+                  httpGet:
+                    path: /ping
+                    port: 9696
+                  initialDelaySeconds: 0
+                  periodSeconds: 5
                   timeoutSeconds: 3
-                  failureThreshold: 5
+                  failureThreshold: 30
 
             # CPU limits optimized for homelab
             resources:
