@@ -139,7 +139,7 @@ spec:
       config:
         enabled: true
         type: persistentVolumeClaim
-        size: 512Mi
+        size: 2Gi
         storageClass: longhorn
         accessMode: ReadWriteOnce
         globalMounts:

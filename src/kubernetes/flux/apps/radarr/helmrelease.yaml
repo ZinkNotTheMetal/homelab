@@ -132,7 +132,7 @@ spec:
         enabled: true
         type: persistentVolumeClaim
         mountPath: /config
-        size: 512Mi
+        size: 2Gi
         storageClass: longhorn
         accessMode: ReadWriteOnce
       downloads:
