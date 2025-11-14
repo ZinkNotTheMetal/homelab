@@ -136,6 +136,12 @@ spec:
         accessMode: ReadWriteOnce
         globalMounts:
           - path: /config
+      downloads:
+        enabled: true
+        type: persistentVolumeClaim
+        existingClaim: shared-downloads
+        globalMounts:
+          - path: /downloads
       media:
         enabled: true
         type: persistentVolumeClaim
