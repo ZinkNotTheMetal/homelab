@@ -4,5 +4,3 @@ kind: Kustomization
 resources:
   - helmrelease.yaml
   - ingressroute.yaml
-# PostgreSQL secret and config are created manually via kubectl
-# See POSTGRES_SETUP.md for instructions

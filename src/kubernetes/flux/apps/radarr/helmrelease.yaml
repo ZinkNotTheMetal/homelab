@@ -55,28 +55,41 @@ spec:
                   name: media-postgres-credentials
                   key: POSTGRES_PASSWORD
 
+            # Health checks - custom probes for port 7878
             probes:
               liveness:
                 enabled: true
+                custom: true
                 spec:
-                  initialDelaySeconds: 35
-                  periodSeconds: 15
+                  httpGet:
+                    path: /ping
+                    port: 7878
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
                   timeoutSeconds: 3
                   failureThreshold: 5
               readiness:
                 enabled: true
+                custom: true
                 spec:
-                  initialDelaySeconds: 35
-                  periodSeconds: 15
+                  httpGet:
+                    path: /ping
+                    port: 7878
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
                   timeoutSeconds: 3
                   failureThreshold: 5
               startup:
                 enabled: true
+                custom: true
                 spec:
-                  initialDelaySeconds: 25
-                  periodSeconds: 10
+                  httpGet:
+                    path: /ping
+                    port: 7878
+                  initialDelaySeconds: 0
+                  periodSeconds: 5
                   timeoutSeconds: 3
-                  failureThreshold: 5
+                  failureThreshold: 30
 
             # CPU limits optimized for homelab with startup spike headroom
             resources:
