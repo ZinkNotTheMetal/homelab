@@ -118,24 +118,15 @@ spec:
       config:
         enabled: true
         type: persistentVolumeClaim
-        mountPath: /config
-        size: 2Gi
+        size: 512Mi
         storageClass: longhorn
         accessMode: ReadWriteOnce
         globalMounts:
           - path: /config
-      # Mount PostgreSQL config.xml from ConfigMap
-      postgres-config:
-        enabled: true
-        type: configMap
-        name: radarr-postgres-config
-        globalMounts:
-          - path: /config/config.xml
-            subPath: config.xml
-            readOnly: false
       media:
         enabled: true
         type: persistentVolumeClaim
         existingClaim: shared-media
         globalMounts:
           - path: /media
+
