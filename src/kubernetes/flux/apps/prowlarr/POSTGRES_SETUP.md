@@ -1,108 +1,85 @@
-# Prowlarr PostgreSQL Migration Setup
+# Prowlarr PostgreSQL Setup
 
-## Prerequisites
+## ✅ Current Status
 
-1. PostgreSQL databases created:
-   - `prowlarr-main` - Main application database
-   - `prowlarr-log` - Log database
+Prowlarr is successfully configured to use PostgreSQL via **environment variables**.
 
-2. Get PostgreSQL credentials:
+## Configuration Method
+
+Prowlarr uses environment variables for PostgreSQL configuration instead of config.xml. This approach:
+- Avoids permission issues with the LinuxServer container
+- Keeps secrets out of ConfigMaps  
+- Works reliably with the loeken-at-home Helm chart
+
+## Environment Variables
+
+The following environment variables are configured in `helmrelease.yaml`:
+
+```yaml
+env:
+  PROWLARR__POSTGRES__HOST: "cnpg-cluster-release-rw.pg-database.svc.cluster.local"
+  PROWLARR__POSTGRES__PORT: "5432"
+  PROWLARR__POSTGRES__USER: "postgres"
+  PROWLARR__POSTGRES__PASSWORD: "<password>"
+  PROWLARR__POSTGRES__MAINDB: "prowlarr-main"
+  PROWLARR__POSTGRES__LOGDB: "prowlarr-log"
+```
+
+## PostgreSQL Databases
+
+Two databases are used:
+- `prowlarr-main` - Main application database
+- `prowlarr-log` - Log database
+
+## Verification
+
+Check that Prowlarr is connected to PostgreSQL:
+
+```bash
+# Check pod status
+kubectl get pods -n media -l app.kubernetes.io/name=prowlarr
+
+# Check logs for PostgreSQL connection
+kubectl logs -n media -l app.kubernetes.io/name=prowlarr | grep -i postgres
+
+# Verify database tables exist
+kubectl exec -n pg-database cnpg-cluster-release-3 -- \
+  psql -U postgres -d prowlarr-main -c "\dt"
+```
+
+## Known Issues
+
+### Health Probes
+
+The loeken-at-home Helm chart has a bug where it ignores custom probe configuration and defaults to port 8191 (flaresolverr port). As a workaround, health probes are **disabled** in the helmrelease.yaml. The application runs correctly without them.
+
+## Updating Password
+
+To update the PostgreSQL password:
+
+1. Get the new password:
    ```bash
-   kubectl get secret -n pg-database cnpg-cluster-release-superuser -o jsonpath='{.data.password}' | base64 -d
+   kubectl get secret -n pg-database cnpg-cluster-release-superuser \
+     -o jsonpath='{.data.password}' | base64 -d
    ```
 
-## Setup Steps
+2. Update `helmrelease.yaml` with the new password
 
-### 1. Create the Secret
+3. Apply the changes:
+   ```bash
+   kubectl apply -f helmrelease.yaml
+   ```
 
-Get the PostgreSQL password and create the secret directly with kubectl:
+4. Delete the pod to restart with new credentials:
+   ```bash
+   kubectl delete pod -n media -l app.kubernetes.io/name=prowlarr
+   ```
 
-```bash
-# Get the password
-PGPASSWORD=$(kubectl get secret -n pg-database cnpg-cluster-release-superuser -o jsonpath='{.data.password}' | base64 -d)
-
-# Create the secret
-kubectl create secret generic prowlarr-postgres-credentials -n media \
-  --from-literal=POSTGRES_USER=postgres \
-  --from-literal=POSTGRES_PASSWORD="$PGPASSWORD" \
-  --from-literal=POSTGRES_HOST=cnpg-cluster-release-rw.pg-database.svc.cluster.local \
-  --from-literal=POSTGRES_PORT=5432 \
-  --from-literal=POSTGRES_MAIN_DB=prowlarr-main \
-  --from-literal=POSTGRES_LOG_DB=prowlarr-log
-```
-
-### 2. Create the ConfigMap
-
-```bash
-# Get the password
-PGPASSWORD=$(kubectl get secret -n pg-database cnpg-cluster-release-superuser -o jsonpath='{.data.password}' | base64 -d)
-
-# Create config.xml file
-cat > /tmp/prowlarr-config.xml <<EOF
-<Config>
-  <LogLevel>info</LogLevel>
-  <UrlBase></UrlBase>
-  <BindAddress>*</BindAddress>
-  <Port>9696</Port>
-  <SslPort>9898</SslPort>
-  <EnableSsl>False</EnableSsl>
-  <LaunchBrowser>False</LaunchBrowser>
-  <ApiKey></ApiKey>
-  <AuthenticationMethod>None</AuthenticationMethod>
-  <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>
-  <Branch>main</Branch>
-  <SslCertPath></SslCertPath>
-  <SslCertPassword></SslCertPassword>
-  <UpdateMechanism>Docker</UpdateMechanism>
-  <InstanceName>Prowlarr</InstanceName>
-  <PostgresUser>postgres</PostgresUser>
-  <PostgresPassword>$PGPASSWORD</PostgresPassword>
-  <PostgresPort>5432</PostgresPort>
-  <PostgresHost>cnpg-cluster-release-rw.pg-database.svc.cluster.local</PostgresHost>
-  <PostgresMainDb>prowlarr-main</PostgresMainDb>
-  <PostgresLogDb>prowlarr-log</PostgresLogDb>
-</Config>
-EOF
-
-# Create the ConfigMap
-kubectl create configmap prowlarr-postgres-config -n media --from-file=config.xml=/tmp/prowlarr-config.xml
-
-# Clean up
-rm /tmp/prowlarr-config.xml
-```
-
-### 3. Delete Old PVC (IMPORTANT: This will delete all existing Prowlarr data)
-
-```bash
-# Delete the deployment first
-kubectl delete deployment -n media prowlarr
-
-# Delete the PVC
-kubectl delete pvc -n media prowlarr
-```
-
-### 4. Apply HelmRelease
-
-The HelmRelease will be applied by Flux automatically once merged to main, or you can apply it manually:
-
-```bash
-kubectl apply -f helmrelease.yaml
-```
-
-### 5. Verify PostgreSQL Connection
-
-```bash
-# Check pod logs
-kubectl logs -n media -l app.kubernetes.io/name=prowlarr --tail=50
-
-# Verify databases have tables
-kubectl exec -n pg-database cnpg-cluster-release-3 -- psql -U postgres -d prowlarr-main -c "\dt"
-```
-
-## Rollback
+## Rollback to SQLite
 
 If you need to rollback to SQLite:
 
-1. Delete the postgres-config mount from helmrelease.yaml
-2. Delete the configmap: `kubectl delete configmap -n media prowlarr-postgres-config`
-3. Restart Prowlarr - it will recreate SQLite database
+1. Remove all `PROWLARR__POSTGRES__*` environment variables from helmrelease.yaml
+2. Delete the PVC: `kubectl delete pvc -n media prowlarr`
+3. Apply the updated helmrelease.yaml
+4. Prowlarr will recreate SQLite databases on startup

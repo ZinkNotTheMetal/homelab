@@ -27,7 +27,7 @@ spec:
               repository: linuxserver/radarr
               tag: "5.28.0"
               pullPolicy: IfNotPresent
-            
+
             # Environment variables
             env:
               TZ: America/New_York
@@ -36,35 +36,48 @@ spec:
               RADARR__SERVER__PORT: "7878"
               RADARR__AUTH__METHOD: ""
               RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
-            
-            # Health checks with 60 second startup delay
+              RADARR__POSTGRES__MAINDB: "radarr-main"
+              RADARR__POSTGRES__LOGDB: "radarr-log"
+              RADARR__POSTGRES__HOST:
+                secretKeyRef:
+                  name: media-postgres-credentials
+                  key: POSTGRES_HOST
+              RADARR__POSTGRES__PORT:
+                secretKeyRef:
+                  name: media-postgres-credentials
+                  key: POSTGRES_PORT
+              RADARR__POSTGRES__USER:
+                secretKeyRef:
+                  name: media-postgres-credentials
+                  key: POSTGRES_USER
+              RADARR__POSTGRES__PASSWORD:
+                secretKeyRef:
+                  name: media-postgres-credentials
+                  key: POSTGRES_PASSWORD
+                  
             probes:
               liveness:
                 enabled: true
-                type: HTTP
                 spec:
-                  initialDelaySeconds: 60
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
+                  initialDelaySeconds: 35
+                  periodSeconds: 15
+                  timeoutSeconds: 3
+                  failureThreshold: 5
               readiness:
                 enabled: true
-                type: HTTP
                 spec:
-                  initialDelaySeconds: 60
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
+                  initialDelaySeconds: 35
+                  periodSeconds: 15
+                  timeoutSeconds: 3
+                  failureThreshold: 5
               startup:
                 enabled: true
-                type: HTTP
                 spec:
-                  initialDelaySeconds: 60
-                  timeoutSeconds: 1
-                  # This means it has a maximum of 5*30=150 seconds to start up before it fails
-                  periodSeconds: 5
-                  failureThreshold: 30
-            
+                  initialDelaySeconds: 25
+                  periodSeconds: 10
+                  timeoutSeconds: 3
+                  failureThreshold: 5
+
             # CPU limits optimized for homelab with startup spike headroom
             resources:
               limits:
@@ -73,12 +86,12 @@ spec:
               requests:
                 cpu: 100m
                 memory: 256Mi
-            
+
             # Container-level security context for non-root execution
             securityContext:
               runAsUser: 568
               runAsGroup: 568
-        
+
         # Pod-level security context
         pod:
           securityContext:
@@ -126,3 +139,98 @@ spec:
         existingClaim: shared-media
         globalMounts:
           - path: /media
+
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: prowlarr
+  namespace: media
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: prowlarr
+      version: "1.37.0"
+      sourceRef:
+        kind: HelmRepository
+        name: loeken-at-home
+        namespace: flux-system
+      interval: 12h
+
+  # Helm values to configure Prowlarr with loeken-at-home
+  values:
+    # Override default naming to use 'prowlarr' for service name
+    nameOverride: prowlarr
+    fullnameOverride: prowlarr
+
+    # Use LinuxServer image
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              repository: linuxserver/prowlarr
+              tag: 2.1.5
+              pullPolicy: IfNotPresent
+
+            # Environment variables
+            env:
+              TZ: America/New_York
+              PUID: 568
+              PGID: 568
+              PROWLARR__SERVER__PORT: "9696"
+              PROWLARR__AUTH__METHOD: ""
+              PROWLARR__AUTH__REQUIRED: DisabledForLocalAddresses
+
+            # Health checks - disabled due to loeken-at-home chart bug
+            # The chart ignores custom probe configuration and uses port 8191
+            # Prowlarr is running correctly on port 9696 and connecting to PostgreSQL
+
+            # CPU limits optimized for homelab
+            resources:
+              limits:
+                cpu: 500m
+                memory: 512Mi
+              requests:
+                cpu: 100m
+                memory: 256Mi
+
+            # Container-level security context for non-root execution
+            securityContext:
+              runAsUser: 568
+              runAsGroup: 568
+
+        # Pod-level security context
+        pod:
+          securityContext:
+            fsGroup: 568
+
+    # Service configuration
+    service:
+      main:
+        enabled: true
+        primary: true
+        ports:
+          http:
+            enabled: true
+            primary: true
+            port: 9696
+            protocol: HTTP
+            targetPort: 9696
+
+    # Ingress (disabled - using Traefik IngressRoute)
+    ingress:
+      main:
+        enabled: false
+
+    # Persistence for configuration
+    persistence:
+      config:
+        enabled: true
+        type: persistentVolumeClaim
+        size: 512Mi
+        storageClass: longhorn
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /config

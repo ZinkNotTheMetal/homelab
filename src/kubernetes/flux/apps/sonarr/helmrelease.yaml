@@ -27,7 +27,7 @@ spec:
               repository: linuxserver/sonarr
               tag: "4.0.16"
               pullPolicy: IfNotPresent
-            
+
             # Environment variables
             env:
               TZ: America/New_York
@@ -36,35 +36,47 @@ spec:
               SONARR__SERVER__PORT: "8989"
               SONARR__AUTH__METHOD: ""
               SONARR__AUTH__REQUIRED: DisabledForLocalAddresses
-            
-            # Health checks with 60 second startup delay
+              # PostgreSQL credentials (from media-postgres-credentials secret)
+              SONARR__POSTGRES__HOST:
+                secretKeyRef:
+                  name: media-postgres-credentials
+                  key: POSTGRES_HOST
+              SONARR__POSTGRES__PORT:
+                secretKeyRef:
+                  name: media-postgres-credentials
+                  key: POSTGRES_PORT
+              SONARR__POSTGRES__USER:
+                secretKeyRef:
+                  name: media-postgres-credentials
+                  key: POSTGRES_USER
+              SONARR__POSTGRES__PASSWORD:
+                secretKeyRef:
+                  name: media-postgres-credentials
+                  key: POSTGRES_PASSWORD
+
             probes:
               liveness:
                 enabled: true
-                type: HTTP
                 spec:
-                  initialDelaySeconds: 60
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
+                  initialDelaySeconds: 35
+                  periodSeconds: 15
+                  timeoutSeconds: 3
+                  failureThreshold: 5
               readiness:
                 enabled: true
-                type: HTTP
                 spec:
-                  initialDelaySeconds: 60
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
+                  initialDelaySeconds: 35
+                  periodSeconds: 15
+                  timeoutSeconds: 3
+                  failureThreshold: 5
               startup:
                 enabled: true
-                type: HTTP
                 spec:
-                  initialDelaySeconds: 60
-                  timeoutSeconds: 1
-                  # This means it has a maximum of 5*30=150 seconds to start up before it fails
-                  periodSeconds: 5
-                  failureThreshold: 30
-            
+                  initialDelaySeconds: 25
+                  periodSeconds: 10
+                  timeoutSeconds: 3
+                  failureThreshold: 5
+
             # CPU limits optimized for homelab with startup spike headroom
             resources:
               limits:
@@ -73,12 +85,12 @@ spec:
               requests:
                 cpu: 100m
                 memory: 256Mi
-            
+
             # Container-level security context for non-root execution
             securityContext:
               runAsUser: 568
               runAsGroup: 568
-        
+
         # Pod-level security context
         pod:
           securityContext:
