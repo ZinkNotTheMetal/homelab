@@ -1,0 +1,79 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: authentik-release
+  namespace: auth
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: authentik
+      sourceRef:
+        kind: HelmRepository
+        name: authentik-helm-repo
+        namespace: flux-system
+      interval: 12h
+
+  values:
+    # Disable built-in PostgreSQL to use external CNPG cluster
+    postgresql:
+      enabled: false
+
+    # Configure external PostgreSQL connection using CNPG secret
+    authentik:
+      # Error reporting (optional, fully opt-in)
+      error_reporting:
+        enabled: false
+
+      # External PostgreSQL configuration using CNPG secret
+      postgresql:
+        host: "cnpg-cluster-release-rw.pg-database.svc.cluster.local"
+        port: 5432
+        name: "authentik"
+        user: "authentik"
+        # Password from CNPG superuser secret
+        password: "ThisIsNotASecurePassword"
+
+      # Secret key from secret
+      secret_key: "PleaseGenerateASecureKey"
+
+    # Environment variables from secrets
+    env:
+      - name: AUTHENTIK_SECRET_KEY
+        valueFrom:
+          secretKeyRef:
+            name: authentik-secret
+            key: SECRET_KEY
+      - name: AUTHENTIK_POSTGRES_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: cnpg-cluster-release-superuser
+            key: password
+            namespace: pg-database
+
+    # Server configuration
+    server:
+      # Resource management
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "256Mi"
+        limits:
+          cpu: "1000m"
+          memory: "2Gi"
+
+      # Disable built-in ingress - using separate IngressRoute
+      ingress:
+        enabled: false
+
+    # Worker configuration
+    worker:
+      # Resource management
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "256Mi"
+        limits:
+          cpu: "500m"
+          memory: "2Gi"
