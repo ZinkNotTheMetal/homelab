@@ -10,12 +10,23 @@ spec:
   chart:
     spec:
       chart: authentik
-      version: "2025.10.1"  # Latest version
+      version: "2025.10.x"  # Auto-update minor versions
       sourceRef:
         kind: HelmRepository
         name: authentik-helm-repo
         namespace: flux-system
       interval: 12h
+
+  # Inject secret values from our custom secret
+  valuesFrom:
+    - kind: Secret
+      name: authentik-db-secret
+      valuesKey: AUTHENTIK_SECRET_KEY
+      targetPath: authentik.secret_key
+    - kind: Secret
+      name: authentik-db-secret
+      valuesKey: AUTHENTIK_POSTGRESQL__PASSWORD
+      targetPath: authentik.postgresql.password
 
   values:
     global:
@@ -30,21 +41,24 @@ spec:
     redis:
       enabled: false
 
-    # Use existing secret for all Authentik configuration
-    # Secret contains: AUTHENTIK_SECRET_KEY, AUTHENTIK_POSTGRESQL__* variables
-    secret:
-      existingSecret: authentik-db-secret
+    # Configure Authentik database connection
+    authentik:
+      postgresql:
+        host: "cnpg-cluster-release-rw.pg-database.svc.cluster.local"
+        port: 5432
+        name: "authentik"
+        user: "authentik"
 
     # Server configuration
     server:
       # Resource management
       resources:
         requests:
-          cpu: "100m"
-          memory: "256Mi"
+          cpu: "250m"
+          memory: "512Mi"
         limits:
-          cpu: "1000m"
-          memory: "2Gi"
+          cpu: "1500m"
+          memory: "3Gi"
 
       # Disable built-in ingress - using separate IngressRoute
       ingress:
@@ -55,8 +69,8 @@ spec:
       # Resource management
       resources:
         requests:
-          cpu: "100m"
-          memory: "256Mi"
+          cpu: "250m"
+          memory: "512Mi"
         limits:
-          cpu: "500m"
-          memory: "2Gi"
+          cpu: "1000m"
+          memory: "3Gi"
