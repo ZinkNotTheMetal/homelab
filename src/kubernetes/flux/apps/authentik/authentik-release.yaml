@@ -6,9 +6,11 @@ metadata:
   namespace: auth
 spec:
   interval: 30m
+  timeout: 10m
   chart:
     spec:
       chart: authentik
+      version: "2025.10.1"  # Latest version
       sourceRef:
         kind: HelmRepository
         name: authentik-helm-repo
@@ -16,41 +18,22 @@ spec:
       interval: 12h
 
   values:
+    global:
+      podAnnotations:
+        deployed: "2025-10-1"
+
     # Disable built-in PostgreSQL to use external CNPG cluster
     postgresql:
       enabled: false
 
-    # Configure external PostgreSQL connection using CNPG secret
-    authentik:
-      # Error reporting (optional, fully opt-in)
-      error_reporting:
-        enabled: false
+    # Redis is no longer used in 2025.10+ (removed dependency)
+    redis:
+      enabled: false
 
-      # External PostgreSQL configuration using CNPG secret
-      postgresql:
-        host: "cnpg-cluster-release-rw.pg-database.svc.cluster.local"
-        port: 5432
-        name: "authentik"
-        user: "authentik"
-        # Password from CNPG superuser secret
-        password: "ThisIsNotASecurePassword"
-
-      # Secret key from secret
-      secret_key: "PleaseGenerateASecureKey"
-
-    # Environment variables from secrets
-    env:
-      - name: AUTHENTIK_SECRET_KEY
-        valueFrom:
-          secretKeyRef:
-            name: authentik-secret
-            key: SECRET_KEY
-      - name: AUTHENTIK_POSTGRES_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: cnpg-cluster-release-superuser
-            key: password
-            namespace: pg-database
+    # Use existing secret for all Authentik configuration
+    # Secret contains: AUTHENTIK_SECRET_KEY, AUTHENTIK_POSTGRESQL__* variables
+    secret:
+      existingSecret: authentik-db-secret
 
     # Server configuration
     server:
