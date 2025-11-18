@@ -25,6 +25,12 @@ spec:
         size: "4Gi"
         storageClass: longhorn
 
+      # Pod anti-affinity to spread across nodes
+      affinity:
+        enablePodAntiAffinity: true
+        topologyKey: kubernetes.io/hostname
+        podAntiAffinityType: required
+
       # Resource management for PostgreSQL instance
       # Two instances for HA - allows safe node maintenance
       # Memory increased to support multiple Servarr app databases
