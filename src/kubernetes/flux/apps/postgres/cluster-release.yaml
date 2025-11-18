@@ -19,19 +19,19 @@ spec:
       postgresql: "18"
 
     cluster:
-      instances: 1
+      instances: 2
 
       storage:
         size: "4Gi"
         storageClass: longhorn
 
       # Resource management for PostgreSQL instance
-      # Single instance for homelab - no HA needed
-      # Memory increased to 2Gi to support multiple Servarr app databases
+      # Two instances for HA - allows safe node maintenance
+      # Memory increased to support multiple Servarr app databases
       resources:
         requests:
-          cpu: "100m"
-          memory: "512Mi"
+          cpu: "250m"
+          memory: "1Gi"
         limits:
-          cpu: "750m"
+          cpu: "1000m"
           memory: "3Gi"
