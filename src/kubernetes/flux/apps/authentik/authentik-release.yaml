@@ -37,7 +37,8 @@ spec:
     postgresql:
       enabled: false
 
-    # Redis is no longer used in 2025.10+ (removed dependency)
+    # Disable built-in Redis (uses deprecated Bitnami images)
+    # Using external Redis deployment instead
     redis:
       enabled: false
 
@@ -48,6 +49,9 @@ spec:
         port: 5432
         name: "authentik"
         user: "authentik"
+      redis:
+        host: "authentik-redis.auth.svc.cluster.local"
+        port: 6379
 
     # Server configuration
     server:
