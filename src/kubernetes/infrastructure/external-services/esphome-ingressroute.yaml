@@ -1,0 +1,46 @@
+---
+# Service pointing to external ESPHome
+apiVersion: v1
+kind: Service
+metadata:
+  name: esphome
+  namespace: traefik
+spec:
+  type: ClusterIP
+  clusterIP: None  # Headless service
+  ports:
+    - port: 6052
+      targetPort: 6052
+      protocol: TCP
+      name: http
+---
+# Endpoints for ESPHome service
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: esphome
+  namespace: traefik
+subsets:
+  - addresses:
+      - ip: 192.168.144.6
+    ports:
+      - port: 6052
+        name: http
+---
+# IngressRoute to route esphome.zinkzone.tech to ESPHome
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: esphome
+  namespace: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`esphome.zinkzone.tech`)
+      kind: Rule
+      services:
+        - name: esphome
+          port: 6052
+  tls:
+    certResolver: cloudflare

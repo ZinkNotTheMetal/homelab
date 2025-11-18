@@ -1,0 +1,46 @@
+---
+# Service pointing to external ZwaveJS
+apiVersion: v1
+kind: Service
+metadata:
+  name: zwavejs
+  namespace: traefik
+spec:
+  type: ClusterIP
+  clusterIP: None  # Headless service
+  ports:
+    - port: 8091
+      targetPort: 8091
+      protocol: TCP
+      name: http
+---
+# Endpoints for ZwaveJS service
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: zwavejs
+  namespace: traefik
+subsets:
+  - addresses:
+      - ip: 192.168.144.20
+    ports:
+      - port: 8091
+        name: http
+---
+# IngressRoute to route zwavejs.zinkzone.tech to ZwaveJS
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: zwavejs
+  namespace: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`zwavejs.zinkzone.tech`)
+      kind: Rule
+      services:
+        - name: zwavejs
+          port: 8091
+  tls:
+    certResolver: cloudflare

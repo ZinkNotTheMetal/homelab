@@ -1,0 +1,19 @@
+---
+# ExternalName Service for External-DNS to create CNAME record for Node-RED
+# Creates: nodered.zinkzone.tech → traefik.zinkzone.tech (CNAME)
+# Traffic is then routed by Traefik IngressRoute to the actual Node-RED IP:port
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodered-external-dns
+  namespace: traefik
+  annotations:
+    # Tell External-DNS to create nodered.zinkzone.tech → traefik.zinkzone.tech
+    external-dns.alpha.kubernetes.io/hostname: nodered.zinkzone.tech
+spec:
+  type: ExternalName
+  externalName: traefik.zinkzone.tech
+  ports:
+    - port: 80
+      protocol: TCP
+      name: http

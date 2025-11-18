@@ -1,0 +1,19 @@
+---
+# ExternalName Service for External-DNS to create CNAME record for ZwaveJS
+# Creates: zwavejs.zinkzone.tech → traefik.zinkzone.tech (CNAME)
+# Traffic is then routed by Traefik IngressRoute to the actual ZwaveJS IP:port
+apiVersion: v1
+kind: Service
+metadata:
+  name: zwavejs-external-dns
+  namespace: traefik
+  annotations:
+    # Tell External-DNS to create zwavejs.zinkzone.tech → traefik.zinkzone.tech
+    external-dns.alpha.kubernetes.io/hostname: zwavejs.zinkzone.tech
+spec:
+  type: ExternalName
+  externalName: traefik.zinkzone.tech
+  ports:
+    - port: 80
+      protocol: TCP
+      name: http

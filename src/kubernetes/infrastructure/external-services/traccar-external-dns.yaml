@@ -1,0 +1,19 @@
+---
+# ExternalName Service for External-DNS to create CNAME record for Traccar
+# Creates: traccar.zinkzone.tech → traefik.zinkzone.tech (CNAME)
+# Traffic is then routed by Traefik IngressRoute to the actual Traccar IP:port
+apiVersion: v1
+kind: Service
+metadata:
+  name: traccar-external-dns
+  namespace: traefik
+  annotations:
+    # Tell External-DNS to create traccar.zinkzone.tech → traefik.zinkzone.tech
+    external-dns.alpha.kubernetes.io/hostname: traccar.zinkzone.tech
+spec:
+  type: ExternalName
+  externalName: traefik.zinkzone.tech
+  ports:
+    - port: 80
+      protocol: TCP
+      name: http

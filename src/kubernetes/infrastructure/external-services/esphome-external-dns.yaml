@@ -1,0 +1,19 @@
+---
+# ExternalName Service for External-DNS to create CNAME record for ESPHome
+# Creates: esphome.zinkzone.tech → traefik.zinkzone.tech (CNAME)
+# Traffic is then routed by Traefik IngressRoute to the actual ESPHome IP:port
+apiVersion: v1
+kind: Service
+metadata:
+  name: esphome-external-dns
+  namespace: traefik
+  annotations:
+    # Tell External-DNS to create esphome.zinkzone.tech → traefik.zinkzone.tech
+    external-dns.alpha.kubernetes.io/hostname: esphome.zinkzone.tech
+spec:
+  type: ExternalName
+  externalName: traefik.zinkzone.tech
+  ports:
+    - port: 80
+      protocol: TCP
+      name: http
