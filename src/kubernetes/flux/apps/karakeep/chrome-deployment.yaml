@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chrome
+  namespace: karakeep
+  labels:
+    app: chrome
+    app.kubernetes.io/name: chrome
+    app.kubernetes.io/part-of: karakeep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chrome
+  template:
+    metadata:
+      labels:
+        app: chrome
+        app.kubernetes.io/name: chrome
+        app.kubernetes.io/part-of: karakeep
+    spec:
+      containers:
+        - name: chrome
+          image: gcr.io/zenika-hub/alpine-chrome:123
+          args:
+            - --no-sandbox
+            - --disable-gpu
+            - --disable-dev-shm-usage
+            - --remote-debugging-address=0.0.0.0
+            - --remote-debugging-port=9222
+            - --hide-scrollbars
+          ports:
+            - containerPort: 9222
+              name: debug
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chrome
+  namespace: karakeep
+  labels:
+    app: chrome
+    app.kubernetes.io/name: chrome
+    app.kubernetes.io/part-of: karakeep
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9222
+      targetPort: 9222
+      protocol: TCP
+      name: debug
+  selector:
+    app: chrome
