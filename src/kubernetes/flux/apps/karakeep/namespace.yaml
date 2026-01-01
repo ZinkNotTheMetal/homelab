@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: karakeep
+  labels:
+    app.kubernetes.io/name: karakeep
+    app.kubernetes.io/part-of: karakeep
