@@ -26,9 +26,15 @@ Edit `secret.secret.yaml` and set:
 - `MEILI_MASTER_KEY`: Generate with `openssl rand -base64 36`
 - `OPENAI_API_KEY`: (Optional) For AI-powered features like automatic tagging
 
-### 2. Apply the Secret
+### 2. Apply the Secret Manually
 
-The secret will be applied automatically when Flux reconciles. Ensure the `secret.secret.yaml` file exists before deploying.
+The secret file is gitignored and must be applied manually to the cluster:
+
+```bash
+kubectl apply -f secret.secret.yaml
+```
+
+**Note**: The secret must exist in the cluster before the pods will start successfully.
 
 ## Deployment
 
