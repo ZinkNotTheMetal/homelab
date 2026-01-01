@@ -39,7 +39,7 @@ spec:
             - name: BROWSER_WEB_URL
               value: "http://chrome:9222"
             - name: NEXTAUTH_URL
-              value: "https://karakeep.zinkzone.tech"
+              value: "https://hoarder.zinkzone.tech"
             - name: NEXTAUTH_SECRET
               valueFrom:
                 secretKeyRef:

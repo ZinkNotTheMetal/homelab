@@ -44,7 +44,7 @@ flux reconcile kustomization flux-system --with-source
 
 Once deployed, access Karakeep at:
 
-- **URL**: https://karakeep.zinkzone.tech
+- **URL**: https://hoarder.zinkzone.tech
 
 ## Storage
 
