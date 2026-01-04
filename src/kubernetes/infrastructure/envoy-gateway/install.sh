@@ -57,7 +57,7 @@ helm upgrade --install cert-manager jetstack/cert-manager \
   --set crds.keep=true \
   --set dns01RecursiveNameserversOnly=true \
   --set "dns01RecursiveNameservers=1.1.1.1:53\,8.8.8.8:53" \
-  --set enableGatewayAPI=true \
+  --set config.enableGatewayAPI=true \
   --wait \
   --timeout 5m
 
@@ -76,7 +76,7 @@ echo ""
 echo "Step 7/10: Installing Envoy Gateway..."
 helm upgrade --install envoy-gateway oci://docker.io/envoyproxy/gateway-helm \
   --namespace envoy-gateway-system \
-  --version v1.3.2 \
+  --version v1.6.1 \
   --wait \
   --timeout 5m
 

@@ -129,7 +129,7 @@ spec:
             protocol: HTTP
             targetPort: 9696
 
-    # Ingress (disabled - using Traefik IngressRoute)
+    # Ingress (disabled - using Gateway API HTTPRoute)
     ingress:
       main:
         enabled: false

@@ -65,7 +65,7 @@ Authentik provides centralized authentication and authorization for all homelab 
 - `authentik-release.yaml` - Main Helm release
 - `redis-deployment.yaml` - Redis for session storage
 - `authentik-secret.sample.yaml` - Secret template
-- `ingressroute.yaml` - Traefik routing
+- `httproute.yaml` - Gateway API routing
 
 ---
 
@@ -83,7 +83,7 @@ Proxy server to bypass Cloudflare and DDoS-GUARD protection for Prowlarr indexer
 **Files:**
 - `deployment.yaml` - FlareSolverr deployment
 - `service.yaml` - ClusterIP service
-- `ingressroute.yaml` - Traefik routing
+- `httproute.yaml` - Gateway API routing
 
 See [FlareSolverr README](./flaresolverr/README.md) for detailed setup.
 
@@ -110,7 +110,7 @@ Self-hosted bookmark manager with AI-powered features, full-text search, and bro
 - `meilisearch-deployment.yaml` - Search engine
 - `chrome-deployment.yaml` - Headless browser
 - `secret.sample.yaml` - Secret template
-- `ingressroute.yaml` - Traefik routing
+- `httproute.yaml` - Gateway API routing
 
 See [Karakeep README](./karakeep/README.md) for detailed setup.
 
@@ -129,7 +129,7 @@ Request management and media discovery tool for Plex. Integrates with Sonarr and
 
 **Files:**
 - `helmrelease.yaml` - Helm release configuration
-- `ingressroute.yaml` - Traefik routing
+- `httproute.yaml` - Gateway API routing
 
 ---
 
@@ -146,7 +146,7 @@ Web-based PostgreSQL administration tool for managing the CNPG cluster.
 **Files:**
 - `pgadmin-release.yaml` - Helm release configuration
 - `pgadmin-secret.sample.yaml` - Secret template
-- `ingressroute.yaml` - Traefik routing
+- `httproute.yaml` - Gateway API routing
 
 ---
 
@@ -179,7 +179,7 @@ Indexer manager/proxy for Sonarr, Radarr, and other *arr applications.
 
 **Files:**
 - `helmrelease.yaml` - Helm release configuration
-- `ingressroute.yaml` - Traefik routing
+- `httproute.yaml` - Gateway API routing
 - `postgres-secret.sample.yaml` - PostgreSQL credentials template
 
 See [Prowlarr README](./prowlarr/README.md) for detailed setup.
@@ -205,7 +205,7 @@ Torrent client with all traffic routed through Private Internet Access VPN.
 **Files:**
 - `deployment.yaml` - qBittorrent + Gluetun deployment
 - `secret.sample.yaml` - VPN credentials template
-- `ingressroute.yaml` - Traefik routing
+- `httproute.yaml` - Gateway API routing
 
 See [qBittorrent README](./qbittorrent/README.md) for detailed setup.
 
@@ -229,7 +229,7 @@ Movie collection manager that integrates with Prowlarr and qBittorrent.
 
 **Files:**
 - `helmrelease.yaml` - Helm release configuration
-- `ingressroute.yaml` - Traefik routing
+- `httproute.yaml` - Gateway API routing
 
 ---
 
@@ -251,7 +251,7 @@ TV show collection manager that integrates with Prowlarr and qBittorrent.
 
 **Files:**
 - `helmrelease.yaml` - Helm release configuration
-- `ingressroute.yaml` - Traefik routing
+- `httproute.yaml` - Gateway API routing
 
 ---
 
@@ -269,7 +269,7 @@ Locally hosted one-stop-shop for all PDF needs including merge, split, convert, 
 **Files:**
 - `helmrelease.yaml` - Helm release configuration
 - `namespace.yaml` - Dedicated namespace
-- `ingressroute.yaml` - Traefik routing
+- `httproute.yaml` - Gateway API routing
 
 ---
 

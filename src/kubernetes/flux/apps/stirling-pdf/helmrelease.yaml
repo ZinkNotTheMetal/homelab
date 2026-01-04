@@ -45,7 +45,7 @@ spec:
       type: ClusterIP
       externalPort: 8080
 
-    # Ingress (disabled - using Traefik IngressRoute)
+    # Ingress (disabled - using Gateway API HTTPRoute)
     ingress:
       enabled: false
 

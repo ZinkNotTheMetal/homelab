@@ -11,7 +11,7 @@ metadata:
   name: external-dns
 rules:
 - apiGroups: [""]
-  resources: ["services","pods"]
+  resources: ["services","pods","namespaces"]
   verbs: ["get","watch","list"]
 - apiGroups: ["discovery.k8s.io"]
   resources: ["endpointslices"]
@@ -76,8 +76,8 @@ spec:
         # You don't need to set this flag, but if you leave it unset, you will receive warning
         # logs when ExternalDNS attempts to create TXT records.
         - --registry=noop
-        # IMPORTANT: upsert-only policy to not delete manually managed records
-        - --policy=upsert-only
+        # Sync policy to keep Pi-hole DNS in sync with cluster state
+        - --policy=sync
         - --provider=pihole
         # Use Pi-hole V6 API
         - --pihole-api-version=6

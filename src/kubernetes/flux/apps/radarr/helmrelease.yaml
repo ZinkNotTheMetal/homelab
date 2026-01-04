@@ -121,7 +121,7 @@ spec:
             port: 7878
             protocol: HTTP
 
-    # Ingress (disabled - using Traefik IngressRoute)
+    # Ingress (disabled - using Gateway API HTTPRoute)
     ingress:
       main:
         enabled: false
