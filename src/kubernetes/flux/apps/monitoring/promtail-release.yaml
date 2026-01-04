@@ -128,25 +128,14 @@ spec:
         operator: Exists
         effect: NoSchedule
 
-    # Volume mounts for log access
+    # Additional volume mounts for journal access
+    # Note: containers and pods volumes are already included by default
     extraVolumes:
-      - name: containers
-        hostPath:
-          path: /var/lib/docker/containers
-      - name: pods
-        hostPath:
-          path: /var/log/pods
       - name: journal
         hostPath:
           path: /var/log/journal
 
     extraVolumeMounts:
-      - name: containers
-        mountPath: /var/lib/docker/containers
-        readOnly: true
-      - name: pods
-        mountPath: /var/log/pods
-        readOnly: true
       - name: journal
         mountPath: /var/log/journal
         readOnly: true
