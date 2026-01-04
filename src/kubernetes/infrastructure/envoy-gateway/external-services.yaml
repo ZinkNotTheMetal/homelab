@@ -1,0 +1,301 @@
+---
+# ============================================
+# External Services - Routes to services outside the cluster
+# These services run on VMs or other devices on the network
+# ============================================
+
+# ============================================
+# Home Assistant (192.168.101.2:8123)
+# ============================================
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: home-assistant-external
+  namespace: envoy-gateway-system
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8123
+      protocol: TCP
+      targetPort: 8123
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: home-assistant-external
+  namespace: envoy-gateway-system
+subsets:
+  - addresses:
+      - ip: 192.168.101.2
+    ports:
+      - name: http
+        port: 8123
+        protocol: TCP
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: home-assistant
+  namespace: envoy-gateway-system
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: home.zinkzone.tech
+spec:
+  parentRefs:
+    - name: homelab-gateway
+      namespace: envoy-gateway-system
+  hostnames:
+    - home.zinkzone.tech
+  rules:
+    - backendRefs:
+        - name: home-assistant-external
+          port: 8123
+
+# ============================================
+# Synology NAS (192.168.1.197:5000)
+# ============================================
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nas-external
+  namespace: envoy-gateway-system
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 5000
+      protocol: TCP
+      targetPort: 5000
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: nas-external
+  namespace: envoy-gateway-system
+subsets:
+  - addresses:
+      - ip: 192.168.1.197
+    ports:
+      - name: http
+        port: 5000
+        protocol: TCP
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: nas
+  namespace: envoy-gateway-system
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: nas.zinkzone.tech
+spec:
+  parentRefs:
+    - name: homelab-gateway
+      namespace: envoy-gateway-system
+  hostnames:
+    - nas.zinkzone.tech
+  rules:
+    - backendRefs:
+        - name: nas-external
+          port: 5000
+
+# ============================================
+# ESPHome (external device)
+# Update the IP address to match your setup
+# ============================================
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: esphome-external
+  namespace: envoy-gateway-system
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 6052
+      protocol: TCP
+      targetPort: 6052
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: esphome-external
+  namespace: envoy-gateway-system
+subsets:
+  - addresses:
+      # Update this IP to your ESPHome device
+      - ip: 192.168.101.2
+    ports:
+      - name: http
+        port: 6052
+        protocol: TCP
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: esphome
+  namespace: envoy-gateway-system
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: esphome.zinkzone.tech
+spec:
+  parentRefs:
+    - name: homelab-gateway
+      namespace: envoy-gateway-system
+  hostnames:
+    - esphome.zinkzone.tech
+  rules:
+    - backendRefs:
+        - name: esphome-external
+          port: 6052
+
+# ============================================
+# Node-RED (external device)
+# Update the IP address to match your setup
+# ============================================
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodered-external
+  namespace: envoy-gateway-system
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 1880
+      protocol: TCP
+      targetPort: 1880
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: nodered-external
+  namespace: envoy-gateway-system
+subsets:
+  - addresses:
+      # Update this IP to your Node-RED instance
+      - ip: 192.168.101.2
+    ports:
+      - name: http
+        port: 1880
+        protocol: TCP
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: nodered
+  namespace: envoy-gateway-system
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: nodered.zinkzone.tech
+spec:
+  parentRefs:
+    - name: homelab-gateway
+      namespace: envoy-gateway-system
+  hostnames:
+    - nodered.zinkzone.tech
+  rules:
+    - backendRefs:
+        - name: nodered-external
+          port: 1880
+
+# ============================================
+# Z-Wave JS (external device)
+# Update the IP address to match your setup
+# ============================================
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zwavejs-external
+  namespace: envoy-gateway-system
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8091
+      protocol: TCP
+      targetPort: 8091
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: zwavejs-external
+  namespace: envoy-gateway-system
+subsets:
+  - addresses:
+      # Update this IP to your Z-Wave JS instance
+      - ip: 192.168.101.2
+    ports:
+      - name: http
+        port: 8091
+        protocol: TCP
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: zwavejs
+  namespace: envoy-gateway-system
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: zwavejs.zinkzone.tech
+spec:
+  parentRefs:
+    - name: homelab-gateway
+      namespace: envoy-gateway-system
+  hostnames:
+    - zwavejs.zinkzone.tech
+  rules:
+    - backendRefs:
+        - name: zwavejs-external
+          port: 8091
+
+# ============================================
+# Traccar (external device)
+# Update the IP address to match your setup
+# ============================================
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: traccar-external
+  namespace: envoy-gateway-system
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8082
+      protocol: TCP
+      targetPort: 8082
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: traccar-external
+  namespace: envoy-gateway-system
+subsets:
+  - addresses:
+      # Update this IP to your Traccar instance
+      - ip: 192.168.101.2
+    ports:
+      - name: http
+        port: 8082
+        protocol: TCP
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: traccar
+  namespace: envoy-gateway-system
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: traccar.zinkzone.tech
+spec:
+  parentRefs:
+    - name: homelab-gateway
+      namespace: envoy-gateway-system
+  hostnames:
+    - traccar.zinkzone.tech
+  rules:
+    - backendRefs:
+        - name: traccar-external
+          port: 8082

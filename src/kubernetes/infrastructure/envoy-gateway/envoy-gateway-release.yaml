@@ -1,0 +1,59 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: envoy-gateway
+  namespace: envoy-gateway-system
+spec:
+  interval: 30m
+  timeout: 10m
+  chart:
+    spec:
+      chart: gateway-helm
+      version: "v1.3.x"
+      sourceRef:
+        kind: HelmRepository
+        name: envoy-gateway
+        namespace: flux-system
+      interval: 12h
+
+  # Wait for cert-manager to be ready
+  dependsOn:
+    - name: cert-manager
+      namespace: cert-manager
+
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+
+  values:
+    # Envoy Gateway configuration
+    config:
+      envoyGateway:
+        gateway:
+          controllerName: gateway.envoyproxy.io/gatewayclass-controller
+        provider:
+          type: Kubernetes
+        logging:
+          level:
+            default: info
+        telemetry:
+          metrics:
+            prometheus:
+              enable: true
+
+    # Resources for the controller
+    deployment:
+      envoyGateway:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi

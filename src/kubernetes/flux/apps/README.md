@@ -9,6 +9,7 @@ This directory contains all applications deployed to the homelab Kubernetes clus
 | [Authentik](#authentik) | `auth` | HelmRelease | https://authentik.zinkzone.tech | Identity provider and SSO |
 | [FlareSolverr](#flaresolverr) | `media` | Deployment | https://flaresolverr.zinkzone.tech | Cloudflare bypass proxy |
 | [Karakeep](#karakeep) | `karakeep` | Deployment | https://hoarder.zinkzone.tech | Bookmark manager (formerly Hoarder) |
+| [Monitoring Stack](#monitoring-stack) | `monitoring` | HelmRelease | https://grafana.zinkzone.tech | Prometheus, Grafana, Loki |
 | [Overseerr](#overseerr) | `media` | HelmRelease | https://overseerr.zinkzone.tech | Media request management |
 | [pgAdmin](#pgadmin) | `pg-database` | HelmRelease | https://pgadmin.zinkzone.tech | PostgreSQL administration |
 | [PostgreSQL (CNPG)](#postgresql-cnpg) | `pg-database` | HelmRelease | N/A (internal) | Cloud Native PostgreSQL operator |
@@ -25,11 +26,15 @@ This directory contains all applications deployed to the homelab Kubernetes clus
 | Authentik Server | 250m | 1500m | 512Mi | 3Gi | - |
 | Authentik Worker | 250m | 1000m | 512Mi | 3Gi | - |
 | FlareSolverr | 100m | 1000m | 256Mi | 1Gi | - |
+| Grafana | 100m | 1000m | 256Mi | 1Gi | 10Gi |
 | Karakeep | 100m | 1000m | 256Mi | 1Gi | 10Gi |
 | Karakeep Meilisearch | 50m | 1000m | 256Mi | 1Gi | 5Gi |
 | Karakeep Chrome | 100m | 1000m | 256Mi | 1Gi | - |
+| Loki | 100m | 1000m | 256Mi | 2Gi | 30Gi |
 | Overseerr | 100m | 500m | 128Mi | 512Mi | 512Mi |
 | pgAdmin | 100m | 1000m | 256Mi | 1Gi | 2Gi |
+| Prometheus | 200m | 2000m | 1Gi | 4Gi | 50Gi |
+| Promtail | 50m | 200m | 64Mi | 256Mi | - |
 | Prowlarr | 100m | 500m | 256Mi | 512Mi | 1Gi |
 | qBittorrent | 100m | 2000m | 256Mi | 2Gi | 1Gi + NFS |
 | Radarr | 100m | 1000m | 256Mi | 1Gi | 2Gi + NFS |

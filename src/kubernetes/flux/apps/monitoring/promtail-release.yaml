@@ -1,0 +1,171 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: promtail
+  namespace: monitoring
+spec:
+  interval: 30m
+  timeout: 10m
+  chart:
+    spec:
+      chart: promtail
+      version: "6.x"
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: flux-system
+      interval: 12h
+
+  # Promtail depends on Loki being available
+  dependsOn:
+    - name: loki
+      namespace: monitoring
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    # ============================================
+    # Promtail Configuration
+    # ============================================
+    config:
+      # Loki server address
+      clients:
+        - url: http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push
+          tenant_id: ""
+
+      # Positions file for tracking log positions
+      positions:
+        filename: /run/promtail/positions.yaml
+
+      # Scrape configs for Kubernetes
+      snippets:
+        # Common labels to add to all logs
+        common:
+          - action: replace
+            source_labels:
+              - __meta_kubernetes_pod_node_name
+            target_label: node
+          - action: replace
+            source_labels:
+              - __meta_kubernetes_namespace
+            target_label: namespace
+          - action: replace
+            source_labels:
+              - __meta_kubernetes_pod_name
+            target_label: pod
+          - action: replace
+            source_labels:
+              - __meta_kubernetes_pod_container_name
+            target_label: container
+          - action: replace
+            source_labels:
+              - __meta_kubernetes_pod_label_app
+            target_label: app
+          - action: replace
+            source_labels:
+              - __meta_kubernetes_pod_label_app_kubernetes_io_name
+            target_label: app_name
+          - action: labelmap
+            regex: __meta_kubernetes_pod_label_(.+)
+          - action: replace
+            replacement: /var/log/pods/*$1/*.log
+            separator: /
+            source_labels:
+              - __meta_kubernetes_pod_uid
+              - __meta_kubernetes_pod_container_name
+            target_label: __path__
+
+        # Add job label for pod logs
+        addScrapeJobLabel: true
+
+        # Pipeline stages for parsing logs
+        pipelineStages:
+          # Parse CRI format (containerd)
+          - cri: {}
+          # Parse JSON logs if present
+          - json:
+              expressions:
+                level: level
+                msg: msg
+                message: message
+              source: log
+          # Extract log level if present
+          - labels:
+              level:
+          # Drop empty logs
+          - drop:
+              expression: '^\s*$'
+              drop_counter_reason: empty_line
+
+    # ============================================
+    # DaemonSet Configuration
+    # ============================================
+    # Promtail runs as a DaemonSet on every node
+    daemonSet:
+      enabled: true
+
+    # Resources
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+    # Tolerations to run on all nodes including control plane
+    tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+
+    # Volume mounts for log access
+    extraVolumes:
+      - name: containers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: pods
+        hostPath:
+          path: /var/log/pods
+      - name: journal
+        hostPath:
+          path: /var/log/journal
+
+    extraVolumeMounts:
+      - name: containers
+        mountPath: /var/lib/docker/containers
+        readOnly: true
+      - name: pods
+        mountPath: /var/log/pods
+        readOnly: true
+      - name: journal
+        mountPath: /var/log/journal
+        readOnly: true
+
+    # ============================================
+    # ServiceMonitor for Prometheus
+    # ============================================
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: kube-prometheus-stack
+
+    # ============================================
+    # Security Context
+    # ============================================
+    # Promtail needs root access to read log files
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      allowPrivilegeEscalation: false

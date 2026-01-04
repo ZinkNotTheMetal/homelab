@@ -1,0 +1,38 @@
+---
+# HTTPRoute for grafana.zinkzone.tech (Gateway API)
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: grafana
+  namespace: monitoring
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: grafana.zinkzone.tech
+spec:
+  parentRefs:
+    - name: homelab-gateway
+      namespace: envoy-gateway-system
+  hostnames:
+    - grafana.zinkzone.tech
+  rules:
+    - backendRefs:
+        - name: grafana
+          port: 80
+---
+# HTTPRoute for prometheus.zinkzone.tech (Gateway API)
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: prometheus
+  namespace: monitoring
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: prometheus.zinkzone.tech
+spec:
+  parentRefs:
+    - name: homelab-gateway
+      namespace: envoy-gateway-system
+  hostnames:
+    - prometheus.zinkzone.tech
+  rules:
+    - backendRefs:
+        - name: prometheus-kube-prometheus-prometheus
+          port: 9090

@@ -79,4 +79,25 @@ spec:
   interval: 1h
   url: https://stirling-tools.github.io/Stirling-PDF-chart
 ---
+# Jetstack - cert-manager
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: jetstack
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://charts.jetstack.io
+---
+# Envoy Gateway
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: envoy-gateway
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: oci://docker.io/envoyproxy
+  type: oci
+---
 

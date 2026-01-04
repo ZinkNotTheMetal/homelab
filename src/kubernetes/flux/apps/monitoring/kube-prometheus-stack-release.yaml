@@ -1,0 +1,313 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+  namespace: monitoring
+spec:
+  interval: 30m
+  timeout: 15m
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      version: "72.x"
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: flux-system
+      interval: 12h
+
+  # Install CRDs before the chart
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+
+  # Inject Grafana admin password from secret
+  valuesFrom:
+    - kind: Secret
+      name: grafana-admin-secret
+      valuesKey: admin-password
+      targetPath: grafana.adminPassword
+
+  values:
+    # ============================================
+    # Global Settings
+    # ============================================
+    fullnameOverride: prometheus
+
+    # ============================================
+    # Prometheus Configuration
+    # ============================================
+    prometheus:
+      prometheusSpec:
+        # Retention settings
+        retention: 30d
+        retentionSize: 45GB
+
+        # Storage configuration
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: longhorn
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 50Gi
+
+        # Resource limits
+        resources:
+          requests:
+            cpu: 200m
+            memory: 1Gi
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+
+        # Scrape all namespaces
+        podMonitorSelectorNilUsesHelmValues: false
+        serviceMonitorSelectorNilUsesHelmValues: false
+        ruleSelectorNilUsesHelmValues: false
+        probeSelectorNilUsesHelmValues: false
+
+        # Additional scrape configs for Envoy Gateway metrics
+        # Envoy proxy pods expose metrics on port 19001 at /stats/prometheus
+        additionalScrapeConfigs:
+          - job_name: 'envoy-gateway-proxy'
+            kubernetes_sd_configs:
+              - role: pod
+                namespaces:
+                  names:
+                    - envoy-gateway-system
+            relabel_configs:
+              # Only scrape pods with the Envoy Gateway label
+              - source_labels: [__meta_kubernetes_pod_label_gateway_envoyproxy_io_owning_gateway_name]
+                action: keep
+                regex: .+
+              # Scrape the admin port (19001)
+              - source_labels: [__meta_kubernetes_pod_container_port_number]
+                action: keep
+                regex: "19001"
+              - source_labels: [__meta_kubernetes_namespace]
+                target_label: namespace
+              - source_labels: [__meta_kubernetes_pod_name]
+                target_label: pod
+              - source_labels: [__meta_kubernetes_pod_label_gateway_envoyproxy_io_owning_gateway_name]
+                target_label: gateway
+            metrics_path: /stats/prometheus
+
+    # ============================================
+    # Alertmanager Configuration
+    # ============================================
+    # Disabled - no alert destinations configured
+    alertmanager:
+      enabled: false
+
+    # ============================================
+    # Grafana Configuration
+    # ============================================
+    grafana:
+      enabled: true
+      fullnameOverride: grafana
+
+      # Admin user configuration
+      adminUser: admin
+      # adminPassword is injected from secret
+
+      # Persistence
+      persistence:
+        enabled: true
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        size: 10Gi
+
+      # Resources
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 1000m
+          memory: 1Gi
+
+      # Disable built-in ingress - using Gateway API HTTPRoute
+      ingress:
+        enabled: false
+
+      # Configure Grafana settings
+      grafana.ini:
+        server:
+          root_url: https://grafana.zinkzone.tech
+        auth.anonymous:
+          enabled: false
+        security:
+          allow_embedding: true
+
+      # Sidecar for dashboard provisioning
+      sidecar:
+        dashboards:
+          enabled: true
+          searchNamespace: ALL
+          folderAnnotation: grafana_folder
+          provider:
+            foldersFromFilesStructure: true
+        datasources:
+          enabled: true
+          searchNamespace: ALL
+
+      # Additional data sources (Loki for logs)
+      additionalDataSources:
+        - name: Loki
+          type: loki
+          url: http://loki.monitoring.svc.cluster.local:3100
+          access: proxy
+          isDefault: false
+          jsonData:
+            maxLines: 1000
+
+      # Default dashboards from kube-prometheus-stack
+      defaultDashboardsEnabled: true
+      defaultDashboardsTimezone: America/New_York
+
+      # Additional dashboard providers
+      dashboardProviders:
+        dashboardproviders.yaml:
+          apiVersion: 1
+          providers:
+            - name: 'custom'
+              orgId: 1
+              folder: 'Custom'
+              type: file
+              disableDeletion: false
+              editable: true
+              options:
+                path: /var/lib/grafana/dashboards/custom
+
+      # Pre-installed dashboards via ConfigMaps
+      dashboards:
+        custom:
+          # Node Exporter Full Dashboard
+          node-exporter-full:
+            gnetId: 1860
+            revision: 37
+            datasource: Prometheus
+          # Kubernetes Cluster Monitoring
+          kubernetes-cluster:
+            gnetId: 7249
+            revision: 1
+            datasource: Prometheus
+          # Envoy Global Dashboard
+          envoy-global:
+            gnetId: 11022
+            revision: 1
+            datasource: Prometheus
+          # Envoy Clusters Dashboard
+          envoy-clusters:
+            gnetId: 11021
+            revision: 1
+            datasource: Prometheus
+          # Longhorn Dashboard
+          longhorn:
+            gnetId: 16888
+            revision: 9
+            datasource: Prometheus
+          # Loki Dashboard for Logs
+          loki-logs:
+            gnetId: 13639
+            revision: 2
+            datasource: Loki
+          # Container Log Dashboard
+          container-logs:
+            gnetId: 16966
+            revision: 1
+            datasource: Loki
+          # Flux Dashboard
+          flux-cluster:
+            gnetId: 16714
+            revision: 1
+            datasource: Prometheus
+          # Flux Control Plane
+          flux-control-plane:
+            gnetId: 16715
+            revision: 1
+            datasource: Prometheus
+          # PostgreSQL Dashboard (for CNPG)
+          postgres:
+            gnetId: 9628
+            revision: 7
+            datasource: Prometheus
+
+    # ============================================
+    # Node Exporter Configuration
+    # ============================================
+    nodeExporter:
+      enabled: true
+
+    prometheus-node-exporter:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 30Mi
+        limits:
+          cpu: 200m
+          memory: 100Mi
+
+    # ============================================
+    # Kube State Metrics Configuration
+    # ============================================
+    kubeStateMetrics:
+      enabled: true
+
+    kube-state-metrics:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 200m
+          memory: 256Mi
+
+    # ============================================
+    # Prometheus Operator Configuration
+    # ============================================
+    prometheusOperator:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+
+    # ============================================
+    # K3S-specific Configuration
+    # ============================================
+    # K3S uses embedded etcd/sqlite, so disable etcd monitoring
+    kubeEtcd:
+      enabled: false
+
+    # K3S uses its own scheduler metrics endpoint
+    kubeScheduler:
+      enabled: false
+
+    # K3S controller manager
+    kubeControllerManager:
+      enabled: false
+
+    # K3S proxy
+    kubeProxy:
+      enabled: false
+
+    # CoreDNS (K3S uses CoreDNS)
+    coreDns:
+      enabled: true
+
+    # Kubelet metrics
+    kubelet:
+      enabled: true
