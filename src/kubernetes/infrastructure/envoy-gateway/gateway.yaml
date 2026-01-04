@@ -1,0 +1,111 @@
+---
+# GatewayClass - defines which controller handles this Gateway
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: envoy-gateway
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+---
+# Gateway - the main entry point for all traffic
+# This creates a LoadBalancer service via MetalLB
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: homelab-gateway
+  namespace: envoy-gateway-system
+  annotations:
+    # MetalLB address pool
+    metallb.universe.tf/address-pool: homelab-prod-pool
+    # External-DNS annotation for the gateway itself
+    external-dns.alpha.kubernetes.io/hostname: gateway.zinkzone.tech
+spec:
+  gatewayClassName: envoy-gateway
+
+  # Listeners define the ports and protocols
+  listeners:
+    # HTTP listener - redirects to HTTPS
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    # HTTPS listener with wildcard certificate
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.zinkzone.tech"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: wildcard-zinkzone-tech-tls
+            namespace: envoy-gateway-system
+
+    # HTTPS listener for apex domain
+    - name: https-apex
+      protocol: HTTPS
+      port: 443
+      hostname: "zinkzone.tech"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: wildcard-zinkzone-tech-tls
+            namespace: envoy-gateway-system
+---
+# ReferenceGrant - allows HTTPRoutes in other namespaces to reference the Gateway
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allow-gateway-reference
+  namespace: envoy-gateway-system
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: media
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: auth
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: monitoring
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: pg-database
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: stirling-pdf
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: karakeep
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: longhorn-system
+  to:
+    - group: ""
+      kind: Secret
+      name: wildcard-zinkzone-tech-tls
+---
+# HTTP to HTTPS redirect policy
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: https-redirect
+  namespace: envoy-gateway-system
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: homelab-gateway
+  # Note: HTTP to HTTPS redirect is handled at the HTTPRoute level
+  # This policy can be extended for additional security features

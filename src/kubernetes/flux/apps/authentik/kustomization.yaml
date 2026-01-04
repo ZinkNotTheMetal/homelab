@@ -5,4 +5,4 @@ resources:
   - namespace.yaml
   - redis-deployment.yaml
   - authentik-release.yaml
-  - ingressroute.yaml
+  - httproute.yaml

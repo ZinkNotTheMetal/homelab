@@ -8,4 +8,4 @@ resources:
   - meilisearch-deployment.yaml
   - chrome-deployment.yaml
   - karakeep-deployment.yaml
-  - ingressroute.yaml
+  - httproute.yaml

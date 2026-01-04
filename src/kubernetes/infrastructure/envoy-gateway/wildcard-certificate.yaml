@@ -1,0 +1,41 @@
+---
+# Wildcard Certificate for *.zinkzone.tech
+# This certificate will be used by the Envoy Gateway for all services
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-zinkzone-tech
+  namespace: envoy-gateway-system
+spec:
+  # Secret name where the certificate will be stored
+  secretName: wildcard-zinkzone-tech-tls
+
+  # Certificate duration and renewal
+  duration: 2160h    # 90 days
+  renewBefore: 360h  # Renew 15 days before expiry
+
+  # Subject information
+  subject:
+    organizations:
+      - Homelab
+
+  # Private key configuration
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+
+  # Usages
+  usages:
+    - server auth
+    - client auth
+
+  # DNS names covered by this certificate
+  dnsNames:
+    - "zinkzone.tech"
+    - "*.zinkzone.tech"
+
+  # Use the production ClusterIssuer
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+    group: cert-manager.io

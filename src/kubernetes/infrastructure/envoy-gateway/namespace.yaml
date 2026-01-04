@@ -1,0 +1,16 @@
+---
+# Namespace for cert-manager
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cert-manager
+  labels:
+    app.kubernetes.io/component: certificate-management
+---
+# Namespace for Envoy Gateway
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: envoy-gateway-system
+  labels:
+    app.kubernetes.io/component: ingress
