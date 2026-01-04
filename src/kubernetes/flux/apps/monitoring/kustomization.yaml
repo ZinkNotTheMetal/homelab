@@ -4,8 +4,10 @@ kind: Kustomization
 namespace: monitoring
 resources:
   - namespace.yaml
-  - grafana-secret.secret.yaml
   - kube-prometheus-stack-release.yaml
   - loki-release.yaml
   - promtail-release.yaml
   - httproute.yaml
+# NOTE: grafana-secret.secret.yaml must be applied manually:
+#   kubectl apply -f grafana-secret.secret.yaml
+# See README.md for instructions
